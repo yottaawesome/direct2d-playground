@@ -1,5 +1,7 @@
 // Adapted from the offical sample with an additional fix for a deprecation warning:
 // https://docs.microsoft.com/en-us/windows/win32/direct2d/direct2d-quickstart
+// See also: https://docs.microsoft.com/en-us/windows/win32/direct2d/getting-started-with-direct2d
+// and https://docs.microsoft.com/en-us/windows/win32/direct2d/direct2d-portal
 
 #include "DemoApp.hpp"
 #include <iostream>
