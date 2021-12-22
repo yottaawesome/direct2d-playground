@@ -17,7 +17,7 @@ namespace Core::COM
 	COMThreadScope::COMThreadScope()
 	{
 		// https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
-		switch (const HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))
+		switch (const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED))
 		{
 			case S_OK:
 			case S_FALSE:
