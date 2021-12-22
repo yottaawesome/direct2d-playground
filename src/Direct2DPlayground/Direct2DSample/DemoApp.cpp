@@ -111,6 +111,7 @@ HRESULT DemoApp::CreateDeviceIndependentResources()
         D2D1_FACTORY_TYPE_SINGLE_THREADED, 
         m_pDirect2dFactory.ReleaseAndGetAddressOf()
     );
+    //if (FAILED(hr)) throw Error::Com
 
     return hr;
 }

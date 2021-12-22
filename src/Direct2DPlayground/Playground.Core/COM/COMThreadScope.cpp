@@ -23,7 +23,7 @@ namespace Core::COM
 			case S_FALSE:
 				break;
 			default:
-				throw Error::ComError(__FUNCSIG__": CoInitializeEx() failed", hr);
+				throw Error::COMError(__FUNCSIG__": CoInitializeEx() failed", hr);
 		}
 	}
 }

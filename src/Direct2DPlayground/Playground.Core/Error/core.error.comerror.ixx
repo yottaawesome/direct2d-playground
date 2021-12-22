@@ -9,12 +9,12 @@ import core.error.win32error;
 
 export namespace Core::Error
 {
-	class ComError : public Win32Error
+	class COMError : public Win32Error
 	{
 		public:
-			virtual ~ComError();
-			ComError(const char* msg);
-			ComError(const char* msg, const DWORD errorCode);
-			ComError(const std::string& msg, const DWORD errorCode);
+			virtual ~COMError();
+			COMError(const char* msg);
+			COMError(const char* msg, const DWORD errorCode);
+			COMError(const std::string& msg, const DWORD errorCode);
 	};
 }

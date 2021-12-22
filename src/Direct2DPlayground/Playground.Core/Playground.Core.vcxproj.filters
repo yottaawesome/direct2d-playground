@@ -26,7 +26,7 @@
     <ClCompile Include="Error\core.error.comerror.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\ComError.cpp">
+    <ClCompile Include="Error\COMError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="COM\COMThreadScope.ixx">
