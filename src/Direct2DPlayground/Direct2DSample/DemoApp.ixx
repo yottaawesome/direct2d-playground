@@ -17,29 +17,6 @@ module;
 
 export module DemoApp;
 
-template<class Interface>
-inline void SafeRelease(
-    Interface** ppInterfaceToRelease
-)
-{
-    if (*ppInterfaceToRelease != NULL)
-    {
-        (*ppInterfaceToRelease)->Release();
-
-        (*ppInterfaceToRelease) = NULL;
-    }
-}
-
-
-//#ifndef Assert
-//#if defined( DEBUG ) || defined( _DEBUG )
-//#define Assert(b) do {if (!(b)) {OutputDebugStringA("Assert: " #b "\n");}} while(0)
-//#else
-//#define Assert(b)
-//#endif //DEBUG || _DEBUG
-//#endif
-
-
 // See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
 // https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions
 //#ifndef HINST_THISCOMPONENT

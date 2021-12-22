@@ -29,5 +29,14 @@
     <ClCompile Include="Error\ComError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="COM\COMThreadScope.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="COM\COMThreadScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Error\Error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

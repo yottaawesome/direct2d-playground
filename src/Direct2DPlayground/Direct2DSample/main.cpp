@@ -19,28 +19,25 @@ int WINAPI WinMain(
 */
 
 import DemoApp;
+import core.com.comthreadscope;
+import core.error.win32error;
 
 int main(int argc, char* args[]) try
 {
-    // Use HeapSetInformation to specify that the process should
-    // terminate if the heap manager detects an error in any heap used
-    // by the process.
-    // The return value is ignored, because we want to continue running in the
-    // unlikely event that HeapSetInformation fails.
-    HeapSetInformation(nullptr, HeapEnableTerminationOnCorruption, nullptr, 0);
-    if (FAILED(CoInitialize(nullptr)))
-        throw std::runtime_error("CoInitialize() failed");
+    // https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation
+    if (!HeapSetInformation(nullptr, HeapEnableTerminationOnCorruption, nullptr, 0))
+        throw Core::Error::Win32Error("HeapSetInformation() failed", GetLastError());
 
-    {
-        DemoApp app;
-        if (SUCCEEDED(app.Initialize()))
-            app.RunMessageLoop();
-    }
-    CoUninitialize();
+    Core::COM::COMThreadScope scope;
+    
+    DemoApp app;
+    if (SUCCEEDED(app.Initialize()))
+        app.RunMessageLoop();
 
     return 0;
 }
 catch (const std::exception& ex)
 {
     std::wcerr << ex.what() << std::endl;
+    return 1;
 }

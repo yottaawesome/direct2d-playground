@@ -168,7 +168,7 @@ LRESULT CALLBACK DemoApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
     {
         LPCREATESTRUCT pcs = (LPCREATESTRUCT)lParam;
         DemoApp* pDemoApp = (DemoApp*)pcs->lpCreateParams;
-        SetWindowLongW(
+        SetWindowLongPtrW(
             hwnd,
             GWLP_USERDATA,
             reinterpret_cast<LONG_PTR>(pDemoApp)
@@ -177,7 +177,7 @@ LRESULT CALLBACK DemoApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         return 0;
     }
 
-    DemoApp* pDemoApp = reinterpret_cast<DemoApp*>(GetWindowLongW(hwnd, GWLP_USERDATA));
+    DemoApp* pDemoApp = reinterpret_cast<DemoApp*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
     if(!pDemoApp)
         return DefWindowProc(hwnd, message, wParam, lParam);
 
