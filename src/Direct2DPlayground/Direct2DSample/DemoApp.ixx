@@ -31,28 +31,35 @@ export class DemoApp
         ~DemoApp();
 
         // Register the window class and call methods for instantiating drawing resources
-        HRESULT Initialize();
+        void Initialize();
 
         // Process and dispatch messages
-        void RunMessageLoop();
+        WPARAM RunMessageLoop();
 
     private:
         // Initialize device-independent resources.
-        HRESULT CreateDeviceIndependentResources();
+        void CreateDeviceIndependentResources();
 
         // Initialize device-dependent resources.
-        HRESULT CreateDeviceResources();
+        void CreateDeviceResources();
 
         // Release device-dependent resource.
         void DiscardDeviceResources();
 
         // Draw content.
-        HRESULT OnRender();
+        void OnRender();
 
         // Resize the render target.
         void OnResize(
             UINT width,
             UINT height
+        );
+
+        LRESULT HandleMessage(
+            HWND hWnd,
+            UINT message,
+            WPARAM wParam,
+            LPARAM lParam
         );
 
         // The windows procedure.

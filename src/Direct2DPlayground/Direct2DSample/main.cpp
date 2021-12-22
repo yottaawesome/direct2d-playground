@@ -21,7 +21,9 @@ int WINAPI WinMain(
 import DemoApp;
 import core.com.comthreadscope;
 import core.error.win32error;
+import core.error.comerror;
 
+// For a list of D2D error codes, see: https://docs.microsoft.com/en-us/windows/win32/direct2d/direct2d-error-codes
 int main(int argc, char* args[]) try
 {
     // https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation
@@ -31,10 +33,8 @@ int main(int argc, char* args[]) try
     Core::COM::COMThreadScope scope;
     
     DemoApp app;
-    if (SUCCEEDED(app.Initialize()))
-        app.RunMessageLoop();
-
-    return 0;
+    app.Initialize();
+    return app.RunMessageLoop();
 }
 catch (const std::exception& ex)
 {
