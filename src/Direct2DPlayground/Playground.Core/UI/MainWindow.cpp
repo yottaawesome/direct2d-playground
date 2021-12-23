@@ -57,6 +57,10 @@ namespace Core::UI
         */
         const float dpi = static_cast<float>(GetDpiForWindow(GetDesktopWindow()));
         // Create the window.
+        RECT r{ 0 };
+        r.right = 512;
+        r.bottom = 512;
+        AdjustWindowRect(&r, WS_SYSMENU |WS_CAPTION| WS_THICKFRAME| WS_MINIMIZEBOX | WS_MAXIMIZEBOX, false);
         m_hwnd = CreateWindowExW(
             0,
             L"D2DDemoApp",
@@ -64,8 +68,10 @@ namespace Core::UI
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            static_cast<UINT>(ceil(640.f * dpi / 96.f)),
-            static_cast<UINT>(ceil(480.f * dpi / 96.f)),
+            r.right,
+            //static_cast<UINT>(ceil(r.right * dpi / 96.f)),
+            r.bottom,
+            //static_cast<UINT>(ceil(r.bottom * dpi / 96.f)),
             nullptr,
             nullptr,
             GetModuleHandle(nullptr), //HINST_THISCOMPONENT,
