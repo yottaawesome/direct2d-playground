@@ -13,7 +13,25 @@ namespace Core::UI
 
     MainWindow::~MainWindow()
     {
-        DestroyWindow(m_hwnd);
+        if (m_hwnd)
+            DestroyWindow(m_hwnd);
+    }
+
+    const WNDCLASSEX& MainWindow::GetClass() const noexcept
+    {
+        static const WNDCLASSEX wcex = {
+            .cbSize = sizeof(WNDCLASSEX),
+            .style = CS_HREDRAW | CS_VREDRAW,
+            .lpfnWndProc = MainWindow::WndProc,
+            .cbClsExtra = 0,
+            .cbWndExtra = sizeof(LONG_PTR),
+            .hInstance = GetModuleHandle(nullptr),// HINST_THISCOMPONENT;
+            .hCursor = LoadCursor(nullptr, IDI_APPLICATION),
+            .hbrBackground = nullptr,
+            .lpszMenuName = nullptr,
+            .lpszClassName = L"D2DDemoApp"
+        };
+        return wcex;
     }
 
     void MainWindow::Initialize()
@@ -22,18 +40,12 @@ namespace Core::UI
         // as the Direct2D factory.
         CreateDeviceIndependentResources();
 
-        // Register the window class.
-        WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc = MainWindow::WndProc;
-        wcex.cbClsExtra = 0;
-        wcex.cbWndExtra = sizeof(LONG_PTR);
-        wcex.hInstance = GetModuleHandle(nullptr);// HINST_THISCOMPONENT;
-        wcex.hbrBackground = nullptr;
-        wcex.lpszMenuName = nullptr;
-        wcex.hCursor = LoadCursor(nullptr, IDI_APPLICATION);
-        wcex.lpszClassName = L"D2DDemoApp";
-        RegisterClassExW(&wcex);
+        // Register the window class, but allow subclasses the option
+        // to override the WndProc
+        WNDCLASSEX windowClass = GetClass();
+        if (!windowClass.lpfnWndProc)
+            windowClass.lpfnWndProc = MainWindow::WndProc;
+        RegisterClassExW(&windowClass);
 
         // Because the CreateWindow function takes its size in pixels,
         // obtain the system DPI and use it to scale the window size.
@@ -93,14 +105,11 @@ namespace Core::UI
         }
         // Do not pass these messages to the Window object to be processed,
         // as it it's destroyed
-        /*else if (message == WM_NCDESTROY)
-        {
-            return DefWindowProc(hwnd, message, wParam, lParam);
-        }
         else if (message == WM_DESTROY)
         {
-            return DefWindowProc(hwnd, message, wParam, lParam);
-        }*/
+            PostQuitMessage(0);
+            return 0;
+        }
 
         try
         {

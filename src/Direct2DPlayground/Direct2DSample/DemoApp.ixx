@@ -16,6 +16,7 @@ module;
 #include <wrl/client.h>
 
 export module DemoApp;
+import core.ui.mainwindow;
 
 // See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
 // https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions
@@ -24,56 +25,41 @@ export module DemoApp;
 //#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 //#endif
 
-export class DemoApp
+export class DemoApp : public Core::UI::MainWindow
 {
     public:
         DemoApp();
-        ~DemoApp();
+        virtual ~DemoApp();
 
-        // Register the window class and call methods for instantiating drawing resources
-        void Initialize();
-
-        // Process and dispatch messages
-        WPARAM RunMessageLoop();
-
-    private:
+    protected:
         // Initialize device-independent resources.
-        void CreateDeviceIndependentResources();
+        virtual void CreateDeviceIndependentResources() override;
 
         // Initialize device-dependent resources.
-        void CreateDeviceResources();
+        virtual void CreateDeviceResources() override;
 
         // Release device-dependent resource.
-        void DiscardDeviceResources();
+        virtual void DiscardDeviceResources() override;
 
         // Draw content.
-        void OnRender();
+        virtual void OnRender() override;
 
-        void LoadTestBitmap();
+        virtual void LoadTestBitmap();
 
         // Resize the render target.
-        void OnResize(
+        virtual void OnResize(
             const UINT width,
             const UINT height
-        );
+        ) override;
 
-        LRESULT HandleMessage(
+        virtual LRESULT HandleMessage(
             HWND hWnd,
             UINT message,
             WPARAM wParam,
             LPARAM lParam
-        );
+        ) override;
 
-        // The windows procedure.
-        static LRESULT CALLBACK WndProc(
-            HWND hWnd,
-            UINT message,
-            WPARAM wParam,
-            LPARAM lParam
-        );
-
-    private:
-        HWND m_hwnd;
+    protected:
         Microsoft::WRL::ComPtr<ID2D1Factory> m_pDirect2dFactory;
         Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pLightSlateGrayBrush;

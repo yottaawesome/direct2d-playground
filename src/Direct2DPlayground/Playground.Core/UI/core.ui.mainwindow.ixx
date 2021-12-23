@@ -18,7 +18,9 @@ export namespace Core::UI
             // Process and dispatch messages
             virtual WPARAM RunMessageLoop();
 
-        private:
+        protected:
+            virtual const WNDCLASSEX& GetClass() const noexcept;
+
             // Initialize device-independent resources.
             virtual void CreateDeviceIndependentResources() = 0;
 
@@ -53,7 +55,7 @@ export namespace Core::UI
                 LPARAM lParam
             );
 
-        private:
+        protected:
             HWND m_hwnd;
     };
 }
