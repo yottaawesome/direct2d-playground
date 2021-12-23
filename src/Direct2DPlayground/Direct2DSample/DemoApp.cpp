@@ -19,6 +19,7 @@ module;
 
 module DemoApp;
 import core.error;
+import core.wic.wicimagingfactory;
 
 DemoApp::DemoApp() :
     m_hwnd(nullptr),
@@ -145,6 +146,8 @@ void DemoApp::CreateDeviceResources()
     );
     if (FAILED(hr)) 
         throw Core::Error::COMError(__FUNCSIG__": CreateSolidColorBrush() failed [2]", hr);
+
+    //LoadTestBitmap();
 }
 
 void DemoApp::DiscardDeviceResources()
@@ -166,8 +169,8 @@ LRESULT DemoApp::HandleMessage(
         // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size
         case WM_SIZE:
         {
-            UINT width = LOWORD(lParam);
-            UINT height = HIWORD(lParam);
+            const UINT width = LOWORD(lParam);
+            const UINT height = HIWORD(lParam);
             OnResize(width, height);
             return 0;
         }
@@ -211,24 +214,57 @@ LRESULT CALLBACK DemoApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             GWLP_USERDATA,
             reinterpret_cast<LONG_PTR>(pDemoApp)
         );
-
         return 0;
     }
-
-    DemoApp* pDemoApp = reinterpret_cast<DemoApp*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
-    if(!pDemoApp)
-        return DefWindowProc(hwnd, message, wParam, lParam);
 
     try
     {
-        return pDemoApp->HandleMessage(hwnd, message, wParam, lParam);
+        DemoApp* demoApp = reinterpret_cast<DemoApp*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+        return demoApp 
+            ? demoApp->HandleMessage(hwnd, message, wParam, lParam) 
+            : DefWindowProcW(hwnd, message, wParam, lParam);        
     }
     catch (const std::exception& ex)
     {
-        std::wcerr << TEXT(__FUNCSIG__) << L" " << ex.what() << std::endl;
+        std::wcerr << L"Exception in WndProc: " << ex.what() << std::endl;
         PostQuitMessage(1);
         return 0;
     }
+}
+
+void DemoApp::LoadTestBitmap()
+{
+    // https://docs.microsoft.com/en-us/windows/win32/Direct2D/how-to-load-a-direct2d-bitmap-from-a-file
+    Core::WIC::WICImagingFactory factory;
+    Microsoft::WRL::ComPtr<IWICBitmapDecoder> pDecoder =
+        factory.CreateDecoderFromFilename(LR"(C:\Users\Royal\Desktop\lena.bmp)");
+
+    Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> pSource;
+    // Create the initial frame.
+    HRESULT hr = pDecoder->GetFrame(0, &pSource);
+    if (FAILED(hr))
+        throw Core::Error::COMError("GetFrame() failed", hr);
+
+    Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter = factory.CreateFormatConverter();
+
+    hr = pConverter->Initialize(
+        pSource.Get(),
+        GUID_WICPixelFormat32bppPBGRA,
+        WICBitmapDitherTypeNone,
+        nullptr,
+        0.f,
+        WICBitmapPaletteTypeMedianCut
+    );
+    if (FAILED(hr))
+        throw Core::Error::COMError("Initialize() failed", hr);
+
+    hr = m_pRenderTarget->CreateBitmapFromWicBitmap(
+        pConverter.Get(),
+        nullptr,
+        &m_bitmap
+    );
+    if (FAILED(hr))
+        throw Core::Error::COMError("CreateBitmapFromWicBitmap() failed", hr);
 }
 
 void DemoApp::OnRender()
@@ -281,6 +317,9 @@ void DemoApp::OnRender()
     // Draw the outline of a rectangle.
     m_pRenderTarget->DrawRectangle(&rectangle2, m_pCornflowerBlueBrush.Get());
 
+    // This is our bitmap test
+    //m_pRenderTarget->DrawBitmap(m_bitmap.Get());
+    
     if (const HRESULT hr = m_pRenderTarget->EndDraw(); hr == D2DERR_RECREATE_TARGET)
     {
         std::wcout << L"Recreating target\n";
@@ -292,7 +331,7 @@ void DemoApp::OnRender()
     }
 }
 
-void DemoApp::OnResize(UINT width, UINT height)
+void DemoApp::OnResize(const UINT width, const UINT height)
 {
     if (!m_pRenderTarget)
         return;

@@ -49,10 +49,12 @@ export class DemoApp
         // Draw content.
         void OnRender();
 
+        void LoadTestBitmap();
+
         // Resize the render target.
         void OnResize(
-            UINT width,
-            UINT height
+            const UINT width,
+            const UINT height
         );
 
         LRESULT HandleMessage(
@@ -76,5 +78,5 @@ export class DemoApp
         Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pLightSlateGrayBrush;
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pCornflowerBlueBrush;
-
+        Microsoft::WRL::ComPtr<ID2D1Bitmap> m_bitmap;
 };

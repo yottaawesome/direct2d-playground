@@ -6,6 +6,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <Windows.h>
+#include <wincodec.h>
+#include <wrl/client.h>
 
 #pragma comment(lib, "d2d1.lib")
 
@@ -22,6 +24,7 @@ import DemoApp;
 import core.com.comthreadscope;
 import core.error.win32error;
 import core.error.comerror;
+import core.wic.wicimagingfactory;
 
 // For a list of D2D error codes, see: https://docs.microsoft.com/en-us/windows/win32/direct2d/direct2d-error-codes
 int main(int argc, char* args[]) try
@@ -34,7 +37,7 @@ int main(int argc, char* args[]) try
     
     DemoApp app;
     app.Initialize();
-    return app.RunMessageLoop();
+    return static_cast<int>(app.RunMessageLoop());
 }
 catch (const std::exception& ex)
 {
