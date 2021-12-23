@@ -60,7 +60,8 @@ namespace Core::UI
         RECT r{ 0 };
         r.right = 512;
         r.bottom = 512;
-        AdjustWindowRect(&r, WS_SYSMENU |WS_CAPTION| WS_THICKFRAME| WS_MINIMIZEBOX | WS_MAXIMIZEBOX, false);
+        AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+        // https://stackoverflow.com/questions/25879021/win32-client-size-and-an-incorrect-size
         m_hwnd = CreateWindowExW(
             0,
             L"D2DDemoApp",
@@ -68,9 +69,9 @@ namespace Core::UI
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            r.right,
+            r.right - r.left,
             //static_cast<UINT>(ceil(r.right * dpi / 96.f)),
-            r.bottom,
+            r.bottom - r.top,
             //static_cast<UINT>(ceil(r.bottom * dpi / 96.f)),
             nullptr,
             nullptr,
