@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <wincodec.h>
 #include <wrl/client.h>
-#pragma comment(lib, "d2d1.lib")
+//#pragma comment(lib, "d2d1.lib")
 
 import DemoApp;
 import core.com.comthreadscope;

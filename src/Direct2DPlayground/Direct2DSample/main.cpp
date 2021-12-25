@@ -9,7 +9,7 @@
 #include <wincodec.h>
 #include <wrl/client.h>
 
-#pragma comment(lib, "d2d1.lib")
+//#pragma comment(lib, "d2d1.lib")
 
 /* Use this signature for main when using SUBSYSTEM:WINDOWS
 int WINAPI WinMain(

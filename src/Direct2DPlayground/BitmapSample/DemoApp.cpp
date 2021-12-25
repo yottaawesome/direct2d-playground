@@ -146,7 +146,6 @@ void DemoApp::LoadTestBitmap()
         throw Core::Error::COMError("GetFrame() failed", hr);
 
     Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter = factory.CreateFormatConverter();
-
     hr = pConverter->Initialize(
         pSource.Get(),
         GUID_WICPixelFormat32bppPBGRA,

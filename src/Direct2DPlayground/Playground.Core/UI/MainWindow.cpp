@@ -110,8 +110,7 @@ namespace Core::UI
             );
             return 0;
         }
-        // Do not pass these messages to the Window object to be processed,
-        // as it it's destroyed
+        // No need to pass this message on
         else if (message == WM_DESTROY)
         {
             PostQuitMessage(0);
