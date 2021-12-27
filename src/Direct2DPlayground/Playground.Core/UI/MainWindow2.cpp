@@ -11,14 +11,13 @@ namespace Core::UI
     UINT64 MainWindow2::RunMessageLoop()
     {
         MSG msg = { 0 };
-
         while (msg.message != WM_QUIT)
         {
             // If there are Window messages then process them.
-            if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+            if (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
             {
                 TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                DispatchMessageW(&msg);
             }
             // Otherwise, do animation/game stuff.
             else
@@ -27,6 +26,6 @@ namespace Core::UI
             }
         }
 
-        return (int)msg.wParam;
+        return msg.wParam;
     }
 }
