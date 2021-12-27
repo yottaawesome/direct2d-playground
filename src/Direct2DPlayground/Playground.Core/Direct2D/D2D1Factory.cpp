@@ -24,6 +24,16 @@ namespace Core::Direct2D::D2D1Factory
 		Initialise(factoryType);
 	}
 
+	D2D1Factory::operator bool() const noexcept
+	{
+		return m_pDirect2dFactory != nullptr;
+	}
+
+	D2D1Factory::operator ID2D1Factory*() const noexcept
+	{
+		return m_pDirect2dFactory.Get();
+	}
+
 	void D2D1Factory::Close()
 	{
 		m_pDirect2dFactory = nullptr;
@@ -75,5 +85,15 @@ namespace Core::Direct2D::D2D1Factory
 	D2D1_FACTORY_TYPE D2D1Factory::GetFactoryType() const noexcept
 	{
 		return m_factoryType;
+	}
+
+	Microsoft::WRL::ComPtr<ID2D1Factory> D2D1Factory::Get() const noexcept
+	{
+		return m_pDirect2dFactory;
+	}
+
+	ID2D1Factory* D2D1Factory::GetRaw() const noexcept
+	{
+		return m_pDirect2dFactory.Get();
 	}
 }
