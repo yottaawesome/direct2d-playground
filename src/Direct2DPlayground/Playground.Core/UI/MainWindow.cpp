@@ -85,7 +85,7 @@ namespace Core::UI
         UpdateWindow(m_hwnd);
     }
 
-    WPARAM MainWindow::RunMessageLoop()
+    UINT64 MainWindow::RunMessageLoop()
     {
         MSG msg;
         while (GetMessageW(&msg, nullptr, 0, 0))

@@ -16,7 +16,7 @@ export namespace Core::UI
             virtual void Initialize();
 
             // Process and dispatch messages
-            virtual WPARAM RunMessageLoop();
+            virtual UINT64 RunMessageLoop();
 
         protected:
             virtual const WNDCLASSEX& GetClass() const noexcept;

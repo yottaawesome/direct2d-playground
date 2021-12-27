@@ -119,7 +119,7 @@ LRESULT DemoApp::HandleMessage(
         // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-paint
         case WM_PAINT:
         {
-            OnRender();
+            //OnRender();
             ValidateRect(hwnd, nullptr);
             return 0;
         }

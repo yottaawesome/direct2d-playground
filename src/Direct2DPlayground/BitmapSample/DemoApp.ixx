@@ -16,7 +16,7 @@ module;
 #include <wrl/client.h>
 
 export module DemoApp;
-import core.ui.mainwindow;
+import core.ui.mainwindow2;
 
 // See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
 // https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions
@@ -25,7 +25,7 @@ import core.ui.mainwindow;
 //#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 //#endif
 
-export class DemoApp : public Core::UI::MainWindow
+export class DemoApp : public Core::UI::MainWindow2
 {
     public:
         DemoApp();

@@ -21,7 +21,7 @@ module DemoApp;
 import core.error;
 import core.wic.wicimagingfactory;
 
-DemoApp::DemoApp() : Core::UI::MainWindow() { }
+DemoApp::DemoApp() : Core::UI::MainWindow2() { }
 
 DemoApp::~DemoApp()
 {
@@ -99,7 +99,7 @@ LRESULT DemoApp::HandleMessage(
         // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-paint
         case WM_PAINT:
         {
-            OnRender();
+            //OnRender();
             ValidateRect(hwnd, nullptr);
             //static bool firstRender = true;
             //if (firstRender)

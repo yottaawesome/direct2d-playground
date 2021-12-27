@@ -30,7 +30,9 @@
     <ClCompile Include="Error\core.error.win32error.ixx" />
     <ClCompile Include="Error\Error.cpp" />
     <ClCompile Include="Error\Win32Error.cpp" />
+    <ClCompile Include="UI\core.ui.mainwindow2.ixx" />
     <ClCompile Include="UI\MainWindow.cpp" />
+    <ClCompile Include="UI\MainWindow2.cpp" />
     <ClCompile Include="WIC\WICImagingFactory.cpp" />
     <ClCompile Include="WIC\WICImagingFactory.ixx" />
     <ClCompile Include="UI\core.ui.mainwindow.ixx" />
