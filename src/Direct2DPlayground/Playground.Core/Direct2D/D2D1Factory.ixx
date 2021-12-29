@@ -8,7 +8,7 @@ module;
 
 export module core.direct2d.d2d1factory;
 
-export namespace Core::Direct2D::D2D1Factory
+export namespace Core::Direct2D
 {
 	// Represents an ID2D1Factory. See also https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nn-d2d1-id2d1factory
 	// Make sure to link to #pragma comment(lib, "d2d1.lib")

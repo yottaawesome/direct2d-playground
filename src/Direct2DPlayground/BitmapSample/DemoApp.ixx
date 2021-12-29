@@ -17,6 +17,7 @@ module;
 
 export module DemoApp;
 import core.ui.mainwindow2;
+import core.direct2d.d2d1factory;
 
 // See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
 // https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions
@@ -60,7 +61,7 @@ export class DemoApp : public Core::UI::MainWindow2
         ) override;
 
     protected:
-        Microsoft::WRL::ComPtr<ID2D1Factory> m_pDirect2dFactory;
+        Core::Direct2D::D2D1Factory m_pDirect2dFactory;
         Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
         Microsoft::WRL::ComPtr<ID2D1Bitmap> m_bitmap;
 };

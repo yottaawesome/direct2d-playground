@@ -96,6 +96,26 @@ namespace Core::UI
         return msg.wParam;
     }
 
+    void MainWindow::ResizeWindow(const UINT width, const UINT height)
+    {
+        if (!m_hwnd)
+            throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
+        if (!SetWindowPos(m_hwnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE))
+            throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
+    }
+
+    void MainWindow::ResizeClient(const UINT width, const UINT height)
+    {
+        if (!m_hwnd)
+            throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
+
+        RECT r{ .right = static_cast<LONG>(width), .bottom = static_cast<LONG>(height) };
+        AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+        // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
+        if (!SetWindowPos(m_hwnd, HWND_TOP, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE))
+            throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
+    }
+
     LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-create

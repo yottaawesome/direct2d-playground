@@ -18,6 +18,9 @@ export namespace Core::UI
             // Process and dispatch messages
             virtual UINT64 RunMessageLoop();
 
+            virtual void ResizeWindow(const UINT width, const UINT height);
+            virtual void ResizeClient(const UINT width, const UINT height);
+
         protected:
             virtual const WNDCLASSEX& GetClass() const noexcept;
 

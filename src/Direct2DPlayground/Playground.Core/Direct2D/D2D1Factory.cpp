@@ -10,7 +10,7 @@ module;
 module core.direct2d.d2d1factory;
 import core.error;
 
-namespace Core::Direct2D::D2D1Factory
+namespace Core::Direct2D
 {
 	D2D1Factory::~D2D1Factory()
 	{

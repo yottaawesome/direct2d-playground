@@ -30,6 +30,8 @@
     <ClCompile Include="Error\core.error.win32error.ixx" />
     <ClCompile Include="Error\Error.cpp" />
     <ClCompile Include="Error\Win32Error.cpp" />
+    <ClCompile Include="GameTimer\core.time.gametimer.ixx" />
+    <ClCompile Include="GameTimer\GameTimer.cpp" />
     <ClCompile Include="UI\core.ui.mainwindow2.ixx" />
     <ClCompile Include="UI\MainWindow.cpp" />
     <ClCompile Include="UI\MainWindow2.cpp" />
@@ -98,9 +100,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

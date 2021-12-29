@@ -25,19 +25,13 @@ DemoApp::DemoApp() : Core::UI::MainWindow2() { }
 
 DemoApp::~DemoApp()
 {
-    m_pDirect2dFactory = nullptr;
+    m_pDirect2dFactory.Close();
     m_pRenderTarget = nullptr;
 }
 
 void DemoApp::CreateDeviceIndependentResources()
 {
-    // Create a Direct2D factory.
-    const HRESULT hr = D2D1CreateFactory(
-        D2D1_FACTORY_TYPE_SINGLE_THREADED, 
-        m_pDirect2dFactory.ReleaseAndGetAddressOf()
-    );
-    if (FAILED(hr)) 
-        throw Core::Error::COMError(__FUNCSIG__": D2D1CreateFactory() failed", hr);
+    m_pDirect2dFactory.Initialise(D2D1_FACTORY_TYPE_SINGLE_THREADED);
 }
 
 void DemoApp::CreateDeviceResources()
@@ -48,20 +42,8 @@ void DemoApp::CreateDeviceResources()
     RECT rc;
     GetClientRect(m_hwnd, &rc);
 
-    D2D1_SIZE_U size = D2D1::SizeU(
-        rc.right - rc.left,
-        rc.bottom - rc.top
-    );
-
     // Create a Direct2D render target.
-    HRESULT hr = m_pDirect2dFactory->CreateHwndRenderTarget(
-        D2D1::RenderTargetProperties(),
-        D2D1::HwndRenderTargetProperties(m_hwnd, size),
-        &m_pRenderTarget
-    );
-    if (FAILED(hr)) 
-        throw Core::Error::COMError(__FUNCSIG__": CreateHwndRenderTarget() failed", hr);
-
+    m_pRenderTarget = m_pDirect2dFactory.CreateHwndRenderTarget(m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
     LoadTestBitmap();
 }
 
@@ -101,22 +83,6 @@ LRESULT DemoApp::HandleMessage(
         {
             //OnRender();
             ValidateRect(hwnd, nullptr);
-            //static bool firstRender = true;
-            //if (firstRender)
-            //{
-            //    firstRender = false;
-            //    D2D1_SIZE_U size = m_bitmap->GetPixelSize();
-            //    RECT r{ 0 };
-            //    r.right = size.width;
-            //    r.bottom = size.height;
-            //    AdjustWindowRect(
-            //        &r, WS_CAPTION, false
-            //    );
-            ////    //PostMessageW(m_hwnd, WM_SIZE, 0, MAKELPARAM(1000, r.bottom));
-            //    SetWindowPos(m_hwnd, HWND_TOP, 0, 0, r.right, r.bottom, SWP_NOMOVE);
-            //    m_pRenderTarget->Resize(D2D1::SizeU(r.right, r.bottom));
-            //}
-
             return 0;
         }
 
