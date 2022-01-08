@@ -60,5 +60,6 @@ export namespace Core::UI
 
         protected:
             HWND m_hwnd;
+            DWORD m_windowStyle;
     };
 }

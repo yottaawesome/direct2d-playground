@@ -9,7 +9,10 @@ import core.error.win32error;
 
 namespace Core::UI
 {
-    MainWindow::MainWindow() : m_hwnd(nullptr) {}
+    MainWindow::MainWindow() 
+        : m_hwnd(nullptr), 
+        m_windowStyle(WS_OVERLAPPEDWINDOW)
+    {}
 
     MainWindow::~MainWindow()
     {
@@ -60,13 +63,13 @@ namespace Core::UI
         RECT r{ 0 };
         r.right = 512;
         r.bottom = 512;
-        AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+        AdjustWindowRect(&r, m_windowStyle, false);
         // https://stackoverflow.com/questions/25879021/win32-client-size-and-an-incorrect-size
         m_hwnd = CreateWindowExW(
             0,
             L"D2DDemoApp",
             L"Direct2D Demo App",
-            WS_OVERLAPPEDWINDOW,
+            m_windowStyle,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             r.right - r.left,
@@ -100,7 +103,16 @@ namespace Core::UI
     {
         if (!m_hwnd)
             throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
-        if (!SetWindowPos(m_hwnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE))
+        const bool succeeded = SetWindowPos(
+            m_hwnd, 
+            HWND_TOP, 
+            0, 
+            0, 
+            width, 
+            height, 
+            SWP_NOMOVE
+        );
+        if (!succeeded)
             throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
     }
 
@@ -109,10 +121,22 @@ namespace Core::UI
         if (!m_hwnd)
             throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
 
-        RECT r{ .right = static_cast<LONG>(width), .bottom = static_cast<LONG>(height) };
-        AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+        RECT r { 
+            .right = static_cast<LONG>(width), 
+            .bottom = static_cast<LONG>(height)
+        };
+        AdjustWindowRect(&r, m_windowStyle, false);
         // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
-        if (!SetWindowPos(m_hwnd, HWND_TOP, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE))
+        const bool succeeded = SetWindowPos(
+            m_hwnd, 
+            HWND_TOP, 
+            0, 
+            0, 
+            r.right - r.left, 
+            r.bottom - r.top, 
+            SWP_NOMOVE
+        );
+        if (!succeeded)
             throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
     }
 
