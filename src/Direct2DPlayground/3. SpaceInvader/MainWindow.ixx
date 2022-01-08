@@ -1,14 +1,6 @@
 module;
-// Windows Header Files:
+
 #include <windows.h>
-
-// C RunTime Header Files:
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <wchar.h>
-#include <math.h>
-
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
@@ -18,13 +10,6 @@ module;
 export module MainWindow;
 import core.ui.mainwindow2;
 import core.direct2d.d2d1factory;
-
-// See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
-// https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions
-//#ifndef HINST_THISCOMPONENT
-//EXTERN_C IMAGE_DOS_HEADER __ImageBase;
-//#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
-//#endif
 
 export class MainWindow : public Core::UI::MainWindow2
 {

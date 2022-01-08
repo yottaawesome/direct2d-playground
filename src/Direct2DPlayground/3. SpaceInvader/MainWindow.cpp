@@ -1,16 +1,7 @@
 module;
 
-// Windows Header Files:
-#include <windows.h>
-
-// C RunTime Header Files:
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <wchar.h>
-#include <math.h>
 #include <iostream>
-
+#include <windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
@@ -103,7 +94,7 @@ void MainWindow::LoadTestBitmap()
     // https://docs.microsoft.com/en-us/windows/win32/Direct2D/how-to-load-a-direct2d-bitmap-from-a-file
     Core::WIC::WICImagingFactory factory;
     Microsoft::WRL::ComPtr<IWICBitmapDecoder> pDecoder =
-        factory.CreateDecoderFromFilename(LR"(C:\Users\Royal\Desktop\lena.bmp)");
+        factory.CreateDecoderFromFilename(LR"(ship.png)");
 
     Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> pSource;
     // Create the initial frame.
@@ -138,11 +129,12 @@ void MainWindow::OnRender()
 
     m_pRenderTarget->BeginDraw();
     m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
-    m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+    m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Red));
 
-    // This is our bitmap test
-    //RECT rc;
-    //GetClientRect(m_hwnd, &rc);
+    m_pRenderTarget->DrawBitmap(m_bitmap.Get());
+    auto x = D2D1::Matrix3x2F::Identity();
+    x = x.Translation(D2D1_SIZE_F(22, 22));
+    m_pRenderTarget->SetTransform(x);
     m_pRenderTarget->DrawBitmap(m_bitmap.Get());
 
     if (const HRESULT hr = m_pRenderTarget->EndDraw(); hr == D2DERR_RECREATE_TARGET)
