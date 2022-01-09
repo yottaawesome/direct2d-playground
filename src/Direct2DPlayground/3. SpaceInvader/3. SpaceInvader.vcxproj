@@ -148,6 +148,8 @@
     <ClCompile Include="Actors\Actor.ixx" />
     <ClCompile Include="Actors\Enemy.ixx" />
     <ClCompile Include="Actors\Player.ixx" />
+    <ClCompile Include="Components\Component.ixx" />
+    <ClCompile Include="Components\Position.ixx" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MainWindow.ixx" />
     <ClCompile Include="main.cpp" />
