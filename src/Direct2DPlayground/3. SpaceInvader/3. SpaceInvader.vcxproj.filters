@@ -24,19 +24,19 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\Actor.ixx">
+    <ClCompile Include="Actors\spaceinvaders.actors.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\Player.ixx">
+    <ClCompile Include="Actors\spaceinvaders.actors.player.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\Enemy.ixx">
+    <ClCompile Include="Actors\spaceinvaders.actors.enemy.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\Component.ixx">
+    <ClCompile Include="Components\spaceinvaders.components.component.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\Position.ixx">
+    <ClCompile Include="Components\spaceinvaders.components.position.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
