@@ -145,13 +145,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actors\spaceinvaders.actors.ixx" />
-    <ClCompile Include="Actors\spaceinvaders.actors.enemy.ixx" />
-    <ClCompile Include="Actors\spaceinvaders.actors.player.ixx" />
-    <ClCompile Include="Components\spaceinvaders.components.component.ixx" />
-    <ClCompile Include="Components\spaceinvaders.components.position.ixx" />
-    <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="MainWindow.ixx" />
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.ixx" />
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.enemy.ixx" />
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.player.ixx" />
+    <ClCompile Include="SpaceInvaders\Components\spaceinvader.components.ixx" />
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.collision.ixx" />
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.component.ixx" />
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx" />
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx" />
+    <ClCompile Include="SpaceInvaders\MainWindow.cpp" />
+    <ClCompile Include="SpaceInvaders\MainWindow.ixx" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

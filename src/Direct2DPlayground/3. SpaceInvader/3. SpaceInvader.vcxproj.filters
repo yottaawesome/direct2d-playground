@@ -18,25 +18,34 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.ixx">
+    <ClCompile Include="SpaceInvaders\MainWindow.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
+    <ClCompile Include="SpaceInvaders\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\spaceinvaders.actors.ixx">
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\spaceinvaders.actors.player.ixx">
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.player.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actors\spaceinvaders.actors.enemy.ixx">
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.enemy.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\spaceinvaders.components.component.ixx">
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.component.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\spaceinvaders.components.position.ixx">
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.collision.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Components\spaceinvader.components.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

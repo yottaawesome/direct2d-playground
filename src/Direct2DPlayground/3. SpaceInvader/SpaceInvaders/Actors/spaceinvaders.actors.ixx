@@ -1,6 +1,6 @@
 export module spaceinvaders.actors;
 
-export namespace SpaceInvader::Actors
+export namespace SpaceInvaders::Actors
 {
 
 }
