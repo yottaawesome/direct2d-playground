@@ -24,12 +24,21 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Actors\Actor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Player.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Enemy.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="assets\ship.bmp">
+    <CopyFileToFolders Include="assets\art\ship.bmp">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="assets\ship.png">
+    <CopyFileToFolders Include="assets\art\ship.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
   </ItemGroup>
