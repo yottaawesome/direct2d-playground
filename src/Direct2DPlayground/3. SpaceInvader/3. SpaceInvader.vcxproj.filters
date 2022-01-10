@@ -48,6 +48,18 @@
     <ClCompile Include="SpaceInvaders\Components\spaceinvader.components.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\Actor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="assets\art\ship.bmp">

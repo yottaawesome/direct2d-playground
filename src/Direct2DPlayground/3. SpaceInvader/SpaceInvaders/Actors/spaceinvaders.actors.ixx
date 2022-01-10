@@ -1,6 +1,4 @@
 export module spaceinvaders.actors;
-
-export namespace SpaceInvaders::Actors
-{
-
-}
+export import spaceinvaders.actors.actor;
+export import spaceinvaders.actors.player;
+export import spaceinvaders.actors.enemy;
