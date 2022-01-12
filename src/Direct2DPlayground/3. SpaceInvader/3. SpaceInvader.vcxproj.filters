@@ -57,7 +57,13 @@
     <ClCompile Include="SpaceInvaders\Actors\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.iactor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Actors\IActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

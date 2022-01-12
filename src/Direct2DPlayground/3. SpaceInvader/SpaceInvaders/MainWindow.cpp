@@ -128,6 +128,7 @@ void MainWindow::OnRender()
     CreateDeviceResources();
 
     m_pRenderTarget->BeginDraw();
+    // https://docs.microsoft.com/en-us/windows/win32/Direct2D/how-to-rotate
     m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
     m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Red));
 

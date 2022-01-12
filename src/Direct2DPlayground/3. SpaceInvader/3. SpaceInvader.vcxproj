@@ -146,9 +146,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SpaceInvaders\Actors\Actor.cpp" />
-    <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp" />
-    <ClCompile Include="SpaceInvaders\Actors\Player.cpp" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx" />
+    <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp" />
+    <ClCompile Include="SpaceInvaders\Actors\IActor.cpp" />
+    <ClCompile Include="SpaceInvaders\Actors\Player.cpp" />
+    <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.iactor.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.enemy.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.player.ixx" />
