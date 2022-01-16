@@ -83,6 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>SpaceInvaders</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -145,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Levels\Level.cpp" />
+    <ClCompile Include="Levels\spaceinvaders.levels.level.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Actor.cpp" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp" />

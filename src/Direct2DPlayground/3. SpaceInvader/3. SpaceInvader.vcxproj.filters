@@ -66,6 +66,12 @@
     <ClCompile Include="SpaceInvaders\Actors\IActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Levels\spaceinvaders.levels.level.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Levels\Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="assets\art\ship.bmp">
