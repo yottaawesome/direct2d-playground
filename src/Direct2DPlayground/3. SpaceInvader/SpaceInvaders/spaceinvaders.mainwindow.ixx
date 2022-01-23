@@ -1,5 +1,6 @@
 module;
 
+#include <functional>
 #include <windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
@@ -12,15 +13,21 @@ import core.direct2d.d2d1factory;
 
 export namespace SpaceInvaders
 {
-    export class MainWindow
+    class MainWindow
     {
+        public:
+            using OnResizeEvt = std::function<void()>;
+
         public:
             MainWindow();
             virtual ~MainWindow();
 
         public:
-            virtual void Initialize();
-            virtual UINT64 RunMessageLoop();
+            virtual void Initialise();
+            virtual HWND GetHandle() const noexcept;
+
+        public:
+            OnResizeEvt OnResizeEvent;
 
         protected:
             // Initialize device-independent resources.
@@ -50,6 +57,8 @@ export namespace SpaceInvaders
             virtual const WNDCLASSEX& GetClass() const noexcept;
 
             static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+            virtual void Destroy();
 
         protected:
             /*Core::Direct2D::D2D1Factory m_pDirect2dFactory;

@@ -5,6 +5,7 @@
 import core.com.comthreadscope;
 import core.error.win32error;
 import spaceinvaders.mainwindow;
+import spaceinvaders.spaceinvadersgame;
 
 int main(int argc, char* args[]) try
 {
@@ -14,9 +15,9 @@ int main(int argc, char* args[]) try
 
     Core::COM::COMThreadScope scope;
 
-    SpaceInvaders::MainWindow app;
-    app.Initialize();
-    return static_cast<int>(app.RunMessageLoop());
+    SpaceInvaders::SpaceInvadersGame m_gameApp;
+    m_gameApp.Initialise();
+    return static_cast<int>(m_gameApp.RunMessageLoop());
 }
 catch (const std::exception& ex)
 {

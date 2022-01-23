@@ -3,6 +3,7 @@ module;
 #include <Windows.h>
 
 export module spaceinvaders.spaceinvadersgame;
+import spaceinvaders.mainwindow;
 
 export namespace SpaceInvaders
 {
@@ -13,16 +14,14 @@ export namespace SpaceInvaders
 			SpaceInvadersGame();
 
 		public:
+			virtual void Initialise();
+			virtual UINT64 RunMessageLoop();
+			virtual void OnResize();
 
 		protected:
-			// The windows procedure.
-			static LRESULT CALLBACK AppProc(
-				HWND hWnd,
-				UINT message,
-				WPARAM wParam,
-				LPARAM lParam
-			);
+			virtual void RenderScene();
 
 		protected:
+			MainWindow m_mainWindow;
 	};
 }

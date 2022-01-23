@@ -31,6 +31,12 @@ namespace SpaceInvaders
         //m_pDirect2dFactory.Initialise(D2D1_FACTORY_TYPE_SINGLE_THREADED);
     }
 
+    void MainWindow::Destroy()
+    {
+        if (m_hwnd)
+            DestroyWindow(m_hwnd);
+    }
+
     void MainWindow::CreateDeviceResources()
     {
         //if (m_pRenderTarget)
@@ -165,28 +171,7 @@ namespace SpaceInvaders
         //m_pRenderTarget->Resize(D2D1::SizeU(width, height));
     }
 
-    UINT64 MainWindow::RunMessageLoop()
-    {
-        MSG msg = { 0 };
-        while (msg.message != WM_QUIT)
-        {
-            // If there are Window messages then process them.
-            if (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
-            {
-                TranslateMessage(&msg);
-                DispatchMessageW(&msg);
-            }
-            // Otherwise, do animation/game stuff.
-            else
-            {
-                OnRender();
-            }
-        }
-
-        return msg.wParam;
-    }
-
-    void MainWindow::Initialize()
+    void MainWindow::Initialise()
     {
         // Initialize device-indpendent resources, such
         // as the Direct2D factory.
@@ -288,5 +273,10 @@ namespace SpaceInvaders
             PostQuitMessage(1);
             return 0;
         }
+    }
+
+    HWND MainWindow::GetHandle() const noexcept
+    {
+        return m_hwnd;
     }
 }
