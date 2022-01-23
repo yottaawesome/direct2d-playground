@@ -1,6 +1,6 @@
 export module spaceinvaders.levels;
 
-export namespace SpaceInvader::Levels
+export namespace SpaceInvaders::Levels
 {
 	class Level
 	{

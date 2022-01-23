@@ -1,6 +1,6 @@
 module spaceinvaders.levels;
 
-namespace SpaceInvader::Levels
+namespace SpaceInvaders::Levels
 {
 	Level::~Level() {}
 }

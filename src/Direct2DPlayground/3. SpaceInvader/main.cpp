@@ -2,9 +2,9 @@
 #include <stdexcept>
 #include <Windows.h>
 
-import MainWindow;
 import core.com.comthreadscope;
 import core.error.win32error;
+import spaceinvaders.mainwindow;
 
 int main(int argc, char* args[]) try
 {
@@ -14,7 +14,7 @@ int main(int argc, char* args[]) try
 
     Core::COM::COMThreadScope scope;
 
-    MainWindow app;
+    SpaceInvaders::MainWindow app;
     app.Initialize();
     return static_cast<int>(app.RunMessageLoop());
 }

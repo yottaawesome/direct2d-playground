@@ -79,6 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>SpaceInvaders</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -146,8 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Levels\Level.cpp" />
-    <ClCompile Include="Levels\spaceinvaders.levels.level.ixx" />
+    <ClCompile Include="SpaceInvaders\Levels\Level.cpp" />
+    <ClCompile Include="SpaceInvaders\Levels\spaceinvaders.levels.level.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Actor.cpp" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp" />
@@ -163,8 +164,10 @@
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx" />
     <ClCompile Include="SpaceInvaders\MainWindow.cpp" />
-    <ClCompile Include="SpaceInvaders\MainWindow.ixx" />
+    <ClCompile Include="SpaceInvaders\spaceinvaders.mainwindow.ixx" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SpaceInvaders\spaceinvaders.spaceinvadersgame.ixx" />
+    <ClCompile Include="SpaceInvaders\SpaceInvadersGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Playground.Core\Playground.Core.vcxproj">
