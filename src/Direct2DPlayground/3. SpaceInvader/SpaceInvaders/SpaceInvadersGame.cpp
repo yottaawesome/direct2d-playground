@@ -2,8 +2,10 @@ module;
 
 #include <functional>
 #include <Windows.h>
+#include <D2d1helper.h>
 
 module spaceinvaders.spaceinvadersgame;
+import core.error.comerror;
 
 namespace SpaceInvaders
 {
@@ -15,6 +17,11 @@ namespace SpaceInvaders
     {
         m_mainWindow.OnResizeEvent = std::bind(&SpaceInvadersGame::OnResize, this);
         m_mainWindow.Initialise();
+        m_renderer.BindRenderTarget(
+            m_mainWindow.GetHandle(), 
+            m_mainWindow.GetClientWidth(), 
+            m_mainWindow.GetClientHeight()
+        );
     }
 
     UINT64 SpaceInvadersGame::RunMessageLoop()
@@ -38,13 +45,30 @@ namespace SpaceInvaders
         return msg.wParam;
     }
 
-    void SpaceInvadersGame::RenderScene()
+    void SpaceInvadersGame::RenderScene() try
     {
-
+        m_renderer.Draw(
+            [this]()
+            {
+                m_renderer.Clear(D2D1::ColorF(D2D1::ColorF::Aquamarine));
+            }
+        );
+    }
+    catch (const Core::Error::COMError& ex)
+    {
+        if (ex.GetErrorCode() != D2DERR_RECREATE_TARGET)
+            throw;
+        // can fail due to D2DERR_RECREATE_TARGET
+        m_renderer.BindRenderTarget(
+            m_mainWindow.GetHandle(),
+            m_mainWindow.GetClientWidth(),
+            m_mainWindow.GetClientHeight()
+        );
+        // will also need to recreate the device-specific resources
     }
 
     void SpaceInvadersGame::OnResize()
     {
-
+        m_renderer.Resize(m_mainWindow.GetClientWidth(), m_mainWindow.GetClientHeight());
     }
 }

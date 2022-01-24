@@ -25,6 +25,10 @@ export namespace SpaceInvaders
         public:
             virtual void Initialise();
             virtual HWND GetHandle() const noexcept;
+            virtual unsigned GetWidth() const;
+            virtual unsigned GetHeight() const;
+            virtual unsigned GetClientWidth() const;
+            virtual unsigned GetClientHeight() const;
 
         public:
             OnResizeEvt OnResizeEvent;

@@ -279,4 +279,44 @@ namespace SpaceInvaders
     {
         return m_hwnd;
     }
+
+    unsigned MainWindow::GetWidth() const
+    {
+        if (!m_hwnd)
+            return 0;
+        RECT r;
+        if (!GetWindowRect(m_hwnd, &r))
+            throw Core::Error::Win32Error(__FUNCSIG__": GetClientRect() failed", GetLastError());
+        return r.right - r.left;
+    }
+
+    unsigned MainWindow::GetHeight() const
+    {
+        if (!m_hwnd)
+            return 0;
+        RECT r;
+        if (!GetWindowRect(m_hwnd, &r))
+            throw Core::Error::Win32Error(__FUNCSIG__": GetClientRect() failed", GetLastError());
+        return r.bottom - r.top;
+    }
+
+    unsigned MainWindow::GetClientWidth() const
+    {
+        if (!m_hwnd)
+            return 0;
+        RECT r;
+        if (!GetClientRect(m_hwnd, &r))
+            throw Core::Error::Win32Error(__FUNCSIG__": GetClientRect() failed", GetLastError());
+        return r.right - r.left;
+    }
+
+    unsigned MainWindow::GetClientHeight() const
+    {
+        if (!m_hwnd)
+            return 0;
+        RECT r;
+        if (!GetClientRect(m_hwnd, &r))
+            throw Core::Error::Win32Error(__FUNCSIG__": GetClientRect() failed", GetLastError());
+        return r.bottom - r.top;
+    }
 }

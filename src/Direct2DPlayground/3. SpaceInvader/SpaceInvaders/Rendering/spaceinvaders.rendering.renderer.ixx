@@ -1,5 +1,6 @@
 module;
 
+#include <functional>
 #include <windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
@@ -13,6 +14,9 @@ export namespace SpaceInvaders::Rendering
 	class Renderer
 	{
 		public:
+			using DrawFunction = std::function<void()>;
+
+		public:
 			virtual ~Renderer();
 			Renderer();
 			Renderer(const D2D1_FACTORY_TYPE factoryType);
@@ -23,21 +27,25 @@ export namespace SpaceInvaders::Rendering
 
 		public:
 			virtual void Close();
-			virtual Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> CreateHwndRenderTarget(
+			virtual void BindRenderTarget(
 				const HWND hwnd,
 				const UINT32 width,
 				const UINT32 height
 			);
-			virtual void Initialise(const D2D1_FACTORY_TYPE factoryType);
+			virtual void Initialise(const D2D1_FACTORY_TYPE factoryType = D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED);
+			virtual void Resize(const unsigned width, const unsigned height);
 
-			// Getters, setters
+		// Getters, setters
 		public:
-			virtual D2D1_FACTORY_TYPE GetFactoryType() const noexcept;
-			virtual Microsoft::WRL::ComPtr<ID2D1Factory> Get() const noexcept;
-			virtual ID2D1Factory* GetRaw() const noexcept;
+			[[nodiscard]] virtual D2D1_FACTORY_TYPE GetFactoryType() const noexcept;
+			[[nodiscard]] virtual Microsoft::WRL::ComPtr<ID2D1Factory> Get() const noexcept;
+			[[nodiscard]] virtual ID2D1Factory* GetRaw() const noexcept;
+			virtual void Clear(const D2D1::ColorF& color);
+			virtual void Draw(const DrawFunction& DrawToTarget);
 
 		protected:
-			Microsoft::WRL::ComPtr<ID2D1Factory> m_pDirect2dFactory;
+			Microsoft::WRL::ComPtr<ID2D1Factory> m_D2DFactory;
+			Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_hwndRenderTarget;
 			D2D1_FACTORY_TYPE m_factoryType;
 	};
 }

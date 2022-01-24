@@ -4,6 +4,7 @@ module;
 
 export module spaceinvaders.spaceinvadersgame;
 import spaceinvaders.mainwindow;
+import spaceinvaders.rendering.renderer;
 
 export namespace SpaceInvaders
 {
@@ -23,5 +24,6 @@ export namespace SpaceInvaders
 
 		protected:
 			MainWindow m_mainWindow;
+			Rendering::Renderer m_renderer;
 	};
 }
