@@ -6,10 +6,12 @@ module;
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
+#include <wincodec.h>
 #include <wrl/client.h>
 
 module spaceinvaders.rendering.renderer;
 import core.error;
+import core.wic.wicimagingfactory;
 
 namespace SpaceInvaders::Rendering
 {
@@ -112,5 +114,42 @@ namespace SpaceInvaders::Rendering
 	void Renderer::Resize(const unsigned width, const unsigned height)
 	{
 		m_hwndRenderTarget->Resize(D2D1::SizeU(width, height));
+	}
+
+	Microsoft::WRL::ComPtr<ID2D1Bitmap> Renderer::LoadBitmap(const std::wstring& path)
+	{
+		Microsoft::WRL::ComPtr<ID2D1Bitmap> m_bitmap;
+
+		//// https://docs.microsoft.com/en-us/windows/win32/Direct2D/how-to-load-a-direct2d-bitmap-from-a-file
+		Core::WIC::WICImagingFactory factory;
+		Microsoft::WRL::ComPtr<IWICBitmapDecoder> pDecoder = factory.CreateDecoderFromFilename(path);
+
+		Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> pSource;
+		//// Create the initial frame.
+		HRESULT hr = pDecoder->GetFrame(0, &pSource);
+		if (FAILED(hr))
+		    throw Core::Error::COMError("GetFrame() failed", hr);
+
+		Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter = factory.CreateFormatConverter();
+		hr = pConverter->Initialize(
+		    pSource.Get(),
+		    GUID_WICPixelFormat32bppPBGRA,
+		    WICBitmapDitherTypeNone,
+		    nullptr,
+		    0.f,
+		    WICBitmapPaletteTypeMedianCut
+		);
+		if (FAILED(hr))
+		    throw Core::Error::COMError("Initialize() failed", hr);
+
+		hr = m_hwndRenderTarget->CreateBitmapFromWicBitmap(
+		    pConverter.Get(),
+		    nullptr,
+		    &m_bitmap
+		);
+		if (FAILED(hr))
+		    throw Core::Error::COMError("CreateBitmapFromWicBitmap() failed", hr);
+
+		return m_bitmap;
 	}
 }

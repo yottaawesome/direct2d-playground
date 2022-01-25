@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <memory>
 #include <Windows.h>
 
 import core.com.comthreadscope;
@@ -17,6 +18,7 @@ int main(int argc, char* args[]) try
 
     SpaceInvaders::SpaceInvadersGame m_gameApp;
     m_gameApp.Initialise();
+
     return static_cast<int>(m_gameApp.RunMessageLoop());
 }
 catch (const std::exception& ex)

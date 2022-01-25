@@ -66,38 +66,66 @@ namespace SpaceInvaders
         switch (message)
         {
             // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size
-        case WM_SIZE:
-        {
-            const UINT width = LOWORD(lParam);
-            const UINT height = HIWORD(lParam);
-            OnResize(width, height);
-            return 0;
-        }
+            case WM_SIZE:
+            {
+                const UINT width = LOWORD(lParam);
+                const UINT height = HIWORD(lParam);
+                OnResize(width, height);
+                return 0;
+            }
 
-        // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-displaychange
-        case WM_DISPLAYCHANGE:
-        {
-            InvalidateRect(hwnd, nullptr, false);
-            return 0;
-        }
+            // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-displaychange
+            case WM_DISPLAYCHANGE:
+            {
+                InvalidateRect(hwnd, nullptr, false);
+                return 0;
+            }
 
-        // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-paint
-        case WM_PAINT:
-        {
-            //OnRender();
-            ValidateRect(hwnd, nullptr);
-            return 0;
-        }
+            // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-paint
+            case WM_PAINT:
+            {
+                //OnRender();
+                ValidateRect(hwnd, nullptr);
+                return 0;
+            }
 
-        // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
-        case WM_DESTROY:
-        {
-            PostQuitMessage(0);
-            return 0;
-        }
+            // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
+            case WM_DESTROY:
+            {
+                PostQuitMessage(0);
+                return 0;
+            }
 
-        default:
-            return DefWindowProc(hwnd, message, wParam, lParam);
+            // https://docs.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-message-flags
+            // https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-char
+            // Sent first
+            case WM_KEYDOWN:
+            {
+                //std::wcout << (wchar_t)wParam;
+                return 0;
+            }
+
+            // Sent after WM_KEYDOWN
+            case WM_CHAR:
+            {
+                //std::wcout << (wchar_t)wParam;
+                return 0;
+            }
+
+            // Sent after key is released
+            case WM_KEYUP:
+            {
+                //std::wcout << (wchar_t)wParam;
+                return 0;
+            }
+
+            case WM_SYSCHAR:
+            {
+                return 0;
+            }
+
+            default:
+                return DefWindowProc(hwnd, message, wParam, lParam);
         }
     }
 
