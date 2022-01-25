@@ -1,6 +1,7 @@
 module;
 
 #include <functional>
+#include <string>
 #include <windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
@@ -31,6 +32,7 @@ export namespace SpaceInvaders::UI
             virtual unsigned GetHeight() const;
             virtual unsigned GetClientWidth() const;
             virtual unsigned GetClientHeight() const;
+            virtual void SetCaption(const std::wstring& caption);
 
         public:
             // Note that these need to be initialised to at least the empty function or 

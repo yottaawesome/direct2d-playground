@@ -1,6 +1,7 @@
 module;
 
 #include <iostream>
+#include <string>
 #include <windows.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
@@ -270,5 +271,10 @@ namespace SpaceInvaders::UI
         if (!GetClientRect(m_hwnd, &r))
             throw Core::Error::Win32Error(__FUNCSIG__": GetClientRect() failed", GetLastError());
         return r.bottom - r.top;
+    }
+
+    void MainWindow::SetCaption(const std::wstring& caption)
+    {
+        SetWindowText(m_hwnd, caption.c_str());
     }
 }
