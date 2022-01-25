@@ -8,52 +8,30 @@ module;
 #include <wincodec.h>
 #include <wrl/client.h>
 
-module spaceinvaders.mainwindow;
+module spaceinvaders.ui.mainwindow;
 import core.error;
 import core.wic.wicimagingfactory;
 
-namespace SpaceInvaders
+namespace SpaceInvaders::UI
 {
     MainWindow::MainWindow()
         : m_hwnd(nullptr),
-        m_windowStyle(WS_OVERLAPPEDWINDOW)
+        m_windowStyle(WS_OVERLAPPEDWINDOW),
+        OnResize([](auto, auto){}),
+        OnInputPressed([](auto, auto){}),
+        OnInputReleased([](auto, auto){})
     {
     }
 
     MainWindow::~MainWindow()
     {
-        /*m_pDirect2dFactory.Close();
-        m_pRenderTarget = nullptr;*/
-    }
-
-    void MainWindow::CreateDeviceIndependentResources()
-    {
-        //m_pDirect2dFactory.Initialise(D2D1_FACTORY_TYPE_SINGLE_THREADED);
+        Destroy();
     }
 
     void MainWindow::Destroy()
     {
         if (m_hwnd)
             DestroyWindow(m_hwnd);
-    }
-
-    void MainWindow::CreateDeviceResources()
-    {
-        //if (m_pRenderTarget)
-        //    return;
-
-        //RECT rc;
-        //GetClientRect(m_hwnd, &rc);
-
-        //// Create a Direct2D render target.
-        //m_pRenderTarget = m_pDirect2dFactory.CreateHwndRenderTarget(m_hwnd, rc.right - rc.left, rc.bottom - rc.top);
-        //LoadTestBitmap();
-    }
-
-    void MainWindow::DiscardDeviceResources()
-    {
-        /*m_pRenderTarget = nullptr;
-        m_bitmap = nullptr;*/
     }
 
     LRESULT MainWindow::HandleMessage(
@@ -68,9 +46,7 @@ namespace SpaceInvaders
             // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size
             case WM_SIZE:
             {
-                const UINT width = LOWORD(lParam);
-                const UINT height = HIWORD(lParam);
-                OnResize(width, height);
+                OnResize(LOWORD(lParam), HIWORD(lParam));
                 return 0;
             }
 
@@ -101,66 +77,32 @@ namespace SpaceInvaders
             // Sent first
             case WM_KEYDOWN:
             {
-                //std::wcout << (wchar_t)wParam;
+                OnInputPressed(InputType::KeyDown, (wchar_t)wParam);
                 return 0;
             }
 
             // Sent after WM_KEYDOWN
             case WM_CHAR:
             {
-                //std::wcout << (wchar_t)wParam;
+                //OnInput(InputType::Key, (wchar_t)wParam);
                 return 0;
             }
 
             // Sent after key is released
             case WM_KEYUP:
             {
-                //std::wcout << (wchar_t)wParam;
+                OnInputReleased(InputType::KeyUp, (wchar_t)wParam);
                 return 0;
             }
 
-            case WM_SYSCHAR:
-            {
-                return 0;
-            }
+            // There's also the following seer the above links
+            // WM_SYSKEYDOWN
+            // WM_SYSCHAR
+            // WM_SYSKEYUP
 
             default:
                 return DefWindowProc(hwnd, message, wParam, lParam);
         }
-    }
-
-    void MainWindow::LoadTestBitmap()
-    {
-        //// https://docs.microsoft.com/en-us/windows/win32/Direct2D/how-to-load-a-direct2d-bitmap-from-a-file
-        //Core::WIC::WICImagingFactory factory;
-        //Microsoft::WRL::ComPtr<IWICBitmapDecoder> pDecoder =
-        //    factory.CreateDecoderFromFilename(LR"(ship.png)");
-
-        //Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> pSource;
-        //// Create the initial frame.
-        //HRESULT hr = pDecoder->GetFrame(0, &pSource);
-        //if (FAILED(hr))
-        //    throw Core::Error::COMError("GetFrame() failed", hr);
-
-        //Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter = factory.CreateFormatConverter();
-        //hr = pConverter->Initialize(
-        //    pSource.Get(),
-        //    GUID_WICPixelFormat32bppPBGRA,
-        //    WICBitmapDitherTypeNone,
-        //    nullptr,
-        //    0.f,
-        //    WICBitmapPaletteTypeMedianCut
-        //);
-        //if (FAILED(hr))
-        //    throw Core::Error::COMError("Initialize() failed", hr);
-
-        //hr = m_pRenderTarget->CreateBitmapFromWicBitmap(
-        //    pConverter.Get(),
-        //    nullptr,
-        //    &m_bitmap
-        //);
-        //if (FAILED(hr))
-        //    throw Core::Error::COMError("CreateBitmapFromWicBitmap() failed", hr);
     }
 
     void MainWindow::OnRender()
@@ -189,22 +131,8 @@ namespace SpaceInvaders
         //}
     }
 
-    void MainWindow::OnResize(const UINT width, const UINT height)
-    {
-        //if (!m_pRenderTarget)
-        //    return;
-        //// Note: This method can fail, but it's okay to ignore the
-        //// error here, because the error will be returned again
-        //// the next time EndDraw is called.
-        //m_pRenderTarget->Resize(D2D1::SizeU(width, height));
-    }
-
     void MainWindow::Initialise()
     {
-        // Initialize device-indpendent resources, such
-        // as the Direct2D factory.
-        CreateDeviceIndependentResources();
-
         // Register the window class, but allow subclasses the option
         // to override the WndProc
         WNDCLASSEX windowClass = GetClass();
@@ -216,10 +144,6 @@ namespace SpaceInvaders
         // obtain the system DPI and use it to scale the window size.
         // The factory returns the current system DPI. This is also the value it will use
         // to create its own windows.
-        /*
-        * Deprecated
-        * m_pDirect2dFactory->GetDesktopDpi(&dpiX, &dpiY);
-        */
         const float dpi = static_cast<float>(GetDpiForWindow(GetDesktopWindow()));
         // Create the window.
         RECT r{ 0 };

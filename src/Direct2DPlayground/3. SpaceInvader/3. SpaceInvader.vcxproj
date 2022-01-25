@@ -163,13 +163,15 @@
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.component.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx" />
-    <ClCompile Include="SpaceInvaders\MainWindow.cpp" />
+    <ClCompile Include="SpaceInvaders\UI\MainWindow.cpp" />
     <ClCompile Include="SpaceInvaders\Rendering\Renderer.cpp" />
     <ClCompile Include="SpaceInvaders\Rendering\spaceinvaders.rendering.renderer.ixx" />
-    <ClCompile Include="SpaceInvaders\spaceinvaders.mainwindow.ixx" />
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.input.ixx" />
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.mainwindow.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SpaceInvaders\spaceinvaders.spaceinvadersgame.ixx" />
     <ClCompile Include="SpaceInvaders\SpaceInvadersGame.cpp" />
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Playground.Core\Playground.Core.vcxproj">

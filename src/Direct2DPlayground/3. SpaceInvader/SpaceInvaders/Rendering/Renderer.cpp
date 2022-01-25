@@ -113,7 +113,8 @@ namespace SpaceInvaders::Rendering
 	
 	void Renderer::Resize(const unsigned width, const unsigned height)
 	{
-		m_hwndRenderTarget->Resize(D2D1::SizeU(width, height));
+		if (m_hwndRenderTarget)
+			m_hwndRenderTarget->Resize(D2D1::SizeU(width, height));
 	}
 
 	Microsoft::WRL::ComPtr<ID2D1Bitmap> Renderer::LoadBitmap(const std::wstring& path)

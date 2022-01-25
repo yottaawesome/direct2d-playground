@@ -8,15 +8,17 @@ module;
 #include <wincodec.h>
 #include <wrl/client.h>
 
-export module spaceinvaders.mainwindow;
+export module spaceinvaders.ui.mainwindow;
 import core.direct2d.d2d1factory;
+import spaceinvaders.ui.input;
 
-export namespace SpaceInvaders
+export namespace SpaceInvaders::UI
 {
     class MainWindow
     {
         public:
-            using OnResizeEvt = std::function<void()>;
+            using OnResizeEvt = std::function<void(const unsigned width, const unsigned height)>;
+            using OnInputEvt = std::function<void(const InputType type, const wchar_t key)>;
 
         public:
             MainWindow();
@@ -31,25 +33,15 @@ export namespace SpaceInvaders
             virtual unsigned GetClientHeight() const;
 
         public:
-            OnResizeEvt OnResizeEvent;
+            // Note that these need to be initialised to at least the empty function or 
+            // you'll get a bad function call exception
+            OnResizeEvt OnResize;
+            OnInputEvt OnInputPressed;
+            OnInputEvt OnInputReleased;
 
         protected:
-            // Initialize device-independent resources.
-            virtual void CreateDeviceIndependentResources();
-
-            // Initialize device-dependent resources.
-            virtual void CreateDeviceResources();
-
-            // Release device-dependent resource.
-            virtual void DiscardDeviceResources();
-
             // Draw content.
             virtual void OnRender();
-
-            virtual void LoadTestBitmap();
-
-            // Resize the render target.
-            virtual void OnResize(const UINT width,const UINT height);
 
             virtual LRESULT HandleMessage(
                 HWND hWnd,
@@ -65,9 +57,6 @@ export namespace SpaceInvaders
             virtual void Destroy();
 
         protected:
-            /*Core::Direct2D::D2D1Factory m_pDirect2dFactory;
-            Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
-            Microsoft::WRL::ComPtr<ID2D1Bitmap> m_bitmap;*/
             HWND m_hwnd;
             DWORD m_windowStyle;
     };

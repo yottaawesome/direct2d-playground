@@ -5,7 +5,7 @@
 
 import core.com.comthreadscope;
 import core.error.win32error;
-import spaceinvaders.mainwindow;
+import spaceinvaders.ui.mainwindow;
 import spaceinvaders.spaceinvadersgame;
 
 int main(int argc, char* args[]) try

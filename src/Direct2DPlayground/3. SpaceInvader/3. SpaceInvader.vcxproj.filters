@@ -18,10 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\spaceinvaders.mainwindow.ixx">
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.mainwindow.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\MainWindow.cpp">
+    <ClCompile Include="SpaceInvaders\UI\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.ixx">
@@ -82,6 +82,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceInvaders\Rendering\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.input.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

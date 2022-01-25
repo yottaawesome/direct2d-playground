@@ -1,5 +1,6 @@
 module;
 
+#include <iostream>
 #include <functional>
 #include <Windows.h>
 #include <D2d1helper.h>
@@ -15,7 +16,8 @@ namespace SpaceInvaders
 
     void SpaceInvadersGame::Initialise()
     {
-        m_mainWindow.OnResizeEvent = std::bind(&SpaceInvadersGame::OnResize, this);
+        m_mainWindow.OnResize = std::bind(&SpaceInvadersGame::OnResize, this, std::placeholders::_1, std::placeholders::_2);
+        m_mainWindow.OnInputPressed = std::bind(&SpaceInvadersGame::OnInputPressed, this, std::placeholders::_1, std::placeholders::_2);
         m_mainWindow.Initialise();
         m_renderer.BindRenderTarget(
             m_mainWindow.GetHandle(), 
@@ -67,8 +69,13 @@ namespace SpaceInvaders
         // will also need to recreate the device-specific resources
     }
 
-    void SpaceInvadersGame::OnResize()
+    void SpaceInvadersGame::OnResize(const unsigned width, const unsigned height)
     {
         m_renderer.Resize(m_mainWindow.GetClientWidth(), m_mainWindow.GetClientHeight());
+    }
+    
+    void SpaceInvadersGame::OnInputPressed(const UI::InputType type, const wchar_t key)
+    {
+        std::wcout << "Key down\n";
     }
 }
