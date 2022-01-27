@@ -59,12 +59,15 @@ namespace SpaceInvaders::Rendering
 		// https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createhwndrendertarget(constd2d1_render_target_properties__constd2d1_hwnd_render_target_properties__id2d1hwndrendertarget)
 		// https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nf-d2d1-id2d1factory-createhwndrendertarget(constd2d1_render_target_properties_constd2d1_hwnd_render_target_properties_id2d1hwndrendertarget)
 		const HRESULT hr = m_D2DFactory->CreateHwndRenderTarget(
+			// https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ns-d2d1-d2d1_render_target_properties
 			D2D1::RenderTargetProperties(),
+			// https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ne-d2d1-d2d1_present_options
 			D2D1::HwndRenderTargetProperties(
 				hwnd, 
 				size, 
 				D2D1_PRESENT_OPTIONS::D2D1_PRESENT_OPTIONS_NONE // Use D2D1_PRESENT_OPTIONS_IMMEDIATELY to decouple from
 																// monitor's refresh rate.
+																// See https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ne-d2d1-d2d1_present_options
 			),
 			&m_hwndRenderTarget
 		);

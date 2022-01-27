@@ -66,10 +66,10 @@
     <ClCompile Include="SpaceInvaders\Actors\IActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\Levels\spaceinvaders.levels.level.ixx">
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.scene.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\Levels\Level.cpp">
+    <ClCompile Include="SpaceInvaders\Scenes\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceInvaders\spaceinvaders.spaceinvadersgame.ixx">
@@ -88,6 +88,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.input.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.mainmenu.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.level1.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Scenes\Level1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Scenes\MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

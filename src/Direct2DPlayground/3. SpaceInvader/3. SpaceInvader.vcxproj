@@ -147,8 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SpaceInvaders\Levels\Level.cpp" />
-    <ClCompile Include="SpaceInvaders\Levels\spaceinvaders.levels.level.ixx" />
+    <ClCompile Include="SpaceInvaders\Scenes\Level1.cpp" />
+    <ClCompile Include="SpaceInvaders\Scenes\MainMenu.cpp" />
+    <ClCompile Include="SpaceInvaders\Scenes\Scene.cpp" />
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.level1.ixx" />
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.mainmenu.ixx" />
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.scene.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Actor.cpp" />
     <ClCompile Include="SpaceInvaders\Actors\spaceinvaders.actors.actor.ixx" />
     <ClCompile Include="SpaceInvaders\Actors\Enemy.cpp" />
