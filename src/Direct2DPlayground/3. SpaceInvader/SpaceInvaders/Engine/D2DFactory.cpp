@@ -68,9 +68,10 @@ namespace SpaceInvaders::Engine
 			D2D1::HwndRenderTargetProperties(
 				hwnd,
 				size,
-				D2D1_PRESENT_OPTIONS::D2D1_PRESENT_OPTIONS_NONE // Use D2D1_PRESENT_OPTIONS_IMMEDIATELY to decouple from
-																// monitor's refresh rate.
-																// See https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ne-d2d1-d2d1_present_options
+				D2D1_PRESENT_OPTIONS::D2D1_PRESENT_OPTIONS_NONE 
+				// Use D2D1_PRESENT_OPTIONS_IMMEDIATELY to decouple from
+				// monitor's refresh rate.
+				// See https://docs.microsoft.com/en-us/windows/win32/api/d2d1/ne-d2d1-d2d1_present_options
 			),
 			&renderTarget
 		);

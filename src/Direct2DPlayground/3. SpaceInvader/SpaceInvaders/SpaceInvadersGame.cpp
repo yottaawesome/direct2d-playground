@@ -28,8 +28,18 @@ namespace SpaceInvaders
 
     void SpaceInvadersGame::Initialise()
     {
-        m_system.Window.OnResize = std::bind(&SpaceInvadersGame::OnResize, this, std::placeholders::_1, std::placeholders::_2);
-        m_system.Window.OnInputPressed = std::bind(&SpaceInvadersGame::OnInputPressed, this, std::placeholders::_1, std::placeholders::_2);
+        m_system.Window.OnResize = std::bind(
+            &SpaceInvadersGame::OnResize, 
+            this, 
+            std::placeholders::_1, 
+            std::placeholders::_2
+        );
+        m_system.Window.OnInputPressed = std::bind(
+            &SpaceInvadersGame::OnInputPressed, 
+            this, 
+            std::placeholders::_1, 
+            std::placeholders::_2
+        );
         m_system.Window.Initialise();
         m_system.Factory.Initialise();
         m_system.Renderer = m_system.Factory.BindRenderTarget(
