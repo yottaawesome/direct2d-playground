@@ -6,6 +6,8 @@ module;
 
 export module spaceinvaders.scenes.mainmenu;
 import spaceinvaders.scenes.scene;
+import spaceinvaders.engine.renderer;
+import spaceinvaders.engine.d2dfactory;
 
 export namespace SpaceInvaders::Scenes
 {
@@ -15,8 +17,8 @@ export namespace SpaceInvaders::Scenes
 			virtual ~MainMenu();
 			MainMenu();
 			virtual void Update(const float deltaTimeSeconds) override;
-			virtual void Draw(Rendering::Renderer& renderer) override;
-			virtual void Initialise(Rendering::Renderer& renderer) override;
+			virtual void Draw(Engine::Renderer& renderer) override;
+			virtual void Initialise(Engine::Renderer& renderer) override;
 
 		protected:
 			float m_delta;

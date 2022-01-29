@@ -7,9 +7,9 @@ module;
 export module spaceinvaders.spaceinvadersgame;
 import core.time.gametimer;
 import spaceinvaders.ui;
-import spaceinvaders.rendering.renderer;
+import spaceinvaders.engine.renderer;
 import spaceinvaders.scenes;
-import spaceinvaders.system.systemobjects;
+import spaceinvaders.engine.systemobjects;
 
 export namespace SpaceInvaders
 {
@@ -30,7 +30,7 @@ export namespace SpaceInvaders
 		protected:
 
 		protected:
-			System::SystemObjects m_system;
+			Engine::SystemObjects m_system;
 			size_t m_colourIndex;
 			float m_timeElapsed;
 			std::shared_ptr<SpaceInvaders::Scenes::IScene> m_currentScene;

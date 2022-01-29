@@ -36,7 +36,7 @@
     <ClCompile Include="UI\MainWindow.cpp" />
     <ClCompile Include="UI\MainWindow2.cpp" />
     <ClCompile Include="WIC\WICImagingFactory.cpp" />
-    <ClCompile Include="WIC\WICImagingFactory.ixx" />
+    <ClCompile Include="WIC\core.wic.wicimagingfactory.ixx" />
     <ClCompile Include="UI\core.ui.mainwindow.ixx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

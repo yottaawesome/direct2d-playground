@@ -78,10 +78,10 @@
     <ClCompile Include="SpaceInvaders\SpaceInvadersGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\Rendering\spaceinvaders.rendering.renderer.ixx">
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.renderer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\Rendering\Renderer.cpp">
+    <ClCompile Include="SpaceInvaders\Engine\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.ixx">
@@ -108,10 +108,16 @@
     <ClCompile Include="SpaceInvaders\State\spaceinvaders.state.world.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.ixx">
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.systemobjects.ixx">
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.systemobjects.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Engine\speceinvaders.engine.d2dfactory.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\Engine\D2DFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

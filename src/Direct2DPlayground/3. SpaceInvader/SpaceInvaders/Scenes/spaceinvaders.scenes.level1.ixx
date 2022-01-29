@@ -1,6 +1,7 @@
 export module spaceinvaders.scenes.level1;
 import spaceinvaders.scenes.scene;
-import spaceinvaders.rendering.renderer;
+import spaceinvaders.engine.renderer;
+import spaceinvaders.engine.d2dfactory;
 
 export namespace SpaceInvaders::Scenes
 {
@@ -9,7 +10,7 @@ export namespace SpaceInvaders::Scenes
 		public:
 			virtual ~Level1();
 			virtual void Update(const float deltaTimeSeconds) override;
-			virtual void Draw(Rendering::Renderer& m_renderer) override;
-			virtual void Initialise(Rendering::Renderer& renderer) override;
+			virtual void Draw(Engine::Renderer& m_renderer) override;
+			virtual void Initialise(Engine::Renderer& renderer) override;
 	};
 }

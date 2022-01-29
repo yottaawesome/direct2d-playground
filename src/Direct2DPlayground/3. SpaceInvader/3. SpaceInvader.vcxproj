@@ -147,7 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.ixx" />
+    <ClCompile Include="SpaceInvaders\Engine\D2DFactory.cpp" />
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.ixx" />
+    <ClCompile Include="SpaceInvaders\Engine\speceinvaders.engine.d2dfactory.ixx" />
     <ClCompile Include="SpaceInvaders\Scenes\Level1.cpp" />
     <ClCompile Include="SpaceInvaders\Scenes\MainMenu.cpp" />
     <ClCompile Include="SpaceInvaders\Scenes\Scene.cpp" />
@@ -170,10 +172,10 @@
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx" />
     <ClCompile Include="SpaceInvaders\State\spaceinvaders.state.world.ixx" />
-    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.systemobjects.ixx" />
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.systemobjects.ixx" />
     <ClCompile Include="SpaceInvaders\UI\MainWindow.cpp" />
-    <ClCompile Include="SpaceInvaders\Rendering\Renderer.cpp" />
-    <ClCompile Include="SpaceInvaders\Rendering\spaceinvaders.rendering.renderer.ixx" />
+    <ClCompile Include="SpaceInvaders\Engine\Renderer.cpp" />
+    <ClCompile Include="SpaceInvaders\Engine\spaceinvaders.engine.renderer.ixx" />
     <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.input.ixx" />
     <ClCompile Include="SpaceInvaders\UI\spaceinvaders.ui.mainwindow.ixx" />
     <ClCompile Include="main.cpp" />

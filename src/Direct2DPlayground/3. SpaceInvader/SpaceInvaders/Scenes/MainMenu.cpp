@@ -18,7 +18,7 @@ namespace SpaceInvaders::Scenes
         m_totalTime += deltaTimeSeconds;
 	}
 
-	void MainMenu::Draw(Rendering::Renderer& renderer)
+	void MainMenu::Draw(Engine::Renderer& renderer)
 	{
         renderer.Draw(
             [this, &renderer]()
@@ -45,12 +45,12 @@ namespace SpaceInvaders::Scenes
                             m_colourIndex = 0;
                 }
 
-                renderer.GetRawRenderTarget()->DrawBitmap(m_bitmap.Get());
+                renderer.GetRaw()->DrawBitmap(m_bitmap.Get());
             }
         );
 	}
 
-    void MainMenu::Initialise(Rendering::Renderer& renderer)
+    void MainMenu::Initialise(Engine::Renderer& renderer)
     {
         m_bitmap = renderer.LoadBitmap(L"PlayerShipBlue.png");
     }

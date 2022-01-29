@@ -21,10 +21,6 @@ namespace SpaceInvaders
         m_timeElapsed(0),
         m_currentScene(0)
     {
-        SpaceInvaders::Scenes::MainMenu a1;
-        SpaceInvaders::Scenes::MainMenu a2;
-        a1 = a2;
-        //m_scenes.push_back(std::unique_ptr<SpaceInvaders::Scenes::MainMenu>(new SpaceInvaders::Scenes::MainMenu()));
         m_scenes.emplace_back(new SpaceInvaders::Scenes::MainMenu());
         m_scenes.emplace_back(new SpaceInvaders::Scenes::Level1());
         m_currentScene = m_scenes[0];
@@ -35,7 +31,8 @@ namespace SpaceInvaders
         m_system.Window.OnResize = std::bind(&SpaceInvadersGame::OnResize, this, std::placeholders::_1, std::placeholders::_2);
         m_system.Window.OnInputPressed = std::bind(&SpaceInvadersGame::OnInputPressed, this, std::placeholders::_1, std::placeholders::_2);
         m_system.Window.Initialise();
-        m_system.Renderer.BindRenderTarget(
+        m_system.Factory.Initialise();
+        m_system.Renderer = m_system.Factory.BindRenderTarget(
             m_system.Window.GetHandle(),
             m_system.Window.GetClientWidth(),
             m_system.Window.GetClientHeight()

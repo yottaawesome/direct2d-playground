@@ -1,5 +1,6 @@
 export module spaceinvaders.scenes.scene;
-import spaceinvaders.rendering.renderer;
+import spaceinvaders.engine.renderer;
+import spaceinvaders.engine.d2dfactory;
 
 export namespace SpaceInvaders::Scenes
 {
@@ -7,7 +8,7 @@ export namespace SpaceInvaders::Scenes
 	{
 		virtual ~IScene();
 		virtual void Update(const float deltaTimeSeconds) = 0;
-		virtual void Draw(Rendering::Renderer& renderer) = 0;
-		virtual void Initialise(Rendering::Renderer& renderer) = 0;
+		virtual void Draw(Engine::Renderer& renderer) = 0;
+		virtual void Initialise(Engine::Renderer& renderer) = 0;
 	};
 }
