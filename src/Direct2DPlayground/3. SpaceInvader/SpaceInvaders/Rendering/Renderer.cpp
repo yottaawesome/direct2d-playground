@@ -161,4 +161,9 @@ namespace SpaceInvaders::Rendering
 
 		return m_bitmap;
 	}
+
+	ID2D1HwndRenderTarget* Renderer::GetRawRenderTarget() const noexcept
+	{
+		return m_hwndRenderTarget.Get();
+	}
 }

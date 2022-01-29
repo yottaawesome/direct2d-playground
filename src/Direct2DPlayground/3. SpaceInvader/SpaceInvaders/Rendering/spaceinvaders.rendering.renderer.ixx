@@ -45,6 +45,7 @@ export namespace SpaceInvaders::Rendering
 			[[nodiscard]] virtual D2D1_FACTORY_TYPE GetFactoryType() const noexcept;
 			[[nodiscard]] virtual Microsoft::WRL::ComPtr<ID2D1Factory> Get() const noexcept;
 			[[nodiscard]] virtual ID2D1Factory* GetRaw() const noexcept;
+			[[nodiscard]] virtual ID2D1HwndRenderTarget* GetRawRenderTarget() const noexcept;
 			
 		protected:
 			Microsoft::WRL::ComPtr<ID2D1Factory> m_D2DFactory;

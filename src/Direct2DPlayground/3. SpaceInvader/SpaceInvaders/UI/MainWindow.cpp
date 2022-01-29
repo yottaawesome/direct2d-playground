@@ -29,6 +29,29 @@ namespace SpaceInvaders::UI
         Destroy();
     }
 
+    MainWindow::MainWindow(MainWindow&& other) noexcept
+        : MainWindow()
+    {
+        Move(other);
+    }
+
+    MainWindow& MainWindow::operator=(MainWindow&& other) noexcept
+    {
+        return Move(other);
+    }
+
+    MainWindow& MainWindow::Move(MainWindow& other) noexcept
+    {
+        if (this == &other)
+            return *this;
+
+        Destroy();
+        m_hwnd = other.m_hwnd;
+        other.m_hwnd = nullptr;
+        m_windowStyle = other.m_windowStyle;
+        return *this;
+    }
+
     void MainWindow::Destroy()
     {
         if (m_hwnd)

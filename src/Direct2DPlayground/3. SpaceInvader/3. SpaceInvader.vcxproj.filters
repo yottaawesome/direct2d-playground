@@ -102,12 +102,27 @@
     <ClCompile Include="SpaceInvaders\Scenes\MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\State\spaceinvaders.state.world.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.systemobjects.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="assets\art\ship.bmp">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="assets\art\ship.png">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="assets\art\PlayerShipBlue.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
   </ItemGroup>

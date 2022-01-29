@@ -1,5 +1,7 @@
 module;
 
+#include <vector>
+#include <memory>
 #include <iostream>
 #include <string>
 #include <format>
@@ -15,25 +17,35 @@ namespace SpaceInvaders
     SpaceInvadersGame::~SpaceInvadersGame() = default;
 
     SpaceInvadersGame::SpaceInvadersGame() 
-        : m_colourIndex(0)
-        , m_timeElapsed(0)
-    {}
+        : m_colourIndex(0), 
+        m_timeElapsed(0),
+        m_currentScene(0)
+    {
+        SpaceInvaders::Scenes::MainMenu a1;
+        SpaceInvaders::Scenes::MainMenu a2;
+        a1 = a2;
+        //m_scenes.push_back(std::unique_ptr<SpaceInvaders::Scenes::MainMenu>(new SpaceInvaders::Scenes::MainMenu()));
+        m_scenes.emplace_back(new SpaceInvaders::Scenes::MainMenu());
+        m_scenes.emplace_back(new SpaceInvaders::Scenes::Level1());
+        m_currentScene = m_scenes[0];
+    }
 
     void SpaceInvadersGame::Initialise()
     {
-        m_mainWindow.OnResize = std::bind(&SpaceInvadersGame::OnResize, this, std::placeholders::_1, std::placeholders::_2);
-        m_mainWindow.OnInputPressed = std::bind(&SpaceInvadersGame::OnInputPressed, this, std::placeholders::_1, std::placeholders::_2);
-        m_mainWindow.Initialise();
-        m_renderer.BindRenderTarget(
-            m_mainWindow.GetHandle(), 
-            m_mainWindow.GetClientWidth(), 
-            m_mainWindow.GetClientHeight()
+        m_system.Window.OnResize = std::bind(&SpaceInvadersGame::OnResize, this, std::placeholders::_1, std::placeholders::_2);
+        m_system.Window.OnInputPressed = std::bind(&SpaceInvadersGame::OnInputPressed, this, std::placeholders::_1, std::placeholders::_2);
+        m_system.Window.Initialise();
+        m_system.Renderer.BindRenderTarget(
+            m_system.Window.GetHandle(),
+            m_system.Window.GetClientWidth(),
+            m_system.Window.GetClientHeight()
         );
+        m_currentScene->Initialise(m_system.Renderer);
     }
 
     UINT64 SpaceInvadersGame::RunMessageLoop()
     {
-        m_timer.Reset();
+        m_system.Timer.Reset();
 
         MSG msg = { 0 };
         while (msg.message != WM_QUIT)
@@ -48,62 +60,22 @@ namespace SpaceInvaders
             else
             {
                 CalculateFrameStats();
-                m_timer.Tick();
-                RenderScene();
+                m_system.Timer.Tick();
+                m_currentScene->Update(m_system.Timer.DeltaTime());
+                m_currentScene->Draw(m_system.Renderer);
+                //RenderScene();
             }
         }
 
         return msg.wParam;
     }
 
-    void SpaceInvadersGame::RenderScene() try
-    {
-        m_renderer.Draw(
-            [this]()
-            {
-                m_timeElapsed += m_timer.DeltaTime();
-                if (m_timeElapsed >= 1.f)
-                {
-                    m_colourIndex++;
-                    m_timeElapsed = 0;
-                }
-                
-                switch (m_colourIndex)
-                {
-                    case 1:
-                        m_renderer.Clear(D2D1::ColorF(D2D1::ColorF::Azure));
-                        break;
-
-                    case 2:
-                        m_renderer.Clear(D2D1::ColorF(D2D1::ColorF::Bisque));
-                        break;
-
-                    default:
-                        m_renderer.Clear(D2D1::ColorF(D2D1::ColorF::Aquamarine));
-                        if (m_colourIndex > 2)
-                            m_colourIndex = 0;
-                }
-
-                //m_renderer.Clear(colour);
-            }
-        );
-    }
-    catch (const Core::Error::COMError& ex)
-    {
-        if (ex.GetErrorCode() != D2DERR_RECREATE_TARGET)
-            throw;
-        // can fail due to D2DERR_RECREATE_TARGET
-        m_renderer.BindRenderTarget(
-            m_mainWindow.GetHandle(),
-            m_mainWindow.GetClientWidth(),
-            m_mainWindow.GetClientHeight()
-        );
-        // will also need to recreate the device-specific resources
-    }
-
     void SpaceInvadersGame::OnResize(const unsigned width, const unsigned height)
     {
-        m_renderer.Resize(m_mainWindow.GetClientWidth(), m_mainWindow.GetClientHeight());
+        m_system.Renderer.Resize(
+            m_system.Window.GetClientWidth(), 
+            m_system.Window.GetClientHeight()
+        );
     }
     
     void SpaceInvadersGame::OnInputPressed(const UI::InputType type, const wchar_t key)
@@ -116,22 +88,21 @@ namespace SpaceInvaders
         // Code computes the average frames per second, and also the 
         // average time it takes to render one frame.  These stats 
         // are appended to the window caption bar.
-
         static int frameCnt = 0;
         static float timeElapsed = 0.0f;
 
         frameCnt++;
 
         // Compute averages over one second period.
-        if ((m_timer.TotalTime() - timeElapsed) >= 1.0f)
-        {
-            const float fps = (float)frameCnt; // fps = frameCnt / 1
-            const float mspf = 1000.0f / fps;
-            m_mainWindow.SetCaption(std::format(L"Space Invaders ({} fps, {} mspf)", fps, mspf));
+        if ((m_system.Timer.TotalTime() - timeElapsed) < 1.0f)
+            return;
 
-            // Reset for next average.
-            frameCnt = 0;
-            timeElapsed += 1.0f;
-        }
+        const float fps = (float)frameCnt; // fps = frameCnt / 1
+        const float mspf = 1000.0f / fps;
+        m_system.Window.SetCaption(std::format(L"Space Invaders ({} fps, {} mspf)", fps, mspf));
+
+        // Reset for next average.
+        frameCnt = 0;
+        timeElapsed += 1.0f;
     }
 }

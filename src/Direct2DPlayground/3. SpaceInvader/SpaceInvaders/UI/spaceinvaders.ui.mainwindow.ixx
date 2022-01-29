@@ -22,8 +22,14 @@ export namespace SpaceInvaders::UI
             using OnInputEvt = std::function<void(const InputType type, const wchar_t key)>;
 
         public:
-            MainWindow();
             virtual ~MainWindow();
+            MainWindow();
+            MainWindow(MainWindow&& other) noexcept;
+            MainWindow(const MainWindow&) = delete;
+
+        public:
+            virtual MainWindow& operator=(MainWindow&& other) noexcept;
+            virtual MainWindow& operator=(const MainWindow&) = delete;
 
         public:
             virtual void Initialise();
@@ -57,6 +63,8 @@ export namespace SpaceInvaders::UI
             static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
             virtual void Destroy();
+
+            virtual MainWindow& Move(MainWindow& other) noexcept;
 
         protected:
             HWND m_hwnd;

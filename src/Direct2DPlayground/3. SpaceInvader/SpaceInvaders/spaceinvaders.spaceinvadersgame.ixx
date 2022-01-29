@@ -1,11 +1,15 @@
 module;
 
+#include <memory>
+#include <vector>
 #include <Windows.h>
 
 export module spaceinvaders.spaceinvadersgame;
 import core.time.gametimer;
 import spaceinvaders.ui;
 import spaceinvaders.rendering.renderer;
+import spaceinvaders.scenes;
+import spaceinvaders.system.systemobjects;
 
 export namespace SpaceInvaders
 {
@@ -24,13 +28,12 @@ export namespace SpaceInvaders
 			virtual void CalculateFrameStats();
 
 		protected:
-			virtual void RenderScene();
 
 		protected:
-			UI::MainWindow m_mainWindow;
-			Rendering::Renderer m_renderer;
-			Core::Time::GameTimer m_timer;
+			System::SystemObjects m_system;
 			size_t m_colourIndex;
 			float m_timeElapsed;
+			std::shared_ptr<SpaceInvaders::Scenes::IScene> m_currentScene;
+			std::vector<std::shared_ptr<SpaceInvaders::Scenes::IScene>> m_scenes;
 	};
 }

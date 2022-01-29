@@ -147,9 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.ixx" />
     <ClCompile Include="SpaceInvaders\Scenes\Level1.cpp" />
     <ClCompile Include="SpaceInvaders\Scenes\MainMenu.cpp" />
     <ClCompile Include="SpaceInvaders\Scenes\Scene.cpp" />
+    <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.ixx" />
     <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.level1.ixx" />
     <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.mainmenu.ixx" />
     <ClCompile Include="SpaceInvaders\Scenes\spaceinvaders.scenes.scene.ixx" />
@@ -167,6 +169,8 @@
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.component.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.position.ixx" />
     <ClCompile Include="SpaceInvaders\Components\spaceinvaders.components.sprite.ixx" />
+    <ClCompile Include="SpaceInvaders\State\spaceinvaders.state.world.ixx" />
+    <ClCompile Include="SpaceInvaders\System\spaceinvaders.system.systemobjects.ixx" />
     <ClCompile Include="SpaceInvaders\UI\MainWindow.cpp" />
     <ClCompile Include="SpaceInvaders\Rendering\Renderer.cpp" />
     <ClCompile Include="SpaceInvaders\Rendering\spaceinvaders.rendering.renderer.ixx" />
@@ -193,6 +197,9 @@
     <CopyFileToFolders Include="assets\art\ship.png">
       <DeploymentContent>true</DeploymentContent>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="assets\art\PlayerShipBlue.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

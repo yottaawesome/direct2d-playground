@@ -12,7 +12,12 @@ namespace SpaceInvaders::Scenes
 
 	}
 
-	void Level1::Draw()
+	void Level1::Draw(Rendering::Renderer& renderer)
+	{
+
+	}
+	
+	void Level1::Initialise(Rendering::Renderer& renderer)
 	{
 
 	}
