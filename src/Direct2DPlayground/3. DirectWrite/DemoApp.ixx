@@ -48,8 +48,8 @@ export class DemoApp : public Core::UI::MainWindow2
     protected:
         Core::Direct2D::D2D1Factory m_pDirect2dFactory;
         Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
-        Microsoft::WRL::ComPtr<IDWriteFactory> pDWriteFactory;
-        Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
-        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBlackBrush;
+        Microsoft::WRL::ComPtr<IDWriteFactory> m_pDWriteFactory;
+        Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
+        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBlackBrush;
         std::wstring m_stringToRender;
 };

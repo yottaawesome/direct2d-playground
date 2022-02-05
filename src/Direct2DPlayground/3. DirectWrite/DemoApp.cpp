@@ -31,12 +31,12 @@ void DemoApp::CreateDeviceIndependentResources()
     HRESULT hr = DWriteCreateFactory(
         DWRITE_FACTORY_TYPE_SHARED,
         __uuidof(IDWriteFactory),
-        &pDWriteFactory
+        &m_pDWriteFactory
     );
     if (FAILED(hr))
         throw Core::Error::COMError("DWriteCreateFactory() failed", hr);
 
-    hr = pDWriteFactory->CreateTextFormat(
+    hr = m_pDWriteFactory->CreateTextFormat(
         L"Gabriola",                // Font family name.
         NULL,                       // Font collection (NULL sets it to use the system font collection).
         DWRITE_FONT_WEIGHT_REGULAR,
@@ -44,17 +44,17 @@ void DemoApp::CreateDeviceIndependentResources()
         DWRITE_FONT_STRETCH_NORMAL,
         72.0f,
         L"en-us",
-        &pTextFormat
+        &m_pTextFormat
     );
     if (FAILED(hr))
         throw Core::Error::COMError("CreateTextFormat() failed", hr);
 
     // Center align (horizontally) the text.
-    hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    hr = m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     if (FAILED(hr))
         throw Core::Error::COMError("SetTextAlignment() failed", hr);
 
-    hr = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    hr = m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     if (FAILED(hr))
         throw Core::Error::COMError("SetParagraphAlignment() failed", hr);
 }
@@ -76,7 +76,7 @@ void DemoApp::CreateDeviceResources()
 
     HRESULT hr = m_pRenderTarget->CreateSolidColorBrush(
         D2D1::ColorF(D2D1::ColorF::Black),
-        &pBlackBrush
+        &m_pBlackBrush
     );
     if (FAILED(hr))
         throw Core::Error::COMError("SetParagraphAlignment() failed", hr);
@@ -85,6 +85,7 @@ void DemoApp::CreateDeviceResources()
 void DemoApp::DiscardDeviceResources()
 {
     m_pRenderTarget = nullptr;
+    m_pBlackBrush = nullptr;
 }
 
 void DemoApp::DrawText()
@@ -101,9 +102,9 @@ void DemoApp::DrawText()
     m_pRenderTarget->DrawText(
         &m_stringToRender[0],        // The string to render.
         m_stringToRender.size(),    // The string's length.
-        pTextFormat.Get(),    // The text format.
+        m_pTextFormat.Get(),    // The text format.
         layoutRect,       // The region of the window where the text will be rendered.
-        pBlackBrush.Get()     // The brush used to draw the text.
+        m_pBlackBrush.Get()     // The brush used to draw the text.
     );
 }
 
