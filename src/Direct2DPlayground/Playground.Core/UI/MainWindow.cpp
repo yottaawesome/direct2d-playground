@@ -9,8 +9,8 @@ import core.error.win32error;
 
 namespace Core::UI
 {
-    MainWindow::MainWindow() 
-        : m_hwnd(nullptr), 
+    MainWindow::MainWindow()
+        : m_hwnd(nullptr),
         m_windowStyle(WS_OVERLAPPEDWINDOW)
     {}
 
