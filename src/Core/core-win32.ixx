@@ -2,6 +2,7 @@ module;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <Objbase.h>
 #include <wincodec.h>
 #include <wrl/client.h>
 
@@ -46,11 +47,18 @@ export namespace Win32
 		::LARGE_INTEGER,
 		::HRESULT,
 		::IWICBitmapDecoder,
+		::HMODULE,
 		::CLSCTX,
 		::IID_IWICImagingFactory2,
 		::CLSID_WICImagingFactory2,
 		::IWICFormatConverter,
 		::IWICImagingFactory2,
+		::COINIT,
+		::CoUninitialize,
+		::CoInitializeEx,
+		::FormatMessageA,
+		::FormatMessageW,
+		::LocalFree,
 		::QueryPerformanceCounter,
 		::QueryPerformanceFrequency,
 		::GetWindowLongPtrW,
@@ -59,6 +67,8 @@ export namespace Win32
 		::PostQuitMessage,
 		::SetWindowLongPtrW,
 		::PeekMessageW,
+		::LoadLibraryW,
+		::FreeLibrary,
 		::TranslateMessage,
 		::DispatchMessageW,
 		::DestroyWindow,
@@ -91,6 +101,14 @@ export namespace Win32
 
 	constexpr auto GenericRead = GENERIC_READ;
 
+	namespace FormatMessageFlags
+	{
+		constexpr auto AllocateBuffer = FORMAT_MESSAGE_ALLOCATE_BUFFER;
+		constexpr auto FromSystem = FORMAT_MESSAGE_FROM_SYSTEM;
+		constexpr auto IgnoreInserts = FORMAT_MESSAGE_FROM_SYSTEM;
+		constexpr auto FromHModule = FORMAT_MESSAGE_FROM_SYSTEM;
+	}
+
 	namespace Messages
 	{
 		enum
@@ -102,4 +120,7 @@ export namespace Win32
 	}
 
 	constexpr auto HrFailed(HRESULT hr) noexcept { return FAILED(hr); }
+
+	constexpr auto SOk = S_OK;
+	constexpr auto SFalse = S_FALSE;
 }

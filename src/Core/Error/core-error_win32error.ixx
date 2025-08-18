@@ -1,9 +1,6 @@
-module;
-
-#include <Windows.h>
-
 export module core:error_win32error;
 import std;
+import :win32;
 import :error_functions;
 
 export namespace Error
@@ -17,7 +14,7 @@ export namespace Error
 			m_errorString = std::format("{} {}", msg, "(no win32 error code was provided)");
 		}
 
-		Win32Error(const char* msg, DWORD errorCode)
+		Win32Error(const char* msg, Win32::DWORD errorCode)
 			: std::runtime_error(msg),
 			m_errorCode(errorCode)
 		{
@@ -33,7 +30,7 @@ export namespace Error
 			m_errorString = std::format("{} (win32 code: {}, {:#X}): {}", msg, errorCode, errorCode, m_errorString);
 		}
 
-		DWORD GetErrorCode() const noexcept
+		Win32::DWORD GetErrorCode() const noexcept
 		{
 			return m_errorCode;
 		}
@@ -44,7 +41,7 @@ export namespace Error
 		}
 
 	protected:
-		DWORD m_errorCode;
+		Win32::DWORD m_errorCode;
 		std::string m_errorString;
 	};
 }
