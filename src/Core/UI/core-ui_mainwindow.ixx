@@ -1,9 +1,6 @@
-module;
-
-#include <Windows.h>
-
 export module core:ui_mainwindow;
 import std;
+import :win32;
 import :error_win32error;
 
 export namespace UI
@@ -14,12 +11,12 @@ export namespace UI
         virtual ~MainWindow()
         {
             if (m_hwnd)
-                DestroyWindow(m_hwnd);
+                Win32::DestroyWindow(m_hwnd);
         }
 
         MainWindow()
             : m_hwnd(nullptr),
-            m_windowStyle(WS_OVERLAPPEDWINDOW)
+            m_windowStyle(Win32::WsOverlappedWindow)
         { }
 
         // Register the window class and call methods for instantiating drawing resources
@@ -31,10 +28,10 @@ export namespace UI
 
             // Register the window class, but allow subclasses the option
             // to override the WndProc
-            WNDCLASSEX windowClass = GetClass();
+            Win32::WNDCLASSEX windowClass = GetClass();
             if (!windowClass.lpfnWndProc)
                 windowClass.lpfnWndProc = MainWindow::WndProc;
-            RegisterClassExW(&windowClass);
+            Win32::RegisterClassExW(&windowClass);
 
             // Because the CreateWindow function takes its size in pixels,
             // obtain the system DPI and use it to scale the window size.
@@ -44,44 +41,44 @@ export namespace UI
             * Deprecated
             * m_pDirect2dFactory->GetDesktopDpi(&dpiX, &dpiY);
             */
-            const float dpi = static_cast<float>(GetDpiForWindow(GetDesktopWindow()));
+            float dpi = static_cast<float>(Win32::GetDpiForWindow(Win32::GetDesktopWindow()));
             // Create the window.
-            RECT r{ 0 };
+            Win32::RECT r{ 0 };
             r.right = 512;
             r.bottom = 512;
-            AdjustWindowRect(&r, m_windowStyle, false);
+            Win32::AdjustWindowRect(&r, m_windowStyle, false);
             // https://stackoverflow.com/questions/25879021/win32-client-size-and-an-incorrect-size
-            m_hwnd = CreateWindowExW(
+            m_hwnd = Win32::CreateWindowExW(
                 0,
                 L"D2DDemoApp",
                 L"Direct2D Demo App",
                 m_windowStyle,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
+                Win32::CwUseDefault,
+                Win32::CwUseDefault,
                 r.right - r.left,
                 //static_cast<UINT>(ceil(r.right * dpi / 96.f)),
                 r.bottom - r.top,
                 //static_cast<UINT>(ceil(r.bottom * dpi / 96.f)),
                 nullptr,
                 nullptr,
-                GetModuleHandle(nullptr), //HINST_THISCOMPONENT,
+                Win32::GetModuleHandleW(nullptr), //HINST_THISCOMPONENT,
                 this
             );
             if (!m_hwnd)
-                throw Error::Win32Error("CreateWindowEx() failed", GetLastError());
+                throw Error::Win32Error("CreateWindowEx() failed", Win32::GetLastError());
 
-            ShowWindow(m_hwnd, SW_SHOWNORMAL);
-            UpdateWindow(m_hwnd);
+            Win32::ShowWindow(m_hwnd, Win32::SwShowNormal);
+            Win32::UpdateWindow(m_hwnd);
         }
 
         // Process and dispatch messages
-        virtual UINT64 RunMessageLoop()
+        virtual Win32::UINT64 RunMessageLoop()
         {
-            MSG msg;
-            while (GetMessageW(&msg, nullptr, 0, 0))
+            Win32::MSG msg;
+            while (Win32::GetMessageW(&msg, nullptr, 0, 0))
             {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                Win32::TranslateMessage(&msg);
+                Win32::DispatchMessageW(&msg);
             }
             return msg.wParam;
         }
@@ -90,14 +87,14 @@ export namespace UI
         {
             if (!m_hwnd)
                 throw std::runtime_error("m_hwnd is null");
-            const bool succeeded = SetWindowPos(
+            bool succeeded = Win32::SetWindowPos(
                 m_hwnd,
-                HWND_TOP,
+                Win32::HwndTop,
                 0,
                 0,
                 width,
                 height,
-                SWP_NOMOVE
+                Win32::SwpNoMove
             );
             if (!succeeded)
                 throw Error::Win32Error("SetWindowPost() failed", GetLastError());
@@ -108,36 +105,36 @@ export namespace UI
             if (!m_hwnd)
                 throw std::runtime_error("m_hwnd is null");
 
-            RECT r{
+            Win32::RECT r{
                 .right = static_cast<LONG>(width),
                 .bottom = static_cast<LONG>(height)
             };
             AdjustWindowRect(&r, m_windowStyle, false);
             // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
-            const bool succeeded = SetWindowPos(
+            bool succeeded = Win32::SetWindowPos(
                 m_hwnd,
-                HWND_TOP,
+                Win32::HwndTop,
                 0,
                 0,
                 r.right - r.left,
                 r.bottom - r.top,
-                SWP_NOMOVE
+                Win32::SwpNoMove
             );
             if (!succeeded)
-                throw Error::Win32Error("SetWindowPost() failed", GetLastError());
+                throw Error::Win32Error("SetWindowPost() failed", Win32::GetLastError());
         }
 
     protected:
-        virtual const WNDCLASSEX& GetClass() const noexcept
+        virtual const Win32::WNDCLASSEX& GetClass() const noexcept
         {
-            static const WNDCLASSEX wcex = {
-                .cbSize = sizeof(WNDCLASSEX),
-                .style = CS_HREDRAW | CS_VREDRAW,
+            static const Win32::WNDCLASSEX wcex{
+                .cbSize = sizeof(Win32::WNDCLASSEX),
+                .style = Win32::CsHRedraw | Win32::CsVRedraw,
                 .lpfnWndProc = MainWindow::WndProc,
                 .cbClsExtra = 0,
-                .cbWndExtra = sizeof(LONG_PTR),
-                .hInstance = GetModuleHandle(nullptr),// HINST_THISCOMPONENT;
-                .hCursor = LoadCursor(nullptr, IDI_APPLICATION),
+                .cbWndExtra = sizeof(Win32::LONG_PTR),
+                .hInstance = Win32::GetModuleHandleW(nullptr),// HINST_THISCOMPONENT;
+                .hCursor = Win32::LoadCursorW(nullptr, Win32::IdiApplication),
                 .hbrBackground = nullptr,
                 .lpszMenuName = nullptr,
                 .lpszClassName = L"D2DDemoApp"
@@ -159,60 +156,60 @@ export namespace UI
 
         // Resize the render target.
         virtual void OnResize(
-            const UINT width,
-            const UINT height
+            const Win32::UINT width,
+            const Win32::UINT height
         ) = 0;
 
-        virtual LRESULT HandleMessage(
-            HWND hWnd,
-            UINT message,
-            WPARAM wParam,
-            LPARAM lParam
+        virtual Win32::LRESULT HandleMessage(
+            Win32::HWND hWnd,
+            Win32::UINT message,
+            Win32::WPARAM wParam,
+            Win32::LPARAM lParam
         ) = 0;
 
         // The windows procedure.
-        static LRESULT CALLBACK WndProc(
-            HWND hwnd,
-            UINT message,
-            WPARAM wParam,
-            LPARAM lParam
+        static LRESULT WndProc(
+            Win32::HWND hwnd,
+            Win32::UINT message,
+            Win32::WPARAM wParam,
+            Win32::LPARAM lParam
         )
         {
             // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-create
-            if (message == WM_CREATE)
+            if (message == Win32::Messages::Create)
             {
-                LPCREATESTRUCT pcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
+                Win32::LPCREATESTRUCT pcs = reinterpret_cast<Win32::LPCREATESTRUCT>(lParam);
                 MainWindow* pDemoApp = reinterpret_cast<MainWindow*>(pcs->lpCreateParams);
-                SetWindowLongPtrW(
+                Win32::SetWindowLongPtrW(
                     hwnd,
-                    GWLP_USERDATA,
+                    Win32::GwlpUserData,
                     reinterpret_cast<LONG_PTR>(pDemoApp)
                 );
                 return 0;
             }
             // No need to pass this message on
-            else if (message == WM_DESTROY)
+            else if (message == Win32::Messages::Destroy)
             {
-                PostQuitMessage(0);
+                Win32::PostQuitMessage(0);
                 return 0;
             }
 
             try
             {
-                MainWindow* demoApp = reinterpret_cast<MainWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+                MainWindow* demoApp = reinterpret_cast<MainWindow*>(Win32::GetWindowLongPtrW(hwnd, Win32::GwlpUserData));
                 return demoApp
                     ? demoApp->HandleMessage(hwnd, message, wParam, lParam)
-                    : DefWindowProcW(hwnd, message, wParam, lParam);
+                    : Win32::DefWindowProcW(hwnd, message, wParam, lParam);
             }
             catch (const std::exception& ex)
             {
                 std::wcerr << L"Exception in WndProc: " << ex.what() << std::endl;
-                PostQuitMessage(1);
+                Win32::PostQuitMessage(1);
                 return 0;
             }
         }
 
-        HWND m_hwnd;
-        DWORD m_windowStyle;
+        Win32::HWND m_hwnd;
+        Win32::DWORD m_windowStyle;
     };
 }

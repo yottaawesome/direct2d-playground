@@ -1,8 +1,5 @@
-module;
-
-#include <Windows.h>
-
 export module core:ui_mainwindow2;
+import :win32;
 import :ui_mainwindow;
 
 export namespace UI
@@ -14,16 +11,16 @@ export namespace UI
         virtual ~MainWindow2() {}
 
         // Process and dispatch messages
-        virtual UINT64 RunMessageLoop() override
+        virtual Win32::UINT64 RunMessageLoop() override
         {
-            MSG msg = { 0 };
-            while (msg.message != WM_QUIT)
+            Win32::MSG msg = { 0 };
+            while (msg.message != Win32::Messages::Quit)
             {
                 // If there are Window messages then process them.
-                if (PeekMessageW(&msg, 0, 0, 0, PM_REMOVE))
+                if (Win32::PeekMessageW(&msg, 0, 0, 0, Win32::PmRemove))
                 {
-                    TranslateMessage(&msg);
-                    DispatchMessageW(&msg);
+                    Win32::TranslateMessage(&msg);
+                    Win32::DispatchMessageW(&msg);
                 }
                 // Otherwise, do animation/game stuff.
                 else
@@ -31,7 +28,6 @@ export namespace UI
                     OnRender();
                 }
             }
-
             return msg.wParam;
         }
     };
