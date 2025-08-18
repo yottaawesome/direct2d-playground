@@ -152,8 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DemoApp.ixx" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="demoapp.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Playground.Core\Playground.Core.vcxproj">

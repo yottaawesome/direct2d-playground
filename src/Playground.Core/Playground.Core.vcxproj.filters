@@ -11,61 +11,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Error\core.error.win32error.ixx">
+    <ClCompile Include="Error\core-error_win32error.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\Win32Error.cpp">
+    <ClCompile Include="Error\core-error_functions.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\core.error.functions.ixx">
+    <ClCompile Include="Error\core-error.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\core.error.ixx">
+    <ClCompile Include="Error\core-error_comerror.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\core.error.comerror.ixx">
+    <ClCompile Include="COM\core-comthreadscope.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\COMError.cpp">
+    <ClCompile Include="WIC\core-wic_wicimagingfactory.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="COM\COMThreadScope.ixx">
+    <ClCompile Include="UI\core-ui_mainwindow.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="COM\COMThreadScope.cpp">
+    <ClCompile Include="Direct2D\core-d2d1factory.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Error\Error.cpp">
+    <ClCompile Include="UI\core-ui_mainwindow2.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WIC\core.wic.wicimagingfactory.ixx">
+    <ClCompile Include="Time\core-time_gametimer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WIC\WICImagingFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\core.ui.mainwindow.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Direct2D\D2D1Factory.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Direct2D\D2D1Factory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\core.ui.mainwindow2.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\MainWindow2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer\core.time.gametimer.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer\GameTimer.cpp">
+    <ClCompile Include="core.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

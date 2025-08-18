@@ -9,13 +9,7 @@ module;
 
 export module DemoApp;
 import std;
-import core.error;
-import core.ui.mainwindow2;
-import core.wic.wicimagingfactory;
-import core.direct2d.d2d1factory;
-import core.com.comthreadscope;
-import core.error.win32error;
-import core.error.comerror;
+import core;
 
 // See https://stackoverflow.com/questions/6126980/get-pointer-to-image-dos-header-with-getmodulehandle
 // https://reverseengineering.stackexchange.com/questions/19660/is-there-any-way-to-get-my-own-image-base-without-calling-any-winapi-functions

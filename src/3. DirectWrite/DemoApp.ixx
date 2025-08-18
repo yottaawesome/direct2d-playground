@@ -7,49 +7,206 @@ module;
 #include <wrl/client.h>
 
 export module DemoApp;
-import core.ui.mainwindow2;
-import core.direct2d.d2d1factory;
+import core;
 
 // This is based on https://docs.microsoft.com/en-us/windows/win32/directwrite/getting-started-with-directwrite
 export class DemoApp : public Core::UI::MainWindow2
 {
-    public:
-        DemoApp();
-        virtual ~DemoApp();
+public:
+    DemoApp()
+        : Core::UI::MainWindow2(),
+        m_stringToRender(L"Hello, DirectWrite!")
+    { }
+    virtual ~DemoApp()
+    {
+        m_pDirect2dFactory.Close();
+        m_pRenderTarget = nullptr;
+        }
 
-    protected:
-        // Initialize device-independent resources.
-        virtual void CreateDeviceIndependentResources() override;
+protected:
+    // Initialize device-independent resources.
+    virtual void CreateDeviceIndependentResources() override
+    {
+        m_pDirect2dFactory.Initialise(D2D1_FACTORY_TYPE_SINGLE_THREADED);
 
-        // Initialize device-dependent resources.
-        virtual void CreateDeviceResources() override;
+        HRESULT hr = DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(IDWriteFactory),
+            &m_pDWriteFactory
+        );
+        if (FAILED(hr))
+            throw Core::Error::COMError("DWriteCreateFactory() failed", hr);
 
-        // Release device-dependent resource.
-        virtual void DiscardDeviceResources() override;
+        hr = m_pDWriteFactory->CreateTextFormat(
+            L"Gabriola",                // Font family name.
+            NULL,                       // Font collection (NULL sets it to use the system font collection).
+            DWRITE_FONT_WEIGHT_REGULAR,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            72.0f,
+            L"en-us",
+            &m_pTextFormat
+        );
+        if (FAILED(hr))
+            throw Core::Error::COMError("CreateTextFormat() failed", hr);
 
-        virtual void DrawText();
+        // Center align (horizontally) the text.
+        hr = m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+        if (FAILED(hr))
+            throw Core::Error::COMError("SetTextAlignment() failed", hr);
 
-        // Draw content.
-        virtual void OnRender() override;
+        hr = m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+        if (FAILED(hr))
+            throw Core::Error::COMError("SetParagraphAlignment() failed", hr);
+    }
 
-        // Resize the render target.
-        virtual void OnResize(
-            const UINT width,
-            const UINT height
-        ) override;
+    // Initialize device-dependent resources.
+    virtual void CreateDeviceResources() override
+    {
+        if (m_pRenderTarget)
+            return;
 
-        virtual LRESULT HandleMessage(
-            HWND hWnd,
-            UINT message,
-            WPARAM wParam,
-            LPARAM lParam
-        ) override;
+        RECT rc;
+        GetClientRect(m_hwnd, &rc);
 
-    protected:
-        Core::Direct2D::D2D1Factory m_pDirect2dFactory;
-        Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
-        Microsoft::WRL::ComPtr<IDWriteFactory> m_pDWriteFactory;
-        Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
-        Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBlackBrush;
-        std::wstring m_stringToRender;
+        // Create a Direct2D render target.
+        m_pRenderTarget = m_pDirect2dFactory.CreateHwndRenderTarget(
+            m_hwnd,
+            rc.right - rc.left,
+            rc.bottom - rc.top
+        );
+
+        HRESULT hr = m_pRenderTarget->CreateSolidColorBrush(
+            D2D1::ColorF(D2D1::ColorF::Black),
+            &m_pBlackBrush
+        );
+        if (FAILED(hr))
+            throw Core::Error::COMError("SetParagraphAlignment() failed", hr);
+    }
+
+    // Release device-dependent resource.
+    virtual void DiscardDeviceResources() override
+    {
+        m_pRenderTarget = nullptr;
+        m_pBlackBrush = nullptr;
+    }
+
+    virtual void DrawText()
+    {
+        const float dpi = static_cast<float>(GetDpiForWindow(GetDesktopWindow()));
+        RECT rc;
+        GetClientRect(m_hwnd, &rc);
+        D2D1_RECT_F layoutRect = D2D1::RectF(
+            static_cast<float>(rc.left),
+            static_cast<float>(rc.top),
+            static_cast<float>(rc.right - rc.left),
+            static_cast<float>(rc.bottom - rc.top)
+        );
+        m_pRenderTarget->DrawText(
+            &m_stringToRender[0],        // The string to render.
+            m_stringToRender.size(),    // The string's length.
+            m_pTextFormat.Get(),    // The text format.
+            layoutRect,       // The region of the window where the text will be rendered.
+            m_pBlackBrush.Get()     // The brush used to draw the text.
+        );
+    }
+
+    // Draw content.
+    virtual void OnRender() override
+    {
+        CreateDeviceResources();
+
+        m_pRenderTarget->BeginDraw();
+        m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+        m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::BlueViolet));
+
+        DrawText();
+
+        if (const HRESULT hr = m_pRenderTarget->EndDraw(); hr == D2DERR_RECREATE_TARGET)
+        {
+            std::wcout << L"Recreating target\n";
+            DiscardDeviceResources();
+        }
+        else if (FAILED(hr))
+        {
+            throw Core::Error::COMError(__FUNCSIG__": EndDraw() failed", hr);
+        }
+    }
+
+    // Resize the render target.
+    virtual void OnResize(
+        const UINT width,
+        const UINT height
+    ) override
+    {
+        if (!m_pRenderTarget)
+            return;
+        // Note: This method can fail, but it's okay to ignore the
+        // error here, because the error will be returned again
+        // the next time EndDraw is called.
+        m_pRenderTarget->Resize(D2D1::SizeU(width, height));
+    }
+
+    virtual LRESULT HandleMessage(
+        HWND hwnd,
+        UINT message,
+        WPARAM wParam,
+        LPARAM lParam
+    ) override
+    {
+        switch (message)
+        {
+            // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size
+            case WM_SIZE:
+            {
+                const UINT width = LOWORD(lParam);
+                const UINT height = HIWORD(lParam);
+                OnResize(width, height);
+                return 0;
+            }
+
+            // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-displaychange
+            case WM_DISPLAYCHANGE:
+            {
+                InvalidateRect(hwnd, nullptr, false);
+                return 0;
+            }
+
+            // https://docs.microsoft.com/en-us/windows/win32/gdi/wm-paint
+            case WM_PAINT:
+            {
+                //OnRender();
+                ValidateRect(hwnd, nullptr);
+                return 0;
+            }
+
+            // https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
+            case WM_DESTROY:
+            {
+                PostQuitMessage(0);
+                return 0;
+            }
+
+            default:
+                return DefWindowProc(hwnd, message, wParam, lParam);
+        }
+    }
+
+protected:
+    Core::Direct2D::D2D1Factory m_pDirect2dFactory;
+    Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_pRenderTarget;
+    Microsoft::WRL::ComPtr<IDWriteFactory> m_pDWriteFactory;
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> m_pTextFormat;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_pBlackBrush;
+    std::wstring m_stringToRender;
 };
+
+extern "C" int main(int argc, char* args[])
+{
+    Core::COM::COMThreadScope scope;
+
+    DemoApp app;
+    app.Initialize();
+
+    return static_cast<int>(app.RunMessageLoop());
+}
