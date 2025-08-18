@@ -4,6 +4,9 @@ module;
 #include <Windows.h>
 #include <Objbase.h>
 #include <wincodec.h>
+#include <d2d1.h>
+#include <d2d1helper.h>
+#include <dwrite.h>
 #include <wrl/client.h>
 
 export module core:win32;
@@ -28,6 +31,15 @@ namespace Win32
 	};
 }
 
+export namespace D2D1
+{
+	using
+		::D2D1::SizeU,
+		::D2D1::RenderTargetProperties,
+		::D2D1::HwndRenderTargetProperties
+		;
+}
+
 export namespace Win32
 {
 	using
@@ -41,6 +53,8 @@ export namespace Win32
 		::DWORD,
 		::HWND,
 		::UINT,
+		::UINT32,
+		::D2D1_SIZE_U,
 		::WPARAM,
 		::LPARAM,
 		::LRESULT,
@@ -49,11 +63,14 @@ export namespace Win32
 		::IWICBitmapDecoder,
 		::HMODULE,
 		::CLSCTX,
+		::D2D1_FACTORY_TYPE,
 		::IID_IWICImagingFactory2,
 		::CLSID_WICImagingFactory2,
 		::IWICFormatConverter,
+		::ID2D1HwndRenderTarget,
 		::IWICImagingFactory2,
 		::COINIT,
+		::ID2D1Factory,
 		::CoUninitialize,
 		::CoInitializeEx,
 		::FormatMessageA,
@@ -64,6 +81,7 @@ export namespace Win32
 		::GetWindowLongPtrW,
 		::LoadCursorW,
 		::DefWindowProcW,
+		::D2D1CreateFactory,
 		::PostQuitMessage,
 		::SetWindowLongPtrW,
 		::PeekMessageW,
