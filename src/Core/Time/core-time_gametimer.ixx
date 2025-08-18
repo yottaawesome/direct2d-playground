@@ -1,9 +1,6 @@
-module;
-
-#include <Windows.h>
-
 export module core:time_gametimer;
 import std;
+import :win32;
 
 export namespace Time
 {
@@ -11,18 +8,10 @@ export namespace Time
 	{
 		// Based on Frank Luna's GameTimer class from Intro to 3D Game Programming with DirectX 12
 		GameTimer()
-			: m_secondsPerCount(0),
-			m_deltaTime(0),
-			m_baseTime(0),
-			m_currentTime(0),
-			m_totalPausedTime(0),
-			m_stopTime(0),
-			m_previousTime(0),
-			m_isStopped(false)
 		{
 			size_t countsPerSec;
 			// https://docs.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancefrequency
-			QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&countsPerSec));
+			Win32::QueryPerformanceFrequency(reinterpret_cast<Win32::LARGE_INTEGER*>(&countsPerSec));
 			m_secondsPerCount = 1.0 / (double)countsPerSec;
 		}
 
@@ -40,9 +29,9 @@ export namespace Time
 
 		void Start() noexcept
 		{
-			__int64 currentTime;
+			std::int64_t currentTime;
 			// https://docs.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
-			QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+			Win32::QueryPerformanceCounter((Win32::LARGE_INTEGER*)&currentTime);
 
 			if (m_isStopped == false)
 				return;
@@ -58,14 +47,14 @@ export namespace Time
 			if (m_isStopped)
 				return;
 
-			QueryPerformanceCounter((LARGE_INTEGER*)&m_stopTime);
+			Win32::QueryPerformanceCounter((Win32::LARGE_INTEGER*)&m_stopTime);
 			m_isStopped = true;
 		}
 
 		void Reset() noexcept
 		{
-			__int64 currentTime;
-			QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+			std::int64_t currentTime;
+			Win32::QueryPerformanceCounter((Win32::LARGE_INTEGER*)&currentTime);
 
 			m_baseTime = currentTime;
 			m_previousTime = currentTime;
@@ -81,7 +70,7 @@ export namespace Time
 				return;
 			}
 
-			QueryPerformanceCounter((LARGE_INTEGER*)&m_currentTime);
+			Win32::QueryPerformanceCounter((Win32::LARGE_INTEGER*)&m_currentTime);
 
 			// Time difference between this frame and the previous.
 			m_deltaTime = (m_currentTime - m_previousTime) * m_secondsPerCount;
@@ -97,13 +86,13 @@ export namespace Time
 		}
 
 	protected:
-		double m_secondsPerCount;
-		double m_deltaTime;
-		std::int64_t m_baseTime;
-		std::int64_t m_currentTime;
-		std::int64_t m_totalPausedTime;
-		std::int64_t m_stopTime;
-		std::int64_t m_previousTime;
-		bool m_isStopped;
+		double m_secondsPerCount = 0;
+		double m_deltaTime = 0;
+		std::int64_t m_baseTime = 0;
+		std::int64_t m_currentTime = 0;
+		std::int64_t m_totalPausedTime = 0;
+		std::int64_t m_stopTime = 0;
+		std::int64_t m_previousTime = 0;
+		bool m_isStopped = false;
 	};
 }

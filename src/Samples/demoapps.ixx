@@ -14,7 +14,7 @@ extern "C" auto main(int argc, char* args[]) -> int
 try
 {
     //Rectangles::Run();
-    DirectWrite::Run();
+    //DirectWrite::Run();
     Bitmap::Run();
 }
 catch (const std::exception& ex)

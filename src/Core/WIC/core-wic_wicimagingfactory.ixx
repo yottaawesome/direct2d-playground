@@ -1,11 +1,6 @@
-module;
-
-#include <Windows.h>
-#include <wincodec.h>
-#include <wrl/client.h>
-
 export module core:wic_wicimagingfactory;
 import std;
+import :win32;
 import :error_comerror;
 
 export namespace WIC
@@ -21,13 +16,14 @@ export namespace WIC
 		WICImagingFactory()
 		{
 			// https://docs.microsoft.com/en-us/windows/win32/api/wincodec/nn-wincodec-iwicimagingfactory
-			HRESULT hr = CoCreateInstance(
-				CLSID_WICImagingFactory,
+			Win32::HRESULT hr = Win32::CoCreateInstance(
+				Win32::CLSID_WICImagingFactory2,
 				nullptr,
-				CLSCTX_INPROC_SERVER,
-				IID_PPV_ARGS(&m_imagingFactory)
+				Win32::CLSCTX::CLSCTX_INPROC_SERVER,
+				Win32::IID_IWICImagingFactory2,
+				&m_imagingFactory
 			);
-			if (FAILED(hr))
+			if (Win32::HrFailed(hr))
 				throw Error::COMError("CoCreateInstance() failed", hr);
 		}
 
@@ -36,40 +32,40 @@ export namespace WIC
 			m_imagingFactory = nullptr;
 		}
 
-		auto CreateDecoderFromFilename(const std::wstring& path) -> Microsoft::WRL::ComPtr<IWICBitmapDecoder>
+		auto CreateDecoderFromFilename(const std::wstring& path) -> Win32::ComPtr<Win32::IWICBitmapDecoder>
 		{
 			if (!m_imagingFactory)
 				throw std::runtime_error("m_imagingFactory is nullptr");
 
-			Microsoft::WRL::ComPtr<IWICBitmapDecoder> result;
+			Microsoft::WRL::ComPtr<Win32::IWICBitmapDecoder> result;
 			// https://docs.microsoft.com/en-us/windows/win32/api/wincodec/nf-wincodec-iwicimagingfactory-createdecoderfromfilename
-			const HRESULT hr = m_imagingFactory->CreateDecoderFromFilename(
+			Win32::HRESULT hr = m_imagingFactory->CreateDecoderFromFilename(
 				path.c_str(),
 				nullptr,
-				GENERIC_READ,
+				Win32::GenericRead,
 				WICDecodeMetadataCacheOnLoad,
 				&result
 			);
-			if (FAILED(hr))
+			if (Win32::HrFailed(hr))
 				throw Error::COMError("CreateDecoderFromFilename() failed", hr);
 
 			return result;
 		}
 
-		auto CreateFormatConverter() -> Microsoft::WRL::ComPtr<IWICFormatConverter>
+		auto CreateFormatConverter() -> Win32::ComPtr<Win32::IWICFormatConverter>
 		{
 			if (!m_imagingFactory)
 				throw std::runtime_error("m_imagingFactory is nullptr");
 
-			Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
-			HRESULT hr = m_imagingFactory->CreateFormatConverter(&pConverter);
-			if (FAILED(hr))
+			Win32::ComPtr<Win32::IWICFormatConverter> pConverter;
+			Win32::HRESULT hr = m_imagingFactory->CreateFormatConverter(&pConverter);
+			if (Win32::HrFailed(hr))
 				throw Error::COMError("CreateFormatConverter() failed", hr);
 
 			return pConverter;
 		}
 
 	private:
-		Microsoft::WRL::ComPtr<IWICImagingFactory> m_imagingFactory;
+		Win32::ComPtr<Win32::IWICImagingFactory2> m_imagingFactory;
 	};
 }

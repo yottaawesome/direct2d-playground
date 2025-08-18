@@ -2,6 +2,8 @@ module;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <wincodec.h>
+#include <wrl/client.h>
 
 export module core:win32;
 import std;
@@ -28,6 +30,7 @@ namespace Win32
 export namespace Win32
 {
 	using
+		::CoCreateInstance,
 		::MSG,
 		::UINT64,
 		::WNDCLASSEX,
@@ -40,6 +43,16 @@ export namespace Win32
 		::WPARAM,
 		::LPARAM,
 		::LRESULT,
+		::LARGE_INTEGER,
+		::HRESULT,
+		::IWICBitmapDecoder,
+		::CLSCTX,
+		::IID_IWICImagingFactory2,
+		::CLSID_WICImagingFactory2,
+		::IWICFormatConverter,
+		::IWICImagingFactory2,
+		::QueryPerformanceCounter,
+		::QueryPerformanceFrequency,
 		::GetWindowLongPtrW,
 		::LoadCursorW,
 		::DefWindowProcW,
@@ -59,7 +72,8 @@ export namespace Win32
 		::ShowWindow,
 		::UpdateWindow,
 		::GetMessageW,
-		::SetWindowPos
+		::SetWindowPos,
+		::Microsoft::WRL::ComPtr
 		;
 
 	constexpr auto PmRemove = PM_REMOVE;
@@ -75,6 +89,8 @@ export namespace Win32
 	constexpr auto SwpNoMove = SWP_NOMOVE;
 	constexpr auto GwlpUserData = GWLP_USERDATA;
 
+	constexpr auto GenericRead = GENERIC_READ;
+
 	namespace Messages
 	{
 		enum
@@ -84,4 +100,6 @@ export namespace Win32
 			Destroy = WM_DESTROY
 		};
 	}
+
+	constexpr auto HrFailed(HRESULT hr) noexcept { return FAILED(hr); }
 }
