@@ -6,7 +6,7 @@ export module core:error_win32error;
 import std;
 import :error_functions;
 
-export namespace Core::Error
+export namespace Error
 {
 	struct Win32Error : std::runtime_error
 	{

@@ -5,7 +5,7 @@ module;
 export module core:error_functions;
 import std;
 
-export namespace Core::Error
+export namespace Error
 {
     template<typename S>
     struct ErrorFormatter
@@ -37,7 +37,7 @@ export namespace Core::Error
 
             std::string msg(static_cast<char*>(messageBuffer));
             if (LocalFree(messageBuffer))
-                std::wcerr << std::format(L"{}: LocalFree() failed: {}\n", TEXT(__FUNCSIG__), GetLastError());
+                std::wcerr << std::format(L"LocalFree() failed: {}\n", GetLastError());
 
             return msg;
         }
@@ -67,7 +67,7 @@ export namespace Core::Error
 
             std::wstring msg(static_cast<wchar_t*>(messageBuffer));
             if (LocalFree(messageBuffer))
-                std::wcerr << std::format(L"{}: LocalFree() failed: {}\n", TEXT(__FUNCSIG__), GetLastError());
+                std::wcerr << std::format(L"LocalFree() failed: {}\n", GetLastError());
 
             return msg;
         }

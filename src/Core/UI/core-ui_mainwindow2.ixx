@@ -5,7 +5,7 @@ module;
 export module core:ui_mainwindow2;
 import :ui_mainwindow;
 
-export namespace Core::UI
+export namespace UI
 {
     // This is  basically the same as MainWindow, but uses a different message loop
     // identical to the one in Intro To 3D Game Programming Using DX12's samples.

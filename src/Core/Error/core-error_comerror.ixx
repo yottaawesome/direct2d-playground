@@ -6,7 +6,7 @@ export module core:error_comerror;
 import std;
 import :error_win32error;
 
-export namespace Core::Error
+export namespace Error
 {
 	struct COMError : Win32Error
 	{

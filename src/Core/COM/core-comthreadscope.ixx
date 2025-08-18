@@ -7,7 +7,7 @@ module;
 export module core:com_comthreadscope;
 import :error_comerror;
 
-export namespace Core::COM
+export namespace COM
 {
 	struct COMThreadScope
 	{
@@ -19,13 +19,13 @@ export namespace Core::COM
 		COMThreadScope()
 		{
 			// https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
-			switch (const HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED))
+			switch (HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED))
 			{
 				case S_OK:
 				case S_FALSE:
 					break;
 				default:
-					throw Error::COMError(__FUNCSIG__": CoInitializeEx() failed", hr);
+					throw Error::COMError("CoInitializeEx() failed", hr);
 			}
 		}
 	};

@@ -10,7 +10,7 @@ export module core:direct2d_d2d1factory;
 import std;
 import :error;
 
-export namespace Core::Direct2D
+export namespace Direct2D
 {
 	// Represents an ID2D1Factory. See also https://docs.microsoft.com/en-us/windows/win32/api/d2d1/nn-d2d1-id2d1factory
 	// Make sure to link to #pragma comment(lib, "d2d1.lib")
@@ -50,7 +50,7 @@ export namespace Core::Direct2D
 			 -> Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget>
 		{
 			if (!hwnd)
-				throw std::invalid_argument(__FUNCSIG__": hwnd is null");
+				throw std::invalid_argument("hwnd is null");
 			if (!m_pDirect2dFactory)
 				Initialise(m_factoryType);
 
@@ -65,7 +65,7 @@ export namespace Core::Direct2D
 				&renderTarget
 			);
 			if (FAILED(hr))
-				throw Core::Error::COMError("CreateHwndRenderTarget() failed", hr);
+				throw Error::COMError("CreateHwndRenderTarget() failed", hr);
 
 			return renderTarget;
 		}

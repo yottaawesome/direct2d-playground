@@ -6,7 +6,7 @@ export module core:ui_mainwindow;
 import std;
 import :error_win32error;
 
-export namespace Core::UI
+export namespace UI
 {
     class MainWindow
     {
@@ -68,7 +68,7 @@ export namespace Core::UI
                 this
             );
             if (!m_hwnd)
-                throw Core::Error::Win32Error(__FUNCSIG__": CreateWindowEx() failed", GetLastError());
+                throw Error::Win32Error("CreateWindowEx() failed", GetLastError());
 
             ShowWindow(m_hwnd, SW_SHOWNORMAL);
             UpdateWindow(m_hwnd);
@@ -89,7 +89,7 @@ export namespace Core::UI
         virtual void ResizeWindow(const UINT width, const UINT height)
         {
             if (!m_hwnd)
-                throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
+                throw std::runtime_error("m_hwnd is null");
             const bool succeeded = SetWindowPos(
                 m_hwnd,
                 HWND_TOP,
@@ -100,13 +100,13 @@ export namespace Core::UI
                 SWP_NOMOVE
             );
             if (!succeeded)
-                throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
+                throw Error::Win32Error("SetWindowPost() failed", GetLastError());
         }
 
         virtual void ResizeClient(const UINT width, const UINT height)
         {
             if (!m_hwnd)
-                throw std::runtime_error(__FUNCSIG__": m_hwnd is null");
+                throw std::runtime_error("m_hwnd is null");
 
             RECT r{
                 .right = static_cast<LONG>(width),
@@ -124,7 +124,7 @@ export namespace Core::UI
                 SWP_NOMOVE
             );
             if (!succeeded)
-                throw Error::Win32Error(__FUNCSIG__": SetWindowPost() failed", GetLastError());
+                throw Error::Win32Error("SetWindowPost() failed", GetLastError());
         }
 
     protected:

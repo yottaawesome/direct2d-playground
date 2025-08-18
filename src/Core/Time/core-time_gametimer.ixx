@@ -5,7 +5,7 @@ module;
 export module core:time_gametimer;
 import std;
 
-export namespace Core::Time
+export namespace Time
 {
 	struct GameTimer
 	{

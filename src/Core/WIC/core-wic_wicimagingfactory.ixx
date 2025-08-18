@@ -8,12 +8,12 @@ export module core:wic_wicimagingfactory;
 import std;
 import :error_comerror;
 
-export namespace Core::WIC
+export namespace WIC
 {
-	class WICImagingFactory
+	class WICImagingFactory final
 	{
 	public:
-		virtual ~WICImagingFactory()
+		~WICImagingFactory()
 		{
 			Close();
 		}
@@ -28,19 +28,18 @@ export namespace Core::WIC
 				IID_PPV_ARGS(&m_imagingFactory)
 			);
 			if (FAILED(hr))
-				throw Error::COMError(__FUNCSIG__": CoCreateInstance() failed", hr);
+				throw Error::COMError("CoCreateInstance() failed", hr);
 		}
 
-	public:
-		virtual void Close()
+		void Close()
 		{
 			m_imagingFactory = nullptr;
 		}
 
-		virtual Microsoft::WRL::ComPtr<IWICBitmapDecoder> CreateDecoderFromFilename(const std::wstring& path)
+		auto CreateDecoderFromFilename(const std::wstring& path) -> Microsoft::WRL::ComPtr<IWICBitmapDecoder>
 		{
 			if (!m_imagingFactory)
-				throw std::runtime_error(__FUNCSIG__": m_imagingFactory is nullptr");
+				throw std::runtime_error("m_imagingFactory is nullptr");
 
 			Microsoft::WRL::ComPtr<IWICBitmapDecoder> result;
 			// https://docs.microsoft.com/en-us/windows/win32/api/wincodec/nf-wincodec-iwicimagingfactory-createdecoderfromfilename
@@ -52,25 +51,25 @@ export namespace Core::WIC
 				&result
 			);
 			if (FAILED(hr))
-				throw Error::COMError(__FUNCSIG__": CreateDecoderFromFilename() failed", hr);
+				throw Error::COMError("CreateDecoderFromFilename() failed", hr);
 
 			return result;
 		}
 
-		virtual Microsoft::WRL::ComPtr<IWICFormatConverter> CreateFormatConverter()
+		auto CreateFormatConverter() -> Microsoft::WRL::ComPtr<IWICFormatConverter>
 		{
 			if (!m_imagingFactory)
-				throw std::runtime_error(__FUNCSIG__": m_imagingFactory is nullptr");
+				throw std::runtime_error("m_imagingFactory is nullptr");
 
 			Microsoft::WRL::ComPtr<IWICFormatConverter> pConverter;
 			HRESULT hr = m_imagingFactory->CreateFormatConverter(&pConverter);
 			if (FAILED(hr))
-				throw Core::Error::COMError("CreateFormatConverter() failed", hr);
+				throw Error::COMError("CreateFormatConverter() failed", hr);
 
 			return pConverter;
 		}
 
-	protected:
+	private:
 		Microsoft::WRL::ComPtr<IWICImagingFactory> m_imagingFactory;
 	};
 }
