@@ -13,9 +13,11 @@ export import :bitmap;
 extern "C" auto main(int argc, char* args[]) -> int
 try
 {
+    COM::COMThreadScope s;
+    COM::C c(COM::Init);
     //Rectangles::Run();
     //DirectWrite::Run();
-    Bitmap::Run();
+    //Bitmap::Run();
 }
 catch (const std::exception& ex)
 {

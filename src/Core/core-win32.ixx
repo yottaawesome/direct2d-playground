@@ -17,33 +17,43 @@ namespace Win32
 	template<auto VValue>
 	struct Win32Constant
 	{
-		operator decltype(VValue)(this auto&&) noexcept
-			requires (not std::invocable<decltype(VValue)>)
+		auto Get() const noexcept
 		{
-			return VValue;
+			if constexpr (std::invocable<decltype(VValue)>)
+				return std::invoke(VValue);
+			else
+				return VValue;
 		}
 
-		operator decltype(VValue)(this auto&&) noexcept
-			requires std::invocable<decltype(VValue)>
+		operator std::invoke_result_t<decltype(&Win32Constant::Get), Win32Constant>() const noexcept
 		{
-			return VValue();
+			return Get();
 		}
 	};
 }
+
+struct F
+{
+	operator bool() { return false; }
+};
 
 export namespace D2D1
 {
 	using
 		::D2D1::SizeU,
 		::D2D1::RenderTargetProperties,
-		::D2D1::HwndRenderTargetProperties
+		::D2D1::HwndRenderTargetProperties,
+		::D2D1::Matrix3x2F,
+		::D2D1::ColorF,
+		::D2D1::RectF
 		;
 }
 
 export namespace Win32
 {
 	using
-		::CoCreateInstance,
+		::IDWriteTextFormat,
+		::ID2D1SolidColorBrush,
 		::MSG,
 		::UINT64,
 		::WNDCLASSEX,
@@ -60,10 +70,12 @@ export namespace Win32
 		::LRESULT,
 		::LARGE_INTEGER,
 		::HRESULT,
+		::D2D1_RECT_F,
 		::IWICBitmapDecoder,
 		::HMODULE,
 		::CLSCTX,
 		::D2D1_FACTORY_TYPE,
+		::DWRITE_FACTORY_TYPE,
 		::IID_IWICImagingFactory2,
 		::CLSID_WICImagingFactory2,
 		::IWICFormatConverter,
@@ -71,6 +83,16 @@ export namespace Win32
 		::IWICImagingFactory2,
 		::COINIT,
 		::ID2D1Factory,
+		::IDWriteFactory,
+		::DWRITE_FONT_STRETCH,
+		::DWRITE_FONT_WEIGHT,
+		::DWRITE_FONT_STYLE,
+		::DWRITE_TEXT_ALIGNMENT,
+		::DWRITE_PARAGRAPH_ALIGNMENT,
+		::Microsoft::WRL::ComPtr,
+		::GetDpiForWindow,
+		::GetDesktopWindow,
+		::DWriteCreateFactory,
 		::CoUninitialize,
 		::CoInitializeEx,
 		::FormatMessageA,
@@ -79,6 +101,7 @@ export namespace Win32
 		::QueryPerformanceCounter,
 		::QueryPerformanceFrequency,
 		::GetWindowLongPtrW,
+		::CoCreateInstance,
 		::LoadCursorW,
 		::DefWindowProcW,
 		::D2D1CreateFactory,
@@ -87,6 +110,7 @@ export namespace Win32
 		::PeekMessageW,
 		::LoadLibraryW,
 		::FreeLibrary,
+		::GetClientRect,
 		::TranslateMessage,
 		::DispatchMessageW,
 		::DestroyWindow,
@@ -101,8 +125,21 @@ export namespace Win32
 		::UpdateWindow,
 		::GetMessageW,
 		::SetWindowPos,
-		::Microsoft::WRL::ComPtr
+		::InvalidateRect,
+		::ValidateRect
 		;
+
+	namespace D2DError
+	{
+		enum
+		{
+			RecreateTarget = D2DERR_RECREATE_TARGET
+		};
+	}
+	constexpr Win32Constant<[]{ return CLSID_WICImagingFactory2; }> ClsWICImagingFactory2;
+
+	constexpr auto LoWord(auto v) noexcept -> WORD { return LOWORD(v); }
+	constexpr auto HiWord(auto v) noexcept -> WORD { return HIWORD(v); }
 
 	constexpr auto PmRemove = PM_REMOVE;
 	constexpr auto WsOverlappedWindow = WS_OVERLAPPEDWINDOW;
@@ -133,7 +170,10 @@ export namespace Win32
 		{
 			Quit = WM_QUIT,
 			Create = WM_CREATE,
-			Destroy = WM_DESTROY
+			Destroy = WM_DESTROY,
+			Size = WM_SIZE,
+			DisplayChange = WM_DISPLAYCHANGE,
+			Paint = WM_PAINT,
 		};
 	}
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="COM\core-comobject.ixx" />
     <ClCompile Include="COM\core-comthreadscope.ixx" />
     <ClCompile Include="core-win32.ixx" />
     <ClCompile Include="core.ixx" />
