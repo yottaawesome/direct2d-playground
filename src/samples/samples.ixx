@@ -8,12 +8,11 @@ import shared;
 // The original sample is licensed under the MIT License.
 export namespace Rectangles
 {
-	class SampleApp final : public Shared::Window
+	class SampleApp final : public Shared::Window<SampleApp>
 	{
 	public:
 		SampleApp()
 		{
-			Init();
 			CreateDeviceIndependentResources();
 			CreateDeviceResources();
 		};

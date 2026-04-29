@@ -50,14 +50,11 @@ export namespace Shared
 
 export namespace Shared
 {
+	template<typename TWindow>
 	class Window
 	{
 	public:
-		struct NoInitTag {} static constexpr DontInitialise{};
-
-		// Subclasses must always call Init() in their own constructor,
-		// to properly initialize the window.
-		constexpr Window() noexcept = default;
+		constexpr Window() noexcept { Init(); };
 
 		constexpr Window(const Window&) = delete;
 		constexpr auto operator=(const Window&) -> Window& = delete;
@@ -81,8 +78,6 @@ export namespace Shared
 		}
 
 	protected:
-		Shared::HwndUniquePtr m_window;
-
 		void Init(this auto&& self)
 		{
 			self.RegisterClass();
@@ -93,11 +88,10 @@ export namespace Shared
 		// a single name would cause the second-and-later RegisterClassExW calls
 		// to fail with ERROR_CLASS_ALREADY_EXISTS and silently fall back to the
 		// first-registered class's WndProc.
-		template<typename TWindow>
 		static auto ClassName() noexcept -> const wchar_t*
 		{
 			static const auto name = 
-				[] -> std::wstring
+				[] static -> std::wstring
 				{
 					auto raw = std::string_view{ typeid(TWindow).name() };
 					return { raw.begin(), raw.end() };
@@ -105,7 +99,6 @@ export namespace Shared
 			return name.c_str();
 		}
 
-		template<typename TWindow>
 		static auto WndProc(
 			Win32::HWND handle, 
 			Win32::UINT msg, 
@@ -164,11 +157,10 @@ export namespace Shared
 
 		auto GetWindowClassStruct(this auto&& self) noexcept -> Win32::WNDCLASSEXW
 		{
-			using Derived = std::remove_cvref_t<decltype(self)>;
 			return Win32::WNDCLASSEXW{
 				.cbSize = sizeof(Win32::WNDCLASSEXW),
 				.style = 0,
-				.lpfnWndProc = &WndProc<Derived>,
+				.lpfnWndProc = &WndProc,
 				.cbClsExtra = 0,
 				.cbWndExtra = 0,
 				.hInstance = Win32::GetModuleHandleW(nullptr),
@@ -176,7 +168,7 @@ export namespace Shared
 				.hCursor = Win32::LoadCursorW(nullptr, Win32::IdcArrow),
 				.hbrBackground = static_cast<Win32::HBRUSH>(Win32::GetStockObject(Win32::Brushes::White)),
 				.lpszMenuName = nullptr,
-				.lpszClassName = ClassName<Derived>(),
+				.lpszClassName = ClassName(),
 			};
 		}
 
@@ -190,11 +182,10 @@ export namespace Shared
 
 		void CreateAndShowWindow(this auto&& self)
 		{
-			using Derived = std::remove_cvref_t<decltype(self)>;
 			auto hwnd =
 				Win32::CreateWindowExW(
 					0,
-					ClassName<Derived>(),
+					ClassName(),
 					L"Shared Window",
 					Win32::WindowStyles::OverlappedWindow | Win32::WindowStyles::Visible,
 					0,
@@ -209,5 +200,7 @@ export namespace Shared
 			if (not hwnd)
 				throw Win32Error{ Win32::GetLastError(), "Failed to create window" };
 		}
+
+		Shared::HwndUniquePtr m_window;
 	};
 }
