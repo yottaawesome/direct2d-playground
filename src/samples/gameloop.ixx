@@ -15,8 +15,11 @@ export namespace GameLoop
 		ResizeFn OnResize = [](std::uint32_t, std::uint32_t) {};
 		DpiChangedFn OnDpiChanged = [](std::uint32_t, const Win32::RECT&) {};
 
-		MainWindow(RenderFn onRender, ResizeFn onResize, DpiChangedFn onDpiChanged)
-			: Shared::Window<MainWindow>{ false }
+		MainWindow(
+			RenderFn onRender, 
+			ResizeFn onResize, 
+			DpiChangedFn onDpiChanged
+		)	: Shared::Window<MainWindow>{ false }
 			, OnRender(std::move(onRender))
 			, OnResize(std::move(onResize))
 			, OnDpiChanged(std::move(onDpiChanged))
@@ -57,6 +60,20 @@ export namespace GameLoop
 		{
 			Win32::InvalidateRect(self.GetHandle(), nullptr, false);
 			return 0;
+		}
+	};
+
+	class Timer 
+	{
+	public:
+		std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
+
+		auto Advance(this auto&& self) -> float
+		{
+			const auto now = std::chrono::steady_clock::now();
+			auto dt = std::chrono::duration<float>(now - self.last).count(); // seconds (can be decimal)
+			self.last = now;
+			return dt;
 		}
 	};
 
@@ -152,9 +169,7 @@ export namespace GameLoop
 
 		auto Tick(this auto&& self)
 		{
-			const auto now = std::chrono::steady_clock::now();
-			auto dt = std::chrono::duration<float>(now - self.last).count(); // seconds (can be decimal)
-			self.last = now;
+			auto dt = self.timer.Advance(); // seconds (can be decimal)
 			// a debugger break or a long modal pause produces a huge first post-resume dt.
 			// production apps clamp this to avoid doing a huge amount of work in the first frame after a pause.
 			self.Update(std::min(dt, 0.1f));
@@ -196,8 +211,8 @@ export namespace GameLoop
 			[this](std::uint32_t width, std::uint32_t height) { OnResize(width, height); },
 			[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect) { OnDpiChanged(dpiX, suggestedRect); }
 		};
-		std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
-
+		
+		Timer timer;
 		Shared::Ptr<D2D1::ID2D1Factory> direct2dFactory;
 		Shared::Ptr<D2D1::ID2D1HwndRenderTarget> renderTarget;
 		Shared::Ptr<D2D1::ID2D1SolidColorBrush> lightSlateGrayBrush;
