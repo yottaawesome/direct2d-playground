@@ -164,8 +164,8 @@ export namespace GameLoop
 			self.lightSlateGrayBrush.reset();
 			self.cornflowerBlueBrush.reset();
 		}
-		void ReleaseDpiDependentResources() {}
-		void CreateDpiDependentResources(std::uint32_t dpi) {}
+		void ReleaseDpiDependentResources(this auto&& self) {}
+		void CreateDpiDependentResources(this auto&& self,std::uint32_t dpi) {}
 
 		auto Tick(this auto&& self)
 		{
