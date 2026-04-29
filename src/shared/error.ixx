@@ -33,6 +33,20 @@ export namespace Shared
 		std::string Message = [code = Code] { return SystemCodeToString(code); }();
 	};
 
+	// FormatMessage with FROM_SYSTEM resolves most HRESULTs directly, but for
+	// FACILITY_WIN32-wrapped HRESULTs (HRESULT_FROM_WIN32) we get a cleaner
+	// message by unwrapping to the underlying Win32 code first. Inlined here
+	// because HRESULT_FACILITY / HRESULT_CODE / FACILITY_WIN32 are macros and
+	// can't be re-exported through the :win32 module partition.
+	auto HResultToString(Win32::HRESULT hr) -> std::string
+	{
+		constexpr long FacilityWin32 = 7;
+		const auto facility = (static_cast<unsigned long>(hr) >> 16) & 0x1FFFul;
+		if (facility == FacilityWin32)
+			return SystemCodeToString(static_cast<Win32::DWORD>(hr) & 0xFFFFul);
+		return SystemCodeToString(static_cast<Win32::DWORD>(hr));
+	}
+
 	class Error : public std::runtime_error
 	{
 	public:
@@ -69,6 +83,24 @@ export namespace Shared
 		static auto FormatPrefix(std::string_view message, Win32::DWORD code) -> std::string
 		{
 			return std::format("{}: {}", message, SystemCodeToString(code));
+		}
+	};
+
+	class ComError : public Error
+	{
+	public:
+		ComError(
+			Win32::HRESULT hr,
+			std::string_view message,
+			const std::source_location& loc = std::source_location::current(),
+			const std::stacktrace& trace = std::stacktrace::current()
+		) : Error(FormatPrefix(message, hr), loc, trace)
+		{}
+
+	private:
+		static auto FormatPrefix(std::string_view message, Win32::HRESULT hr) -> std::string
+		{
+			return std::format("{}: {} (0x{:08X})", message, HResultToString(hr), static_cast<unsigned long>(hr));
 		}
 	};
 }

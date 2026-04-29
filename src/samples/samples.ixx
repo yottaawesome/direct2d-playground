@@ -21,11 +21,13 @@ export namespace Rectangles
 		auto CreateDeviceIndependentResources(this auto&& self)
 		{
 			// Create a Direct2D factory.
-			auto hr = Win32::HRESULT{
-				D2D1::D2D1CreateFactory(D2D1::D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, self.direct2dFactory.ReleaseAndGetAddressOf())
-			};
-			if (Win32::Failed(hr))
-				throw Shared::Win32Error(hr, "D2D1CreateFactory() failed");
+			auto hr = Shared::HResult{
+				D2D1::D2D1CreateFactory(
+					D2D1::D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, 
+					self.direct2dFactory.ReleaseAndGetAddressOf()
+				)};
+			if (not hr)
+				throw Shared::ComError{ hr, "D2D1CreateFactory() failed" };
 		}
 
 		auto CreateDeviceResources(this auto&& self)
@@ -45,7 +47,7 @@ export namespace Rectangles
 					self.renderTarget.AddressOfTyped()
 				) };
 			if (Win32::Failed(hr))
-				throw Shared::Win32Error(hr, "CreateHwndRenderTarget() failed");
+				throw Shared::ComError{ hr, "CreateHwndRenderTarget() failed" };
 
 			// Create a gray brush.
 			hr = self.renderTarget->CreateSolidColorBrush(
@@ -53,7 +55,7 @@ export namespace Rectangles
 				self.lightSlateGrayBrush.AddressOfTyped()
 			);
 			if (Win32::Failed(hr))
-				throw Shared::Win32Error(hr, "CreateSolidColorBrush() failed [1]");
+				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [1]" };
 
 			// Create a blue brush.
 			hr = self.renderTarget->CreateSolidColorBrush(
@@ -61,7 +63,7 @@ export namespace Rectangles
 				self.cornflowerBlueBrush.ReleaseAndGetAddressOf()
 			);
 			if (Win32::Failed(hr))
-				throw Shared::Win32Error(hr, "CreateSolidColorBrush() failed [2]");
+				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [2]" };
 		}
 
 		auto OnMessage(this auto&& self, const Shared::Messages::Paint& msg) -> Win32::LRESULT
