@@ -18,7 +18,7 @@ try
 		throw Shared::Error{std::string{"Expected the DPI awareness context to be PerMonitorAwareV2"}};
 
 	//Rectangles::Run();
-	MainLoopDrawing::Run();
+	GameLoop::Run();
 
 	return 0;
 }

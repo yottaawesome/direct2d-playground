@@ -8,6 +8,6 @@ The project is set up to be DPI-aware.
 
 Draws rectangles.
 
-### MainLoopDrawing
+### GameLoop
 
 A sample thet demonstrates how to draw in the main loop. It's set up how a game would be.

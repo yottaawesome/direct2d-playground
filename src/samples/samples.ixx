@@ -190,7 +190,7 @@ export namespace Rectangles
 	}
 }
 
-export namespace MainLoopDrawing
+export namespace GameLoop
 {
 	class MainWindow final : public Shared::Window<MainWindow>
 	{
