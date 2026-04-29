@@ -11,7 +11,7 @@ export namespace Rectangles
 	class SampleApp final : public Shared::Window<SampleApp>
 	{
 	public:
-		SampleApp()
+		SampleApp() : Shared::Window<SampleApp>{ true }
 		{
 			CreateDeviceIndependentResources();
 			CreateDeviceResources();
@@ -203,10 +203,16 @@ export namespace MainLoopDrawing
 		ResizeFn OnResize = [](std::uint32_t, std::uint32_t){};
 		DpiChangedFn OnDpiChanged = [](std::uint32_t, const Win32::RECT&){};
 
-		MainWindow() = default;
 		MainWindow(RenderFn onRender, ResizeFn onResize, DpiChangedFn onDpiChanged)
-			: OnRender(std::move(onRender)), OnResize(std::move(onResize)), OnDpiChanged(std::move(onDpiChanged))
-		{}
+			: Shared::Window<MainWindow>{ false }, OnRender(std::move(onRender)), OnResize(std::move(onResize)), OnDpiChanged(std::move(onDpiChanged))
+		{
+			// We need to Init() after setting the function objects, 
+			// because the message handlers call those functions.
+			// Letting the base constructor do the init would cause 
+			// the handlers to call empty function objects, generating 
+			// errors.
+			Init();
+		}
 
 		// This is the minimum message handling needed to support rendering in the main loop. 
 		// You can add handlers for other messages (e.g. WM_SIZE) as needed.
@@ -258,15 +264,15 @@ export namespace MainLoopDrawing
 
 			self.renderTarget->BeginDraw();
 			
-			auto hr = Win32::HRESULT{ self.renderTarget->EndDraw() };
-			if (hr == D2D1::Error::RecreateTarget)
+			auto hr = Shared::HResult{ self.renderTarget->EndDraw() };
+			if (hr == Shared::HResult{ D2D1::Error::RecreateTarget })
 			{
 				self.DiscardDeviceResources();
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
 			}
 			else if (not hr)
 			{
-				throw Shared::Win32Error(hr, "EndDraw() failed");
+				throw Shared::ComError{ hr, "EndDraw() failed" };
 			}
 		}
 		auto GetWindow(this auto&& self) -> Win32::HWND

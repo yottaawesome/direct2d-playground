@@ -56,7 +56,10 @@ export namespace Shared
 	class Window
 	{
 	public:
-		constexpr Window() noexcept { Init(); };
+		constexpr Window(bool init = true) 
+		{ 
+			init ? Init() : void();
+		};
 
 		constexpr Window(const Window&) = delete;
 		constexpr auto operator=(const Window&) -> Window& = delete;

@@ -17,7 +17,8 @@ try
 	if (not Win32::AreDpiAwarenessContextsEqual(ctx, Win32::DpiAwarenessContext::PerMonitorAwareV2))
 		throw Shared::Error{std::string{"Expected the DPI awareness context to be PerMonitorAwareV2"}};
 
-	Rectangles::Run();
+	//Rectangles::Run();
+	MainLoopDrawing::Run();
 
 	return 0;
 }
