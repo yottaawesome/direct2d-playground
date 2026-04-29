@@ -35,6 +35,7 @@ export namespace Shared
 		using NonClientDestroy = TypedMessage<Win32::Messages::NonClientDestroy>;
 		using Size = TypedMessage<Win32::Messages::Size>;
 		using DisplayChange = TypedMessage<Win32::Messages::DisplayChange>;
+		using DpiChanged = TypedMessage<Win32::Messages::DpiChanged>;
 	}
 
 	constexpr auto HandledMessages = std::tuple{
@@ -44,7 +45,8 @@ export namespace Shared
 		Messages::Command{},
 		Messages::NonClientDestroy{},
 		Messages::Size{},
-		Messages::DisplayChange{}
+		Messages::DisplayChange{},
+		Messages::DpiChanged{}
 	};
 }
 

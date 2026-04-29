@@ -43,6 +43,15 @@ export namespace Win32
 		::RECT,
 		::HRESULT,
 		::COINIT,
+		::PAINTSTRUCT,
+		::DPI_AWARENESS,
+		::AreDpiAwarenessContextsEqual,
+		::GetAwarenessFromDpiAwarenessContext,
+		::SetProcessDpiAwarenessContext,
+		::GetThreadDpiAwarenessContext,
+		::SetWindowPos,
+		::MessageBoxA,
+		::MessageBoxW,
 		::InvalidateRect,
 		::ValidateRect,
 		::CoInitializeEx,
@@ -50,7 +59,6 @@ export namespace Win32
 		::GetClientRect,
 		::BeginPaint,
 		::EndPaint,
-		::PAINTSTRUCT,
 		::WaitMessage,
 		::GetWindowLongPtrW,
 		::SetWindowLongPtrW,
@@ -75,6 +83,48 @@ export namespace Win32
 
 	constexpr auto Succeeded(HRESULT hr) noexcept { return SUCCEEDED(hr); }
 	constexpr auto Failed(HRESULT hr) noexcept { return FAILED(hr); }
+
+	namespace DpiAwarenessContext
+	{
+		constexpr auto Unaware = Win32Constant<DPI_AWARENESS_CONTEXT_UNAWARE>{};
+		constexpr auto SystemAware = Win32Constant<DPI_AWARENESS_CONTEXT_SYSTEM_AWARE>{};
+		constexpr auto PerMonitorAware = Win32Constant<DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE>{};
+		constexpr auto PerMonitorAwareV2 = Win32Constant<DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2>{};
+	}
+
+	namespace SetWindowPosFlags
+	{
+		enum
+		{
+			NoSize = SWP_NOSIZE,
+			NoMove = SWP_NOMOVE,
+			NoZOrder = SWP_NOZORDER,
+			ShowWindow = SWP_SHOWWINDOW,
+			HideWindow = SWP_HIDEWINDOW,
+			NoActivate = SWP_NOACTIVATE,
+			DrawFrame = SWP_DRAWFRAME,
+			FrameChanged = SWP_FRAMECHANGED,
+			NoOwnerZOrder = SWP_NOOWNERZORDER,
+			NoSendChanging = SWP_NOSENDCHANGING
+		};
+	}
+
+	namespace MessageBoxOptions
+	{
+		enum
+		{
+			Ok = MB_OK,
+			OkCancel = MB_OKCANCEL,
+			AbortRetryIgnore = MB_ABORTRETRYIGNORE,
+			YesNoCancel = MB_YESNOCANCEL,
+			YesNo = MB_YESNO,
+			RetryCancel = MB_RETRYCANCEL,
+			Critical = MB_ICONERROR,
+			Question = MB_ICONQUESTION,
+			Exclamation = MB_ICONEXCLAMATION,
+			Information = MB_ICONINFORMATION
+		};
+	}
 
 	namespace Error
 	{
@@ -175,7 +225,8 @@ export namespace Win32
 			KeyUp = WM_KEYUP,
 			Command = WM_COMMAND,
 			Size = WM_SIZE,
-			DisplayChange = WM_DISPLAYCHANGE
+			DisplayChange = WM_DISPLAYCHANGE,
+			DpiChanged = WM_DPICHANGED
 		};
 	}
 
