@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Just a repo for fooling around with Direct2D.
+Just a repo for fooling around with Direct2D. This repo is being reworked to modernise it and add more samples.
 
 ## Additional resources
 
