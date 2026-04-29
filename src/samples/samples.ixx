@@ -66,21 +66,18 @@ export namespace Rectangles
 				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [2]" };
 		}
 
+		void DiscardDeviceResources(this auto&& self)
+		{
+			self.renderTarget.reset();
+			self.lightSlateGrayBrush.reset();
+			self.cornflowerBlueBrush.reset();
+		}
+
 		auto OnMessage(this auto&& self, const Shared::Messages::Paint& msg) -> Win32::LRESULT
 		{
 			self.OnRender();
 			Win32::ValidateRect(self.GetHandle(), nullptr);
 			return 0;
-		}
-
-		void OnResize(this auto&& self, Win32::UINT width, Win32::UINT height)
-		{
-			if (not self.renderTarget)
-				return;
-			// Note: This method can fail, but it's okay to ignore the
-			// error here, because the error will be returned again
-			// the next time EndDraw is called.
-			self.renderTarget->Resize(D2D1::SizeU(width, height));
 		}
 
 		auto OnMessage(this auto&& self, const Shared::Messages::Size& msg) -> Win32::LRESULT
@@ -97,11 +94,14 @@ export namespace Rectangles
 			return 0;
 		}
 
-		void DiscardDeviceResources(this auto&& self)
+		void OnResize(this auto&& self, Win32::UINT width, Win32::UINT height)
 		{
-			self.renderTarget.reset();
-			self.lightSlateGrayBrush.reset();
-			self.cornflowerBlueBrush.reset();
+			if (not self.renderTarget)
+				return;
+			// Note: This method can fail, but it's okay to ignore the
+			// error here, because the error will be returned again
+			// the next time EndDraw is called.
+			self.renderTarget->Resize(D2D1::SizeU(width, height));
 		}
 
 		auto OnRender(this auto&& self)
