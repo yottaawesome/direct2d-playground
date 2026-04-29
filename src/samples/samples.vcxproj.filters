@@ -21,6 +21,12 @@
     <ClCompile Include="samples.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="rectangles.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gameloop.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />

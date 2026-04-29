@@ -141,7 +141,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="gameloop.ixx" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rectangles.ixx" />
     <ClCompile Include="samples.ixx" />
   </ItemGroup>
   <ItemGroup>
