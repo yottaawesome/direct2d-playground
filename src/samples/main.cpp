@@ -8,7 +8,7 @@ import shared;
 class SampleApp final : public Shared::Window
 {
 public:
-	SampleApp() : Shared::Window(Shared::Window::DontInitialise) 
+	SampleApp()
 	{ 
 		Init();
 		CreateDeviceIndependentResources();

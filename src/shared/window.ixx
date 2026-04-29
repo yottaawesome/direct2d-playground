@@ -53,29 +53,23 @@ export namespace Shared
 	class Window
 	{
 	public:
-		struct InitTag {} static constexpr Initialise;
 		struct NoInitTag {} static constexpr DontInitialise{};
 
-		Window(InitTag) 
-		{
-			Init();
-		}
-		constexpr Window(NoInitTag) noexcept { }
+		// Subclasses must always call Init() in their own constructor,
+		// to properly initialize the window.
+		constexpr Window() noexcept = default;
 
 		constexpr Window(const Window&) = delete;
-		constexpr auto operator=(const Window&) -> Window & = delete;
+		constexpr auto operator=(const Window&) -> Window& = delete;
 
-		constexpr Window(Window&&) = default;
-		constexpr auto operator=(Window&&) -> Window & = default;
+		// Move is deleted: WndProc stores `this` in GWLP_USERDATA, so moving the
+		// Window object would leave the OS pointing at a moved-from instance.
+		Window(Window&&) = delete;
+		auto operator=(Window&&) -> Window& = delete;
 
 		constexpr auto GetHandle() const -> Win32::HWND
 		{
 			return m_window.get();
-		}
-
-		constexpr auto OnMessage(this auto&&, const Messages::Paint& msg) -> Win32::LRESULT
-		{
-			return Win32::DefWindowProcW(msg.Handle, msg.MessageId, msg.WParam, msg.LParam);
 		}
 
 		auto GetClientRect(this auto&& self) -> Win32::RECT
@@ -93,6 +87,22 @@ export namespace Shared
 		{
 			self.RegisterClass();
 			self.CreateAndShowWindow();
+		}
+
+		// Each derived type registers under its own window class name; sharing
+		// a single name would cause the second-and-later RegisterClassExW calls
+		// to fail with ERROR_CLASS_ALREADY_EXISTS and silently fall back to the
+		// first-registered class's WndProc.
+		template<typename TWindow>
+		static auto ClassName() noexcept -> const wchar_t*
+		{
+			static const auto name = 
+				[] -> std::wstring
+				{
+					auto raw = std::string_view{ typeid(TWindow).name() };
+					return { raw.begin(), raw.end() };
+				}();
+			return name.c_str();
 		}
 
 		template<typename TWindow>
@@ -123,18 +133,18 @@ export namespace Shared
 				if (pThis and msg == Win32::Messages::NonClientDestroy)
 				{
 					Win32::SetWindowLongPtrW(handle, Win32::Gwlp::UserData, 0);
-					pThis->m_window.release();
+					(void)pThis->m_window.release();
 				}
 			}
-
-			if (not pThis)
-				return Win32::DefWindowProcW(handle, msg, wParam, lParam);
 
 			if (msg == Win32::Messages::Destroy)
 			{
 				Win32::PostQuitMessage(0);
 				return 0;
 			}
+
+			if (not pThis)
+				return Win32::DefWindowProcW(handle, msg, wParam, lParam);
 
 			return [pThis, handle, wParam, lParam, msg]<std::size_t...Is>(std::index_sequence<Is...>)
 			{
@@ -154,10 +164,11 @@ export namespace Shared
 
 		auto GetWindowClassStruct(this auto&& self) noexcept -> Win32::WNDCLASSEXW
 		{
+			using Derived = std::remove_cvref_t<decltype(self)>;
 			return Win32::WNDCLASSEXW{
 				.cbSize = sizeof(Win32::WNDCLASSEXW),
 				.style = 0,
-				.lpfnWndProc = &WndProc<std::remove_cvref_t<decltype(self)>>,
+				.lpfnWndProc = &WndProc<Derived>,
 				.cbClsExtra = 0,
 				.cbWndExtra = 0,
 				.hInstance = Win32::GetModuleHandleW(nullptr),
@@ -165,7 +176,7 @@ export namespace Shared
 				.hCursor = Win32::LoadCursorW(nullptr, Win32::IdcArrow),
 				.hbrBackground = static_cast<Win32::HBRUSH>(Win32::GetStockObject(Win32::Brushes::White)),
 				.lpszMenuName = nullptr,
-				.lpszClassName = L"SharedWindowClass",
+				.lpszClassName = ClassName<Derived>(),
 			};
 		}
 
@@ -179,10 +190,11 @@ export namespace Shared
 
 		void CreateAndShowWindow(this auto&& self)
 		{
+			using Derived = std::remove_cvref_t<decltype(self)>;
 			auto hwnd =
 				Win32::CreateWindowExW(
 					0,
-					L"SharedWindowClass",
+					ClassName<Derived>(),
 					L"Shared Window",
 					Win32::WindowStyles::OverlappedWindow | Win32::WindowStyles::Visible,
 					0,

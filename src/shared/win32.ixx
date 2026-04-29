@@ -46,7 +46,12 @@ export namespace Win32
 		::InvalidateRect,
 		::ValidateRect,
 		::CoInitializeEx,
+		::CoUninitialize,
 		::GetClientRect,
+		::BeginPaint,
+		::EndPaint,
+		::PAINTSTRUCT,
+		::WaitMessage,
 		::GetWindowLongPtrW,
 		::SetWindowLongPtrW,
 		::ShowWindow,
@@ -243,6 +248,15 @@ export namespace D2D1
 		enum
 		{
 			RecreateTarget = D2DERR_RECREATE_TARGET
+		};
+	}
+
+	namespace FactoryType
+	{
+		enum : int
+		{
+			SingleThreaded = D2D1_FACTORY_TYPE_SINGLE_THREADED,
+			MultiThreaded = D2D1_FACTORY_TYPE_MULTI_THREADED
 		};
 	}
 }

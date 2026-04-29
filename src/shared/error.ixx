@@ -6,7 +6,7 @@ export namespace Shared
 {
 	auto SystemCodeToString(Win32::DWORD code) -> std::string
 	{
-		void* buffer;
+		void* buffer = nullptr;
 		auto chars = 
 			Win32::FormatMessageA(
 				Win32::FormatMessageFlags::FromSystem | Win32::FormatMessageFlags::AllocateBuffer,
@@ -17,11 +17,13 @@ export namespace Shared
 				0,
 				nullptr
 			);
-		if (chars == 0)
+		if (chars == 0 or not buffer)
 			return std::format("Unknown error code: {}", code);
 
-		auto message = std::string(static_cast<char*>(buffer), chars); 
+		auto message = std::string(static_cast<char*>(buffer), chars);
 		Win32::LocalFree(buffer);
+		while (not message.empty() and (message.back() == '\r' or message.back() == '\n'))
+			message.pop_back();
 		return message;
 	}
 
@@ -31,21 +33,20 @@ export namespace Shared
 		std::string Message = [code = Code] { return SystemCodeToString(code); }();
 	};
 
-	class Error : std::runtime_error
+	class Error : public std::runtime_error
 	{
 	public:
-		Error() = default;
 		Error(const std::string& message) : std::runtime_error(message) {}
 		Error(
-			std::string_view msg, 
+			std::string_view msg,
 			const std::source_location& loc = std::source_location::current(),
 			const std::stacktrace& trace = std::stacktrace::current()
 		) : std::runtime_error(Format(msg, loc, trace))
 		{ }
 
 		static auto Format(
-			std::string_view message, 
-			const std::source_location& loc, 
+			std::string_view message,
+			const std::source_location& loc,
 			const std::stacktrace& trace
 		) -> std::string
 		{
@@ -61,23 +62,13 @@ export namespace Shared
 			std::string_view message,
 			const std::source_location& loc = std::source_location::current(),
 			const std::stacktrace& trace = std::stacktrace::current()
-		) : Error(Format(message, code, loc, trace), loc)
+		) : Error(FormatPrefix(message, code), loc, trace)
 		{}
-		static auto Format(
-			std::string_view message,
-			Win32::DWORD code,
-			const std::source_location& loc,
-			const std::stacktrace& trace
-		) -> std::string
+
+	private:
+		static auto FormatPrefix(std::string_view message, Win32::DWORD code) -> std::string
 		{
-			return std::format("{}: {} at {} of {}:{}\n{}",
-				message,
-				SystemCodeToString(code),
-				loc.function_name(),
-				loc.line(),
-				loc.file_name(),
-				trace
-			);
+			return std::format("{}: {}", message, SystemCodeToString(code));
 		}
 	};
 }

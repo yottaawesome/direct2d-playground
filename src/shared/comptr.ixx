@@ -6,8 +6,6 @@ export namespace Shared
 	template<typename T>
 	struct Ptr
 	{
-		using pointer = T*;
-
 		constexpr ~Ptr() noexcept
 		{
 			reset();
@@ -15,22 +13,25 @@ export namespace Shared
 
 		constexpr Ptr() = default;
 
-		constexpr Ptr(T* typePtr) noexcept
+		constexpr explicit Ptr(T* typePtr) noexcept
 			: ptr(typePtr)
 		{}
 
 		// Copyable
-		constexpr Ptr(const Ptr& typePtr) noexcept
-			: ptr(typePtr.ptr)
+		constexpr Ptr(const Ptr& other) noexcept
+			: ptr(other.ptr)
 		{
 			if (ptr)
 				ptr->AddRef();
 		}
 		constexpr auto operator=(this Ptr& self, const Ptr& other) noexcept -> Ptr&
 		{
+			if (&self == &other)
+				return self;
 			self.reset();
 			self.ptr = other.ptr;
-			self.ptr->AddRef();
+			if (self.ptr)
+				self.ptr->AddRef();
 			return self;
 		}
 
@@ -42,17 +43,15 @@ export namespace Shared
 		}
 		constexpr auto operator=(this Ptr& self, Ptr&& other) noexcept -> Ptr&
 		{
+			if (&self == &other)
+				return self;
 			self.reset();
-			self.swap(other);
+			self.ptr = other.ptr;
+			other.ptr = nullptr;
 			return self;
 		}
 
-		constexpr operator Win32::GUID(this const Ptr& self) noexcept
-		{
-			return self.GetUuid();
-		}
-
-		constexpr operator bool(this const Ptr& self) noexcept
+		constexpr explicit operator bool(this const Ptr& self) noexcept
 		{
 			return self.ptr != nullptr;
 		}
@@ -62,9 +61,14 @@ export namespace Shared
 			return self.ptr == other.ptr;
 		}
 
-		constexpr auto operator*(this auto&& self) noexcept -> T*
+		constexpr auto operator==(this const Ptr& self, std::nullptr_t) noexcept -> bool
 		{
-			return self.ptr;
+			return self.ptr == nullptr;
+		}
+
+		constexpr auto operator*(this auto&& self) noexcept -> T&
+		{
+			return *self.ptr;
 		}
 
 		constexpr auto operator->(this auto&& self) noexcept -> T*
@@ -72,14 +76,13 @@ export namespace Shared
 			return self.ptr;
 		}
 
-		constexpr auto reset(this Ptr& self) noexcept -> Ptr&
+		constexpr auto reset(this Ptr& self) noexcept -> void
 		{
 			if (self.ptr)
 			{
 				self.ptr->Release();
 				self.ptr = nullptr;
 			}
-			return self;
 		}
 
 		constexpr auto detach(this Ptr& self) noexcept -> T*
@@ -94,11 +97,6 @@ export namespace Shared
 			return self.ptr;
 		}
 
-		constexpr auto get(this const Ptr& self) noexcept -> T*
-		{
-			return self.ptr;
-		}
-
 		constexpr auto swap(this Ptr& self, Ptr& other) noexcept -> void
 		{
 			auto temp = self.ptr;
@@ -106,25 +104,30 @@ export namespace Shared
 			other.ptr = temp;
 		}
 
+		// Releases the held interface and returns the address of the internal
+		// pointer for use as an out-parameter (the typical COM idiom).
+		constexpr auto ReleaseAndGetAddressOf(this Ptr& self) noexcept -> T**
+		{
+			self.reset();
+			return &self.ptr;
+		}
+
+		// Convenience aliases for ReleaseAndGetAddressOf, kept because the
+		// existing call sites use them. Both release first to avoid leaks.
 		constexpr auto AddressOf(this Ptr& self) noexcept -> void**
 		{
+			self.reset();
 			return reinterpret_cast<void**>(&self.ptr);
 		}
 
 		constexpr auto AddressOfTyped(this Ptr& self) noexcept -> T**
 		{
-			return &self.ptr;
+			return self.ReleaseAndGetAddressOf();
 		}
 
-		constexpr auto GetUuid(this const Ptr& self) noexcept -> Win32::GUID
+		constexpr auto GetUuid(this const Ptr&) noexcept -> Win32::GUID
 		{
 			return __uuidof(T);
-		}
-
-		constexpr auto ReleaseAndGetAddressOf(this Ptr& self) noexcept -> T**
-		{
-			self.reset();
-			return &self.ptr;
 		}
 
 		T* ptr = nullptr;
