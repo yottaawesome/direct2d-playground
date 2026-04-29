@@ -47,6 +47,16 @@ export namespace Shared
 		return SystemCodeToString(static_cast<Win32::DWORD>(hr));
 	}
 
+	struct HResult
+	{
+		Win32::HRESULT Code = 0;
+		constexpr auto Succeeded() const noexcept { return Win32::Succeeded(Code); }
+		constexpr auto Failed() const noexcept { return Win32::Failed(Code); }
+		constexpr operator Win32::HRESULT() const noexcept { return Code; }
+		constexpr bool operator==(const HResult& other) const noexcept = default;
+		constexpr operator bool() const noexcept { return Succeeded(); }
+	};
+
 	class Error : public std::runtime_error
 	{
 	public:
