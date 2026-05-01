@@ -1,4 +1,5 @@
 export module shared:comptr;
+import std;
 import :win32;
 
 export namespace Shared
@@ -112,6 +113,22 @@ export namespace Shared
 			return &self.ptr;
 		}
 
+		constexpr auto Release() -> std::uint32_t
+		{
+			if (not ptr)
+				return 0;
+			auto count =  ptr->Release();
+			ptr = nullptr;
+			return count;
+		}
+
+		constexpr auto AddRef(this Ptr& self) -> std::uint32_t
+		{
+			if (not self.ptr)
+				return 0;
+			return self.ptr->AddRef();
+		}
+
 		// Convenience aliases for ReleaseAndGetAddressOf, kept because the
 		// existing call sites use them. Both release first to avoid leaks.
 		constexpr auto AddressOf(this Ptr& self) noexcept -> void**
@@ -134,4 +151,32 @@ export namespace Shared
 	};
 
 	// TODO: add static tests for Ptr to ensure it behaves as expected.
+}
+
+namespace
+{
+	static_assert(std::is_default_constructible<Shared::Ptr<int>>::value, "Ptr should be default constructible");
+	static_assert(std::copyable<Shared::Ptr<int>>, "Ptr should be copyable");
+	static_assert(std::movable<Shared::Ptr<int>>, "Ptr should be movable");
+
+	struct TestInterface : public Win32::IUnknown
+	{
+		unsigned RefCount = 1;
+		constexpr auto AddRef() noexcept -> unsigned long override { return ++RefCount; }
+		constexpr auto Release() noexcept -> unsigned long override { return --RefCount; }
+		constexpr auto QueryInterface(const Win32::GUID& iid, void** ppv) noexcept -> Win32::HRESULT override { return 0; }
+	};
+
+	static_assert(
+		[] -> bool
+		{
+			auto rawPtr = std::make_unique<TestInterface>();
+			auto ptr1 = Shared::Ptr<TestInterface>{ rawPtr.get() };
+			if (ptr1.AddRef() != 2)
+				throw "AddRef did not return 2";
+			if (ptr1.Release() != 1)
+				throw "Release did not return 1";
+			return true;
+		}(), "Ptr should call AddRef and Release correctly"
+	);
 }

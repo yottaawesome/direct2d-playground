@@ -45,6 +45,7 @@ export namespace Win32
 		::COINIT,
 		::PAINTSTRUCT,
 		::DPI_AWARENESS,
+		::IUnknown,
 		::AreDpiAwarenessContextsEqual,
 		::GetAwarenessFromDpiAwarenessContext,
 		::SetProcessDpiAwarenessContext,
