@@ -147,7 +147,10 @@
   <ItemGroup>
     <ClCompile Include="comptr.ixx" />
     <ClCompile Include="error.ixx" />
+    <ClCompile Include="gamemainwindow.ixx" />
+    <ClCompile Include="graphicscontext.ixx" />
     <ClCompile Include="shared.ixx" />
+    <ClCompile Include="timer.ixx" />
     <ClCompile Include="win32.ixx" />
     <ClCompile Include="window.ixx" />
   </ItemGroup>

@@ -60,7 +60,6 @@ export namespace Shared
 	class Error : public std::runtime_error
 	{
 	public:
-		Error(const std::string& message) : std::runtime_error(message) {}
 		Error(
 			std::string_view msg,
 			const std::source_location& loc = std::source_location::current(),

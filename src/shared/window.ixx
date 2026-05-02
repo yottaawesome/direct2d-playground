@@ -56,7 +56,7 @@ export namespace Shared
 	class Window
 	{
 	public:
-		constexpr Window(bool init = true) 
+		constexpr Window(bool init) 
 		{ 
 			init ? Init() : void();
 		};
@@ -64,10 +64,23 @@ export namespace Shared
 		constexpr Window(const Window&) = delete;
 		constexpr auto operator=(const Window&) -> Window& = delete;
 
-		// Move is deleted: WndProc stores `this` in GWLP_USERDATA, so moving the
-		// Window object would leave the OS pointing at a moved-from instance.
-		Window(Window&&) = delete;
-		auto operator=(Window&&) -> Window& = delete;
+		Window(Window&& other) noexcept
+		{
+			m_window = std::move(other.m_window);
+			if (m_window)
+				Win32::SetWindowLongPtrW(m_window.get(), Win32::Gwlp::UserData, reinterpret_cast<Win32::LONG_PTR>(static_cast<TWindow*>(this)));
+		}
+		auto operator=(Window&& other) noexcept -> Window&
+		{
+			if (&other == this)
+				return *this;
+			if (m_window)
+				Win32::SetWindowLongPtrW(other.GetHandle(), Win32::Gwlp::UserData, 0);   
+			m_window = std::move(other.m_window);
+			if (m_window)
+				Win32::SetWindowLongPtrW(m_window.get(), Win32::Gwlp::UserData, reinterpret_cast<Win32::LONG_PTR>(this));
+			return *this;
+		}
 
 		constexpr auto GetHandle() const -> Win32::HWND
 		{
@@ -76,10 +89,24 @@ export namespace Shared
 
 		auto GetClientRect(this auto&& self) -> Win32::RECT
 		{
+			if (not self.GetHandle())
+				throw Error{ "Window handle is null" };
 			auto rc = Win32::RECT{};
 			if (not Win32::GetClientRect(self.GetHandle(), &rc))
 				throw Win32Error{ Win32::GetLastError(), "Failed to get client rect" };
 			return rc;
+		}
+
+		auto GetDpi(this auto&& self) -> std::uint32_t
+		{
+			auto dpi = Win32::GetThreadDpiAwarenessContext();
+			return std::uint32_t{ Win32::HiWord(dpi) };
+		}
+
+		auto Invalidate(this auto&& self, const Win32::RECT* rect = nullptr, bool erase = false)
+		{
+			if (not Win32::InvalidateRect(self.GetHandle(), rect, erase))
+				throw Win32Error{ Win32::GetLastError(), "Failed to invalidate rect" };
 		}
 
 	protected:

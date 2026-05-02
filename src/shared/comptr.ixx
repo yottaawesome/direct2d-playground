@@ -149,8 +149,6 @@ export namespace Shared
 
 		T* ptr = nullptr;
 	};
-
-	// TODO: add static tests for Ptr to ensure it behaves as expected.
 }
 
 namespace

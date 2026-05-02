@@ -4,168 +4,88 @@ import shared;
 
 export namespace GameLoop
 {
-	class MainWindow final : public Shared::Window<MainWindow>
+	class SceneResources
 	{
 	public:
-		using RenderFn = std::move_only_function<auto()->void>;
-		using ResizeFn = std::move_only_function<auto(std::uint32_t, std::uint32_t)->void>;
-		using DpiChangedFn = std::move_only_function<auto(std::uint32_t, const Win32::RECT&)->void>;
+		Shared::Ptr<D2D1::ID2D1SolidColorBrush> LightSlateGrayBrush;
+		Shared::Ptr<D2D1::ID2D1SolidColorBrush> CornflowerBlueBrush;
 
-		RenderFn OnRender = [] {};
-		ResizeFn OnResize = [](std::uint32_t, std::uint32_t) {};
-		DpiChangedFn OnDpiChanged = [](std::uint32_t, const Win32::RECT&) {};
-
-		MainWindow(
-			RenderFn onRender, 
-			ResizeFn onResize, 
-			DpiChangedFn onDpiChanged
-		)	: Shared::Window<MainWindow>{ false }
-			, OnRender(std::move(onRender))
-			, OnResize(std::move(onResize))
-			, OnDpiChanged(std::move(onDpiChanged))
+		auto HasBeenCreated(this auto&& self) noexcept -> bool
 		{
-			// We need to Init() after setting the function objects, 
-			// because the message handlers call those functions.
-			// Letting the base constructor do the init would cause 
-			// the handlers to call empty function objects, generating 
-			// errors.
-			Init();
+			return self.LightSlateGrayBrush and self.CornflowerBlueBrush;
 		}
 
-		// This is the minimum message handling needed to support rendering in the main loop. 
-		// You can add handlers for other messages (e.g. WM_SIZE) as needed.
-		auto OnMessage(this auto&& self, const Shared::Messages::Paint& msg) -> Win32::LRESULT
+		auto CreateResources(this auto&& self, Shared::GraphicsContext& gfxContext)
 		{
-			auto ps = Win32::PAINTSTRUCT{};
-			Win32::BeginPaint(self.GetHandle(), &ps);
-			self.OnRender();
-			Win32::EndPaint(self.GetHandle(), &ps);
-			return 0;
-		}
-		auto OnMessage(this auto&& self, const Shared::Messages::Size& msg) -> Win32::LRESULT
-		{
-			auto width = Win32::LoWord(msg.LParam);
-			auto height = Win32::HiWord(msg.LParam);
-			self.OnResize(width, height);
-			return 0;
-		}
-		auto OnMessage(this auto&& self, const Shared::Messages::DisplayChange& msg) -> Win32::LRESULT
-		{
-			const auto dpi = std::uint32_t{ Win32::HiWord(msg.WParam) };
-			const auto rect = reinterpret_cast<const Win32::RECT*>(msg.LParam);
-			self.OnDpiChanged(dpi, *rect);
-			return 0;
-		}
-		auto OnMessage(this auto&& self, const Shared::Messages::DpiChanged& msg) -> Win32::LRESULT
-		{
-			Win32::InvalidateRect(self.GetHandle(), nullptr, false);
-			return 0;
-		}
-	};
+			if (self.HasBeenCreated())
+				return;
 
-	class Timer 
-	{
-	public:
-		std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
+			auto hr = Shared::HResult{ 
+				gfxContext->CreateSolidColorBrush(
+					D2D1::ColorF{ D2D1::ColorF::LightSlateGray },
+					self.LightSlateGrayBrush.AddressOfTyped()
+				)};
+			if (not hr)
+				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [1]" };
+			hr = Shared::HResult{ 
+				gfxContext->CreateSolidColorBrush(
+					D2D1::ColorF{ D2D1::ColorF::CornflowerBlue },
+					self.CornflowerBlueBrush.ReleaseAndGetAddressOf()
+				)};
+			if (not hr)
+				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [2]" };
+		}
 
-		auto Advance(this auto&& self) -> float
+		auto DiscardResources(this auto&& self)
 		{
-			const auto now = std::chrono::steady_clock::now();
-			auto dt = std::chrono::duration<float>(now - self.last).count(); // seconds (can be decimal)
-			self.last = now;
-			return dt;
+			self = {};
+		}
+
+		auto DiscardAndRecreateResources(this auto&& self, Shared::GraphicsContext& gfxContext)
+		{
+			self.DiscardResources();
+			self.CreateResources(gfxContext);
 		}
 	};
 
 	class MainApp
 	{
+	private:
+		Shared::Timer timer;
+		Shared::GameMainWindow window;
+		Shared::GraphicsContext gfxContext;
+		SceneResources sceneResources;
+
 	public:
 		MainApp()
 		{
-			CreateDeviceIndependentResources();
-			CreateDeviceResources();
+			window = Shared::GameMainWindow{
+				[this] 
+				{ 
+					Tick(); // animate resizes
+				}, 
+				[this](std::uint32_t width, std::uint32_t height) 
+				{ 
+					OnResize(width, height); 
+				},
+				[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect) 
+				{ 
+					OnDpiChanged(dpiX, suggestedRect); 
+				}
+			};
+			gfxContext = Shared::GraphicsContext{
+				Shared::WindowSurface{ window.GetHandle(), window.GetDpi(), window.GetClientRect() }
+			};
+			CreateResources();
 		};
 
+		//
+		//
+		// Game loop
 		auto Update(this auto&& self, float dt)
 		{
 			// Add update code here.
 		}
-		auto Render(this auto&& self)
-		{
-			self.CreateDeviceResources();
-
-			self.renderTarget->BeginDraw();
-
-			auto hr = Shared::HResult{ self.renderTarget->EndDraw() };
-			if (hr == Shared::HResult{ D2D1::Error::RecreateTarget })
-			{
-				self.DiscardDeviceResources();
-				Win32::ValidateRect(self.window.GetHandle(), nullptr);
-			}
-			else if (not hr)
-			{
-				throw Shared::ComError{ hr, "EndDraw() failed" };
-			}
-		}
-		auto GetWindow(this auto&& self) -> Win32::HWND
-		{
-			return self.window.GetHandle();
-		}
-
-		auto CreateDeviceIndependentResources(this auto&& self)
-		{
-			// Create a Direct2D factory.
-			auto hr = Shared::HResult{
-				D2D1::D2D1CreateFactory(
-					D2D1::D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED,
-					self.direct2dFactory.ReleaseAndGetAddressOf()
-				) };
-			if (not hr)
-				throw Shared::ComError{ hr, "D2D1CreateFactory() failed" };
-		}
-		auto CreateDeviceResources(this auto&& self)
-		{
-			if (self.renderTarget)
-				return;
-
-			auto rc = self.window.GetClientRect();
-
-			auto size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
-
-			// Create a Direct2D render target.
-			auto hr = Win32::HRESULT{
-				self.direct2dFactory->CreateHwndRenderTarget(
-					D2D1::RenderTargetProperties(),
-					D2D1::HwndRenderTargetProperties(self.window.GetHandle(), size),
-					self.renderTarget.AddressOfTyped()
-				) };
-			if (Win32::Failed(hr))
-				throw Shared::ComError{ hr, "CreateHwndRenderTarget() failed" };
-
-			// Create a gray brush.
-			hr = self.renderTarget->CreateSolidColorBrush(
-				D2D1::ColorF{ D2D1::ColorF::LightSlateGray },
-				self.lightSlateGrayBrush.AddressOfTyped()
-			);
-			if (Win32::Failed(hr))
-				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [1]" };
-
-			// Create a blue brush.
-			hr = self.renderTarget->CreateSolidColorBrush(
-				D2D1::ColorF{ D2D1::ColorF::CornflowerBlue },
-				self.cornflowerBlueBrush.ReleaseAndGetAddressOf()
-			);
-			if (Win32::Failed(hr))
-				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [2]" };
-		}
-		void DiscardDeviceResources(this auto&& self)
-		{
-			self.renderTarget.reset();
-			self.lightSlateGrayBrush.reset();
-			self.cornflowerBlueBrush.reset();
-		}
-		void ReleaseDpiDependentResources(this auto&& self) {}
-		void CreateDpiDependentResources(this auto&& self,std::uint32_t dpi) {}
 
 		auto Tick(this auto&& self)
 		{
@@ -176,17 +96,56 @@ export namespace GameLoop
 			self.Render();
 		}
 
-		void OnResize(this auto&& self, Win32::UINT width, Win32::UINT height)
+		//
+		//
+		// Rendering
+		auto Render(this auto&& self)
 		{
-			if (not self.renderTarget)
-				return;
-			// Note: This method can fail, but it's okay to ignore the
-			// error here, because the error will be returned again
-			// the next time EndDraw is called.
-			self.renderTarget->Resize(D2D1::SizeU(width, height));
+			self.gfxContext.CreateResources();
+
+			self.gfxContext->BeginDraw();
+
+			if (auto hr = Shared::HResult{ self.gfxContext->EndDraw() }; 
+				hr.Code == D2D1::Error::RecreateTarget)
+			{
+				self.DiscardResources();
+				Win32::ValidateRect(self.window.GetHandle(), nullptr);
+			}
+			else if (not hr)
+			{
+				throw Shared::ComError{ hr, "EndDraw() failed" };
+			}
 		}
 
-		void OnDpiChanged(this auto&& self, Win32::UINT dpi, const Win32::RECT& rect)
+		
+		//
+		//
+		// Graphics resources
+		void CreateResources(this auto&& self)
+		{
+			// Create a Direct2D render target.
+			self.gfxContext.CreateResources();
+			self.sceneResources.CreateResources(self.gfxContext);
+		}
+		void DiscardResources(this auto&& self)
+		{
+			self.gfxContext.DiscardDeviceResources();
+			self.sceneResources.DiscardResources();
+		}
+
+		
+
+		//
+		//
+		// Window events
+		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
+		{
+			if (not self.gfxContext.HasTarget())
+				return;
+			self.gfxContext.OnResize(width, height);
+		}
+
+		void OnDpiChanged(this auto&& self, std::uint32_t dpi, const Win32::RECT& rect)
 		{
 			Win32::SetWindowPos(
 				self.window.GetHandle(),
@@ -197,26 +156,18 @@ export namespace GameLoop
 				rect.bottom - rect.top,
 				Win32::SetWindowPosFlags::NoZOrder | Win32::SetWindowPosFlags::NoActivate
 			);
-			if (self.renderTarget)
-				self.renderTarget->SetDpi(static_cast<float>(dpi), static_cast<float>(dpi));
-
-			self.ReleaseDpiDependentResources();
-			self.CreateDpiDependentResources(dpi);
+			self.gfxContext.OnDpiChanged(dpi);
 			Win32::InvalidateRect(self.window.GetHandle(), nullptr, false);
 		}
 
-	private:
-		MainWindow window{
-			[this] { Tick(); }, // animate resizes
-			[this](std::uint32_t width, std::uint32_t height) { OnResize(width, height); },
-			[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect) { OnDpiChanged(dpiX, suggestedRect); }
-		};
-		
-		Timer timer;
-		Shared::Ptr<D2D1::ID2D1Factory> direct2dFactory;
-		Shared::Ptr<D2D1::ID2D1HwndRenderTarget> renderTarget;
-		Shared::Ptr<D2D1::ID2D1SolidColorBrush> lightSlateGrayBrush;
-		Shared::Ptr<D2D1::ID2D1SolidColorBrush> cornflowerBlueBrush;
+		//
+		//
+		// Misc
+		[[nodiscard]]
+		auto GetWindow(this auto&& self) -> Win32::HWND
+		{
+			return self.window.GetHandle();
+		}
 	};
 
 	void Run()
