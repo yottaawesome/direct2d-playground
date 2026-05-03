@@ -52,30 +52,28 @@ export namespace GameLoop
 	{
 	private:
 		Shared::Timer timer;
-		Shared::GameMainWindow window;
-		Shared::GraphicsContext gfxContext;
+		Shared::GameMainWindow window{
+			[this]
+			{
+				Tick(); // animate resizes
+			},
+			[this](std::uint32_t width, std::uint32_t height)
+			{
+				OnResize(width, height);
+			},
+			[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect)
+			{
+				OnDpiChanged(dpiX, suggestedRect);
+			}
+		};
+		Shared::GraphicsContext gfxContext{
+			Shared::WindowSurface{ window.GetHandle(), window.GetDpi(), window.GetClientRect() }
+		};
 		SceneResources sceneResources;
 
 	public:
 		MainApp()
 		{
-			window = Shared::GameMainWindow{
-				[this] 
-				{ 
-					Tick(); // animate resizes
-				}, 
-				[this](std::uint32_t width, std::uint32_t height) 
-				{ 
-					OnResize(width, height); 
-				},
-				[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect) 
-				{ 
-					OnDpiChanged(dpiX, suggestedRect); 
-				}
-			};
-			gfxContext = Shared::GraphicsContext{
-				Shared::WindowSurface{ window.GetHandle(), window.GetDpi(), window.GetClientRect() }
-			};
 			CreateResources();
 		};
 
@@ -102,18 +100,18 @@ export namespace GameLoop
 		auto Render(this auto&& self)
 		{
 			self.gfxContext.CreateResources();
-
-			self.gfxContext->BeginDraw();
-
-			if (auto hr = Shared::HResult{ self.gfxContext->EndDraw() }; 
-				hr.Code == D2D1::Error::RecreateTarget)
+			bool recreate = self.gfxContext.Draw(
+				[&self]
+				{
+					self.gfxContext->Clear(D2D1::ColorF{ D2D1::ColorF::White });
+				});
+			if (recreate)
 			{
-				self.DiscardResources();
+				self.sceneResources.DiscardResources();
+				self.gfxContext.DiscardDeviceResources();
+				self.gfxContext.CreateDeviceResources();
+				self.sceneResources.CreateResources(self.gfxContext);
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
-			}
-			else if (not hr)
-			{
-				throw Shared::ComError{ hr, "EndDraw() failed" };
 			}
 		}
 
@@ -127,12 +125,6 @@ export namespace GameLoop
 			self.gfxContext.CreateResources();
 			self.sceneResources.CreateResources(self.gfxContext);
 		}
-		void DiscardResources(this auto&& self)
-		{
-			self.gfxContext.DiscardDeviceResources();
-			self.sceneResources.DiscardResources();
-		}
-
 		
 
 		//
@@ -141,6 +133,8 @@ export namespace GameLoop
 		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 		{
 			if (not self.gfxContext.HasTarget())
+				return;
+			if (width == 0 or height == 0)
 				return;
 			self.gfxContext.OnResize(width, height);
 		}

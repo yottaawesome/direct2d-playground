@@ -259,6 +259,14 @@ export namespace Win32
 	constexpr auto SFalse = S_FALSE;
 }
 
+export namespace DXGI
+{
+	using
+		::DXGI_FORMAT,
+		::DXGI_SAMPLE_DESC
+		;
+}
+
 export namespace D2D1
 {
 	using
@@ -281,6 +289,8 @@ export namespace D2D1
 		::IWICImagingFactory2,
 		::D2D1_FACTORY_TYPE,
 		::D2D1_SIZE_F,
+		::D2D1_RENDER_TARGET_TYPE,
+		::D2D1_ALPHA_MODE,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
 		::D2D1::SizeU,

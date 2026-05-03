@@ -87,7 +87,7 @@ export namespace Shared
 		void CreateDpiDependentResources(this auto&& self)
 		{
 			if (not self.renderTarget)
-				throw Error{ "render target must not be null" };
+				return;
 			// TODO: add a check to avoid recreating resources if the resources are already created for the current DPI
 		}
 		void DiscardDpiDependentResources(this auto&& self)
@@ -108,7 +108,13 @@ export namespace Shared
 			// Create a Direct2D render target.
 			auto hr = Win32::HRESULT{
 				self.direct2dFactory->CreateHwndRenderTarget(
-					D2D1::RenderTargetProperties(),
+					D2D1::RenderTargetProperties(
+						D2D1::D2D1_RENDER_TARGET_TYPE::D2D1_RENDER_TARGET_TYPE_HARDWARE,
+						D2D1::PixelFormat(
+							DXGI::DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM,
+							D2D1::D2D1_ALPHA_MODE::D2D1_ALPHA_MODE_PREMULTIPLIED
+						)
+					),
 					D2D1::HwndRenderTargetProperties(self.surface.Hwnd, size),
 					self.renderTarget.AddressOfTyped()
 				) };
@@ -122,6 +128,21 @@ export namespace Shared
 		{
 			self.renderTarget.reset();
 			self.DiscardDpiDependentResources();
+		}
+
+		auto Draw(this auto&& self, std::invocable auto&& drawFn) -> bool
+		{
+			if (not self.renderTarget)
+				throw Error{ "render target must not be null" };
+			self.renderTarget->BeginDraw();
+			drawFn();
+			auto hr = Win32::HRESULT{ self.renderTarget->EndDraw() };
+			
+			if (hr == 0x0)
+				return false;
+			if (hr == D2D1::Error::RecreateTarget)
+				return true;
+			throw ComError{ hr, "EndDraw() failed" };
 		}
 
 		[[nodiscard]]
