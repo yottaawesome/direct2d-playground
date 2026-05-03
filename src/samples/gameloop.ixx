@@ -4,47 +4,66 @@ import shared;
 
 export namespace GameLoop
 {
-	class SceneResources
+	class Scene
 	{
-	public:
+	private:
+		bool Created = false;
 		Shared::Ptr<D2D1::ID2D1SolidColorBrush> LightSlateGrayBrush;
 		Shared::Ptr<D2D1::ID2D1SolidColorBrush> CornflowerBlueBrush;
 
+	public:
 		auto HasBeenCreated(this auto&& self) noexcept -> bool
 		{
-			return self.LightSlateGrayBrush and self.CornflowerBlueBrush;
+			return Created;
 		}
 
-		auto CreateResources(this auto&& self, Shared::GraphicsContext& gfxContext)
+		auto Draw(this auto&& self, D2D1::ID2D1HwndRenderTarget* renderTarget) -> Shared::HResult
 		{
-			if (self.HasBeenCreated())
+			if (not self.Created)
+				self.CreateResources(renderTarget);
+			try
+			{
+				renderTarget->BeginDraw();
+				renderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+				renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Aquamarine));
+				return Shared::HResult{ renderTarget->EndDraw() };
+			}
+			catch (...)
+			{
+				renderTarget->EndDraw();
+				throw;
+			}
+		}
+		
+
+		auto CreateResources(this auto&& self, D2D1::ID2D1HwndRenderTarget* renderTarget)
+		{
+			if (self.Created)
 				return;
 
-			auto hr = Shared::HResult{ 
-				gfxContext->CreateSolidColorBrush(
-					D2D1::ColorF{ D2D1::ColorF::LightSlateGray },
-					self.LightSlateGrayBrush.AddressOfTyped()
-				)};
+			auto hr = Shared::HResult{
+			renderTarget->CreateSolidColorBrush(
+				D2D1::ColorF{ D2D1::ColorF::LightSlateGray },
+				self.LightSlateGrayBrush.ReleaseAndGetAddressOf()
+			) };
 			if (not hr)
 				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [1]" };
-			hr = Shared::HResult{ 
-				gfxContext->CreateSolidColorBrush(
+			hr = Shared::HResult{
+				renderTarget->CreateSolidColorBrush(
 					D2D1::ColorF{ D2D1::ColorF::CornflowerBlue },
 					self.CornflowerBlueBrush.ReleaseAndGetAddressOf()
-				)};
+				) };
 			if (not hr)
 				throw Shared::ComError{ hr, "CreateSolidColorBrush() failed [2]" };
+
+			self.Created = true;
 		}
 
 		auto DiscardResources(this auto&& self)
 		{
-			self = {};
-		}
-
-		auto DiscardAndRecreateResources(this auto&& self, Shared::GraphicsContext& gfxContext)
-		{
-			self.DiscardResources();
-			self.CreateResources(gfxContext);
+			self.LightSlateGrayBrush.reset();
+			self.CornflowerBlueBrush.reset();
+			self.Created = false;
 		}
 	};
 
@@ -69,7 +88,7 @@ export namespace GameLoop
 		Shared::GraphicsContext gfxContext{
 			Shared::WindowSurface{ window.GetHandle(), window.GetDpi(), window.GetClientRect() }
 		};
-		SceneResources sceneResources;
+		Scene sceneResources;
 
 	public:
 		MainApp()
@@ -99,19 +118,21 @@ export namespace GameLoop
 		// Rendering
 		auto Render(this auto&& self)
 		{
-			self.CreateResources();
-			
 			self.gfxContext.CreateResources();
-			bool recreate = self.gfxContext.Draw(
-				[&self]
-				{
-					self.gfxContext->Clear(D2D1::ColorF{ D2D1::ColorF::White });
-				});
-			if (recreate)
+
+			auto hr = self.sceneResources.Draw(self.gfxContext.GetRenderTarget());
+			if (not hr)
 			{
-				self.sceneResources.DiscardResources();
-				self.gfxContext.DiscardDeviceResources();
-				Win32::ValidateRect(self.window.GetHandle(), nullptr);
+				if (hr.Code == D2D1::Error::RecreateTarget)
+				{
+					self.sceneResources.DiscardResources();
+					self.gfxContext.DiscardResources();
+					Win32::ValidateRect(self.window.GetHandle(), nullptr);
+				}
+				else
+				{
+					throw Shared::ComError{ hr, "Draw() failed" };
+				}
 			}
 		}
 
@@ -123,7 +144,7 @@ export namespace GameLoop
 		{
 			// Create a Direct2D render target.
 			self.gfxContext.CreateResources();
-			self.sceneResources.CreateResources(self.gfxContext);
+			self.sceneResources.CreateResources(self.gfxContext.GetRenderTarget());
 		}
 		
 
@@ -132,8 +153,6 @@ export namespace GameLoop
 		// Window events
 		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 		{
-			if (not self.gfxContext.HasTarget())
-				return;
 			if (width == 0 or height == 0)
 				return;
 			self.gfxContext.OnResize(width, height);

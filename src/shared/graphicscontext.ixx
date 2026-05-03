@@ -11,6 +11,42 @@ export namespace Shared
 		Win32::HWND Hwnd{};
 		std::uint32_t Dpi{};
 		Win32::RECT Client{};
+
+		[[nodiscard]]
+		auto GetClientRect(this auto&& self) -> Win32::RECT
+		{
+			if (not self.Hwnd)
+				return {};
+			auto rc = Win32::RECT{};
+			if (not Win32::GetClientRect(self.Hwnd, &rc))
+				throw Win32Error{ Win32::GetLastError(), "Failed to get client rect" };
+			return rc;
+		}
+
+		[[nodiscard]]
+		auto GetDpi(this auto&& self) -> std::uint32_t
+		{
+			if (not self.Hwnd)
+				return 0;
+			auto dpi = Win32::GetDpiForWindow(self.Hwnd);
+			if (dpi == 0)
+				throw Win32Error{ Win32::GetLastError(), "Failed to get DPI for window" };
+			return dpi;
+		}
+
+		[[nodiscard]]
+		auto IsIconic(this auto&& self) -> bool
+		{
+			return self.Hwnd ? Win32::IsIconic(self.Hwnd) : false;
+		}
+	};
+
+	template<typename T>
+	concept WindowLike = requires(T t)
+	{
+		{ t.GetHandle() } -> std::same_as<Win32::HWND>;
+		{ t.GetDpi() } -> std::same_as<std::uint32_t>;
+		{ t.GetClientRect() } -> std::same_as<Win32::RECT>;
 	};
 
 	class GraphicsContext
@@ -39,6 +75,13 @@ export namespace Shared
 			Init(window);
 		}
 
+		[[nodiscard]]
+		auto GetRenderTarget(this auto&& self) -> D2D1::ID2D1HwndRenderTarget*
+		{
+			return self.renderTarget.Get();
+		}
+
+		[[nodiscard]]
 		auto HasTarget(this auto&& self) noexcept -> bool
 		{
 			return self.renderTarget != nullptr;
@@ -61,8 +104,7 @@ export namespace Shared
 		{
 			if (not self.renderTarget)
 				return;
-			surface.Client.right = surface.Client.left + LONG(width);
-			surface.Client.bottom = surface.Client.top + LONG(height);
+			Win32::GetClientRect(self.surface.Hwnd, &self.surface.Client);
 			// Note: This method can fail, but it's okay to ignore the
 			// error here, because the error will be returned again
 			// the next time EndDraw is called.
@@ -82,6 +124,12 @@ export namespace Shared
 		{
 			self.CreateDeviceResources();
 			self.CreateDpiDependentResources();
+		}
+
+		void DiscardResources(this auto&& self)
+		{
+			self.DiscardDeviceResources();
+			self.DiscardDpiDependentResources();
 		}
 
 
@@ -129,7 +177,6 @@ export namespace Shared
 		void DiscardDeviceResources(this auto&& self)
 		{
 			self.renderTarget.reset();
-			self.DiscardDpiDependentResources();
 		}
 
 		auto Draw(this auto&& self, std::invocable auto&& drawFn) -> bool

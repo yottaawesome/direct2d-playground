@@ -82,11 +82,13 @@ export namespace Shared
 			return *this;
 		}
 
+		[[nodiscard]]
 		constexpr auto GetHandle() const -> Win32::HWND
 		{
 			return m_window.get();
 		}
 
+		[[nodiscard]]
 		auto GetClientRect(this auto&& self) -> Win32::RECT
 		{
 			if (not self.GetHandle())
@@ -97,6 +99,7 @@ export namespace Shared
 			return rc;
 		}
 
+		[[nodiscard]]
 		auto GetDpi(this auto&& self) -> std::uint32_t
 		{
 			return Win32::GetDpiForWindow(self.GetHandle());
@@ -106,6 +109,12 @@ export namespace Shared
 		{
 			if (not Win32::InvalidateRect(self.GetHandle(), rect, erase))
 				throw Win32Error{ Win32::GetLastError(), "Failed to invalidate rect" };
+		}
+
+		[[nodiscard]]
+		auto IsIconic(this auto&& self) -> bool
+		{
+			return Win32::IsIconic(self.GetHandle());
 		}
 
 	protected:
