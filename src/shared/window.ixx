@@ -99,8 +99,7 @@ export namespace Shared
 
 		auto GetDpi(this auto&& self) -> std::uint32_t
 		{
-			auto dpi = Win32::GetThreadDpiAwarenessContext();
-			return std::uint32_t{ Win32::HiWord(dpi) };
+			return Win32::GetDpiForWindow(self.GetHandle());
 		}
 
 		auto Invalidate(this auto&& self, const Win32::RECT* rect = nullptr, bool erase = false)

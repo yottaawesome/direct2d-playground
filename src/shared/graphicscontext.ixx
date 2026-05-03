@@ -61,6 +61,8 @@ export namespace Shared
 		{
 			if (not self.renderTarget)
 				return;
+			surface.Client.right = surface.Client.left + LONG(width);
+			surface.Client.bottom = surface.Client.top + LONG(height);
 			// Note: This method can fail, but it's okay to ignore the
 			// error here, because the error will be returned again
 			// the next time EndDraw is called.

@@ -58,14 +58,13 @@ export namespace Shared
 		}
 		auto OnMessage(this auto&& self, const Messages::DisplayChange& msg) -> Win32::LRESULT
 		{
-			const auto dpi = std::uint32_t{ Win32::HiWord(msg.WParam) };
-			const auto rect = reinterpret_cast<const Win32::RECT*>(msg.LParam);
-			self.OnDpiChanged(dpi, *rect);
+			Win32::InvalidateRect(self.GetHandle(), nullptr, false);
 			return 0;
 		}
-		auto OnMessage(this auto&& self, const Messages::DpiChanged& msg) -> Win32::LRESULT
+		auto OnMessage(this auto&& self, const Messages::DpiChanged& msg) -> Win32::LRESULT 
 		{
-			Win32::InvalidateRect(self.GetHandle(), nullptr, false);
+			const auto rect = reinterpret_cast<const Win32::RECT*>(msg.LParam);
+			self.OnDpiChanged(self.GetDpi(), *rect);
 			return 0;
 		}
 	};

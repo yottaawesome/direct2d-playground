@@ -99,6 +99,8 @@ export namespace GameLoop
 		// Rendering
 		auto Render(this auto&& self)
 		{
+			self.CreateResources();
+			
 			self.gfxContext.CreateResources();
 			bool recreate = self.gfxContext.Draw(
 				[&self]
@@ -109,8 +111,6 @@ export namespace GameLoop
 			{
 				self.sceneResources.DiscardResources();
 				self.gfxContext.DiscardDeviceResources();
-				self.gfxContext.CreateDeviceResources();
-				self.sceneResources.CreateResources(self.gfxContext);
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
 			}
 		}

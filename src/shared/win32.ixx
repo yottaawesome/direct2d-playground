@@ -62,6 +62,7 @@ export namespace Win32
 		::EndPaint,
 		::WaitMessage,
 		::GetWindowLongPtrW,
+		::GetDpiForWindow,
 		::SetWindowLongPtrW,
 		::ShowWindow,
 		::LoadIconW,
