@@ -9,6 +9,12 @@ import shared;
 class TestApp final : public Shared::D2DApp
 {
 public:
+	auto OnResize(this auto&& self, std::uint32_t width, std::uint32_t height) -> void
+	{
+		self.deviceContext.OnResize(width, height);
+		self.window.Invalidate();
+	}
+
 	auto OnIdle(this auto&& self) -> void
 	{
 		self.deviceContext.CreateResources();
@@ -21,7 +27,7 @@ public:
 
 		if (hr)
 		{
-			hr = self.deviceContext.Present();
+			hr = self.deviceContext.Present(1, 0);
 			if (not hr)
 				throw Shared::ComError{ hr, "IDXGISwapChain::Present() failed" };
 		}
@@ -37,7 +43,15 @@ public:
 	}
 
 private:
-	Shared::GameMainWindow window{ Shared::Init };
+	Shared::GameMainWindow window{ 
+		Shared::GameMainWindow::OnEvent{
+			.Resize = 
+				[this](std::uint32_t width, std::uint32_t height) 
+				{ 
+					OnResize(width, height); 
+				},
+		} 
+	};
 	Shared::DeviceContext deviceContext{ window.ToSurface() };
 };
 

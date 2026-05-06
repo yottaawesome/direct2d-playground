@@ -29,6 +29,26 @@ export namespace Shared
 			CreateResources();
 		}
 
+		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
+		{
+			if (not self.swapChain)
+				return;
+			self.d2dDeviceContext->SetTarget(nullptr);
+			self.targetBitmap.reset();
+			auto hr = HResult{
+				self.swapChain->ResizeBuffers(
+					0,
+					width,
+					height,
+					DXGI_FORMAT_UNKNOWN,
+					0
+				) };
+			if (not hr)
+				throw ComError{ hr, "Failed to resize swap chain buffers" };
+			self.CreateTargetBitmap();
+		}
+
+		#pragma region Rendering
 		void BeginDraw(this auto&& self)
 		{
 			self.d2dDeviceContext->BeginDraw();
@@ -39,10 +59,16 @@ export namespace Shared
 			return Shared::HResult{ self.d2dDeviceContext->EndDraw() };
 		}
 
-		auto Present(this auto&& self) -> Shared::HResult
+		// https://learn.microsoft.com/en-us/windows/win32/api/dxgi/nf-dxgi-idxgiswapchain-present
+		auto Present(
+			this auto&& self, 
+			std::uint32_t syncInterval, 
+			std::uint32_t flags
+		) -> Shared::HResult
 		{
-			return Shared::HResult{ self.swapChain->Present(1, 0) };
+			return Shared::HResult{ self.swapChain->Present(syncInterval, flags) };
 		}
+		#pragma endregion
 
 		#pragma region Getters
 		[[nodiscard]]
@@ -79,6 +105,7 @@ export namespace Shared
 		}
 		#pragma endregion
 
+		#pragma region Resource management
 		auto DiscardResources(this auto&& self)
 		{
 			if (self.d2dDeviceContext)
@@ -99,6 +126,8 @@ export namespace Shared
 			self.CreateSwapChain();
 			self.CreateTargetBitmap();
 		}
+		#pragma endregion
+
 	private:
 		void CreateDeviceResources(this auto&& self)
 		{
