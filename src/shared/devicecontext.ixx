@@ -26,32 +26,51 @@ export namespace Shared
 			if (not surface.Hwnd)
 				throw Error{ "Invalid window handle in DeviceContext constructor" };
 
-			Initialise();
+			CreateResources();
+		}
+
+		void BeginDraw(this auto&& self)
+		{
+			self.d2dDeviceContext->BeginDraw();
+		}
+
+		auto EndDraw(this auto&& self) -> Shared::HResult
+		{
+			return Shared::HResult{ self.d2dDeviceContext->EndDraw() };
+		}
+
+		auto Present(this auto&& self) -> Shared::HResult
+		{
+			return Shared::HResult{ self.swapChain->Present(1, 0) };
 		}
 
 		#pragma region Getters
+		[[nodiscard]]
 		constexpr auto operator->(this auto&& self) noexcept
 		{
-			return self.deviceContext.Get();
+			return self.d2dDeviceContext.Get();
 		}
 
-		constexpr auto GetDevice(this auto&& self) noexcept ->
-			Ptr<D3D11::ID3D11Device>
+		[[nodiscard]]
+		constexpr auto GetDevice(this auto&& self) noexcept -> D3D11::ID3D11Device*
 		{
 			return self.d3dDevice.Get();
 		}
 		
-		constexpr auto GetDeviceContext(this auto&& self) noexcept
+		[[nodiscard]]
+		constexpr auto GetDeviceContext(this auto&& self) noexcept -> D3D11::ID3D11DeviceContext*
 		{
 			return self.deviceContext.Get();
 		}
 
-		consteval auto GetCreationFlags(this auto&& self) noexcept
+		[[nodiscard]]
+		consteval auto GetCreationFlags(this auto&& self) noexcept -> unsigned int
 		{
 			return D3D11::D3D11_CREATE_DEVICE_FLAG::D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 		}
 
-		consteval auto GetFeatureLevels(this auto&& self) noexcept
+		[[nodiscard]]
+		consteval auto GetFeatureLevels(this auto&& self) noexcept -> auto
 		{
 			return std::array{
 				D3D11::D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_1,
@@ -59,14 +78,28 @@ export namespace Shared
 			};
 		}
 		#pragma endregion
-	private:
-		void Initialise(this auto&& self)
+
+		auto DiscardResources(this auto&& self)
 		{
+			if (self.d2dDeviceContext)
+				self.d2dDeviceContext->SetTarget(nullptr);
+			self.targetBitmap.reset();
+			self.swapChain.reset();
+			self.d2dDeviceContext.reset();
+			self.d2dDevice.reset();
+			self.dxgiDevice.reset();
+			self.d3d11DeviceContext.reset();
+			self.d3d11Device.reset();
+		}
+		auto CreateResources(this auto&& self)
+		{
+			if (self.d2dDeviceContext)
+				return;
 			self.CreateDeviceResources();
 			self.CreateSwapChain();
 			self.CreateTargetBitmap();
 		}
-
+	private:
 		void CreateDeviceResources(this auto&& self)
 		{
 			// Create a Direct2D factory.
@@ -192,6 +225,8 @@ export namespace Shared
 			);
 			if (not hr)
 				throw ComError{ hr, "ID2D1DeviceContext::CreateBitmapFromDxgiSurface() failed" };
+
+			self.d2dDeviceContext->SetTarget(self.targetBitmap.Get());
 		}
 
 		Ptr<D3D11::ID3D11Device> d3d11Device;
