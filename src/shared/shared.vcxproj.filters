@@ -48,5 +48,11 @@
     <ClCompile Include="devicecontext.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="d2dapp.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="init.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,15 +26,15 @@ export namespace Shared
 			if (ptr)
 				ptr->AddRef();
 		}
-		constexpr auto operator=(this Ptr& self, const Ptr& other) noexcept -> Ptr&
+		constexpr auto operator=(const Ptr& other) noexcept -> Ptr&
 		{
-			if (&self == &other)
-				return self;
-			self.reset();
-			self.ptr = other.ptr;
-			if (self.ptr)
-				self.ptr->AddRef();
-			return self;
+			if (this == &other)
+				return *this;
+			reset();
+			ptr = other.ptr;
+			if (ptr)
+				ptr->AddRef();
+			return *this;
 		}
 
 		// Movable
@@ -43,14 +43,13 @@ export namespace Shared
 		{
 			other.ptr = nullptr;
 		}
-		constexpr auto operator=(this Ptr& self, Ptr&& other) noexcept -> Ptr&
+		constexpr auto operator=(Ptr&& other) noexcept -> Ptr&
 		{
-			if (&self == &other)
-				return self;
-			self.reset();
-			self.ptr = other.ptr;
-			other.ptr = nullptr;
-			return self;
+			if (this == &other)
+				return *this;
+			reset();
+			ptr = std::exchange(other.ptr, nullptr);
+			return *this;
 		}
 
 		constexpr explicit operator bool(this const Ptr& self) noexcept
@@ -181,6 +180,7 @@ namespace
 		constexpr auto QueryInterface(const Win32::GUID& iid, void** ppv) noexcept -> Win32::HRESULT override { return 0; }
 	};
 
+	// Basic AddRef/Release test
 	static_assert(
 		[] -> bool
 		{
@@ -192,5 +192,56 @@ namespace
 				throw "Release did not return 1";
 			return true;
 		}(), "Ptr should call AddRef and Release correctly"
+	);
+	// Move test
+	static_assert(
+		[] -> bool
+		{
+			auto rawPtr = std::make_unique<TestInterface>();
+			auto ptr1 = Shared::Ptr<TestInterface>{ rawPtr.get() };
+			auto ptr2 = std::move(ptr1);
+			if (ptr1.Get() != nullptr)
+				throw "Moved-from Ptr should have null pointer";
+			if (ptr2.Get() != rawPtr.get())
+				throw "Moved-to Ptr should have the original pointer";
+			return true;
+		}(), "Moving Ptr should transfer ownership correctly"
+	);
+	// Copy test
+	static_assert(
+		[] -> bool
+		{
+			auto rawPtr = std::make_unique<TestInterface>();
+			auto ptr1 = Shared::Ptr<TestInterface>{ rawPtr.get() };
+			auto ptr2 = ptr1; // Copy constructor
+			if (ptr1.Get() != rawPtr.get() || ptr2.Get() != rawPtr.get())
+				throw "Both Ptr instances should point to the same object";
+			if (ptr1.AddRef() != 3)
+				throw "AddRef did not return 3 after copy";
+			if (ptr2.Release() != 2)
+				throw "Release did not return 2 after copy";
+			return true;
+		}(), "Copying Ptr should call AddRef correctly"
+	);
+	// Combined copy and move test
+	static_assert(
+		[] -> bool
+		{
+			auto rawPtr = std::make_unique<TestInterface>();
+			auto ptr1 = Shared::Ptr<TestInterface>{ rawPtr.get() };
+			auto ptr2 = ptr1; // Copy constructor
+			auto ptr3 = std::move(ptr1); // Move constructor
+			if (ptr1.Get() != nullptr)
+				throw "Moved-from Ptr should have null pointer";
+			if (ptr2.Get() != rawPtr.get())
+				throw "Copy-constructed Ptr should still point to the original object";
+			if (ptr3.Get() != rawPtr.get())
+				throw "Move-constructed Ptr should point to the original object";
+			if (ptr2.AddRef() != 3)
+				throw "AddRef did not return 3 after copy and move";
+			if (ptr3.Release() != 2)
+				throw "Release did not return 2 after copy and move";
+			return true;
+		}(), "Moving Ptr should transfer ownership correctly"
 	);
 }

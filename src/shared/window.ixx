@@ -2,6 +2,7 @@ export module shared:window;
 import std;
 import :win32;
 import :error;
+import :windowsurface;
 
 namespace Shared
 {
@@ -103,6 +104,12 @@ export namespace Shared
 		auto GetDpi(this auto&& self) -> std::uint32_t
 		{
 			return Win32::GetDpiForWindow(self.GetHandle());
+		}
+
+		[[nodiscard]]
+		auto ToSurface(this auto&& self) -> WindowSurface
+		{
+			return WindowSurface{ self.GetHandle(), self.GetDpi(), self.GetClientRect() };
 		}
 
 		auto Invalidate(this auto&& self, const Win32::RECT* rect = nullptr, bool erase = false)

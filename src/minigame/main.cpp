@@ -8,7 +8,9 @@ import shared;
 
 auto main() -> int
 {
-	auto deviceContext = Shared::DeviceContext{ true };
+	auto window = Shared::GameMainWindow{ Shared::Init };
+	auto deviceContext = Shared::DeviceContext{ window.ToSurface() };
 
-	return 0;
+	auto app = Shared::D2DApp{ std::move(window) };
+	return app.MainLoop();
 }

@@ -10,6 +10,7 @@ module;
 #include <d2d1_1.h>
 #include <dwrite.h>
 #include <dxgi.h>
+#include <dxgi1_2.h>
 #include <d3d11.h>
 
 // Ensure the application uses the latest common controls
@@ -269,8 +270,28 @@ export namespace DXGI
 	using
 		::DXGI_FORMAT,
 		::DXGI_SAMPLE_DESC,
-		::IDXGIDevice
+		::IDXGIDevice,
+		::IDXGIAdapter,
+		::IDXGISwapChain1,
+		::IDXGIFactory2,
+		::DXGI_SWAP_CHAIN_DESC1,
+		::DXGI_USAGE,
+		::DXGI_SCALING,
+		::DXGI_SWAP_EFFECT,
+		::DXGI_SAMPLE_DESC,
+		::DXGI_ALPHA_MODE
 		;
+
+	namespace Usage
+	{
+		enum : UINT
+		{
+			RenderTargetOutput = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+			Shared = DXGI_USAGE_SHARED,
+			ReadOnly = DXGI_USAGE_READ_ONLY,
+			Disposal = DXGI_USAGE_DISCARD_ON_PRESENT
+		};
+	}
 }
 
 export namespace D3D11
@@ -316,6 +337,7 @@ export namespace D2D1
 		::D2D1_DEVICE_CONTEXT_OPTIONS,
 		::ID2D1Device,
 		::ID2D1DeviceContext,
+		::ID2D1Bitmap1,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
 		::D2D1::SizeU,

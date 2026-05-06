@@ -117,6 +117,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <BuildStlModules>true</BuildStlModules>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <ModuleOutputFile>$(IntDir)%(RelativeDir)</ModuleOutputFile>
+      <ModuleDependenciesFile>$(IntDir)%(RelativeDir)</ModuleDependenciesFile>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -137,6 +139,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <BuildStlModules>true</BuildStlModules>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <ModuleOutputFile>$(IntDir)%(RelativeDir)</ModuleOutputFile>
+      <ModuleDependenciesFile>$(IntDir)%(RelativeDir)</ModuleDependenciesFile>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -146,10 +150,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="comptr.ixx" />
+    <ClCompile Include="d2dapp.ixx" />
     <ClCompile Include="devicecontext.ixx" />
     <ClCompile Include="error.ixx" />
     <ClCompile Include="gamemainwindow.ixx" />
     <ClCompile Include="graphicscontext.ixx" />
+    <ClCompile Include="init.ixx" />
     <ClCompile Include="shared.ixx" />
     <ClCompile Include="timer.ixx" />
     <ClCompile Include="win32.ixx" />

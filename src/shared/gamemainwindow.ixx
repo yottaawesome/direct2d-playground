@@ -2,6 +2,7 @@ export module shared:gamemainwindow;
 import std;
 import :win32;
 import :window;
+import :init;
 
 export namespace Shared
 {
@@ -19,8 +20,13 @@ export namespace Shared
 		GameMainWindow(GameMainWindow&&) noexcept = default;
 		auto operator=(GameMainWindow&&) noexcept -> GameMainWindow& = default;
 
-		GameMainWindow() : Window<GameMainWindow>{false}
+		GameMainWindow(NoInitTag) : Window<GameMainWindow>{false}
 		{}
+
+		GameMainWindow(InitTag) : Window<GameMainWindow>{ false }
+		{
+			Init();
+		}
 
 		GameMainWindow(
 			RenderFn onRender,

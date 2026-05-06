@@ -8,3 +8,5 @@ export import :gamemainwindow;
 export import :graphicscontext;
 export import :windowsurface;
 export import :devicecontext;
+export import :d2dapp;
+export import :init;
