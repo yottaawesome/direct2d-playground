@@ -9,17 +9,17 @@ import shared;
 class TestApp final : public Shared::D2DApp
 {
 public:
-	auto OnResize(this auto&& self, std::uint32_t width, std::uint32_t height) -> void
+	void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 	{
 		self.deviceContext.OnResize(width, height);
 		self.window.Invalidate();
 	}
 
-	auto OnIdle(this auto&& self) -> void
+	void OnIdle(this auto&& self)
 	{
 		self.deviceContext.CreateResources();
-		if (not self.window.IsIconic())
-			self.window.On.Render();
+		if (self.window.IsIconic())
+			return;
 
 		self.deviceContext.BeginDraw();
 		self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
@@ -45,6 +45,11 @@ public:
 private:
 	Shared::GameMainWindow window{ 
 		Shared::GameMainWindow::OnEvent{
+			.Render =
+				[this]
+				{
+					OnIdle();
+				},
 			.Resize = 
 				[this](std::uint32_t width, std::uint32_t height) 
 				{ 
