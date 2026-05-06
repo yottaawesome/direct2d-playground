@@ -72,17 +72,22 @@ export namespace GameLoop
 	private:
 		Shared::Timer timer;
 		Shared::GameMainWindow window{
-			[this]
-			{
-				Tick(); // animate resizes
-			},
-			[this](std::uint32_t width, std::uint32_t height)
-			{
-				OnResize(width, height);
-			},
-			[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect)
-			{
-				OnDpiChanged(dpiX, suggestedRect);
+			Shared::GameMainWindow::OnEvent{
+				.Render = 
+					[this]
+					{
+						Tick(); // animate resizes
+					},
+				.Resize = 
+					[this](std::uint32_t width, std::uint32_t height)
+					{
+						OnResize(width, height);
+					},
+				.DpiChanged = 
+					[this](std::uint32_t dpiX, const Win32::RECT& suggestedRect)
+					{
+						OnDpiChanged(dpiX, suggestedRect);
+					}
 			}
 		};
 		Shared::GraphicsContext gfxContext{
