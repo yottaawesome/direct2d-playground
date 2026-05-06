@@ -64,6 +64,7 @@ export namespace Shared
 		{
 			self.CreateDeviceResources();
 			self.CreateSwapChain();
+			self.CreateTargetBitmap();
 		}
 
 		void CreateDeviceResources(this auto&& self)
@@ -94,14 +95,14 @@ export namespace Shared
 					featureLevels.data(),
 					static_cast<unsigned int>(featureLevels.size()),
 					D3D11::SdkVersion,
-					self.d3dDevice.ReleaseAndGetAddressOf(),
+					self.d3d11Device.ReleaseAndGetAddressOf(),
 					&featureLevel,
-					self.deviceContext.ReleaseAndGetAddressOf()
+					self.d3d11DeviceContext.ReleaseAndGetAddressOf()
 				) };
 			if (not hr)
 				throw ComError{ hr, "Failed to create D3D11 device and context" };
 
-			self.dxgiDevice = self.d3dDevice.As<DXGI::IDXGIDevice>();
+			self.dxgiDevice = self.d3d11Device.As<DXGI::IDXGIDevice>();
 
 			hr = HResult{
 				self.d2dFactory1->CreateDevice(
@@ -114,7 +115,7 @@ export namespace Shared
 			hr = HResult{
 				self.d2dDevice->CreateDeviceContext(
 					D2D1::D2D1_DEVICE_CONTEXT_OPTIONS::D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-					self.d2dContext.ReleaseAndGetAddressOf()
+					self.d2dDeviceContext.ReleaseAndGetAddressOf()
 				) };
 			if (not hr)
 				throw ComError{ hr, "Failed to create D2D1 device context" };
@@ -150,7 +151,7 @@ export namespace Shared
 			};
 
 			hr = factory->CreateSwapChainForHwnd(
-				self.d3dDevice.Get(),
+				self.d3d11Device.Get(),
 				self.surface.Hwnd,
 				&swapChainDesc,
 				nullptr,
@@ -161,13 +162,45 @@ export namespace Shared
 				throw Shared::ComError{ hr, "IDXGIFactory2::CreateSwapChainForHwnd() failed" };
 		}
 
-		Ptr<D3D11::ID3D11Device> d3dDevice;
-		Ptr<D3D11::ID3D11DeviceContext> deviceContext;
+		void CreateTargetBitmap(this auto&& self)
+		{
+			auto backBuffer = Shared::Ptr<DXGI::IDXGISurface>{};
+			auto hr = Shared::HResult{ 
+				self.swapChain->GetBuffer(
+					0,
+					backBuffer.GetUuid(),
+					reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf())
+				) };
+			if (not hr)
+				throw Shared::ComError{ hr, "IDXGISwapChain::GetBuffer() failed" };
+
+			auto bitmapProperties =
+				D2D1::D2D1_BITMAP_PROPERTIES1{
+					.pixelFormat = D2D1::D2D1_PIXEL_FORMAT{
+						.format = DXGI::DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM,
+						.alphaMode = D2D1::D2D1_ALPHA_MODE::D2D1_ALPHA_MODE_PREMULTIPLIED
+					},
+					.dpiX = static_cast<float>(self.surface.GetDpi()),
+					.dpiY = static_cast<float>(self.surface.GetDpi()),
+					.bitmapOptions = static_cast<D2D1::D2D1_BITMAP_OPTIONS>(D2D1::D2D1_BITMAP_OPTIONS::D2D1_BITMAP_OPTIONS_TARGET | D2D1::D2D1_BITMAP_OPTIONS::D2D1_BITMAP_OPTIONS_CANNOT_DRAW),
+					.colorContext = nullptr
+				};
+			hr = self.d2dDeviceContext->CreateBitmapFromDxgiSurface(
+				backBuffer.Get(),
+				&bitmapProperties,
+				self.targetBitmap.ReleaseAndGetAddressOf()
+			);
+			if (not hr)
+				throw ComError{ hr, "ID2D1DeviceContext::CreateBitmapFromDxgiSurface() failed" };
+		}
+
+		Ptr<D3D11::ID3D11Device> d3d11Device;
+		Ptr<D3D11::ID3D11DeviceContext> d3d11DeviceContext;
 		Ptr<DXGI::IDXGIDevice> dxgiDevice;
 		Ptr<D2D1::ID2D1Factory> d2dFactory;
 		Ptr<D2D1::ID2D1Factory1> d2dFactory1;
 		Ptr<D2D1::ID2D1Device> d2dDevice;
-		Ptr<D2D1::ID2D1DeviceContext> d2dContext;
+		Ptr<D2D1::ID2D1DeviceContext> d2dDeviceContext;
 		Ptr<DXGI::IDXGISwapChain1> swapChain;
 		Ptr<D2D1::ID2D1Bitmap1> targetBitmap;
 		WindowSurface surface;

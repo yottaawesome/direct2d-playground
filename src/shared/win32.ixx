@@ -279,7 +279,8 @@ export namespace DXGI
 		::DXGI_SCALING,
 		::DXGI_SWAP_EFFECT,
 		::DXGI_SAMPLE_DESC,
-		::DXGI_ALPHA_MODE
+		::DXGI_ALPHA_MODE,
+		::IDXGISurface
 		;
 
 	namespace Usage
@@ -327,6 +328,8 @@ export namespace D2D1
 		::DWRITE_FONT_STYLE,
 		::DWRITE_TEXT_ALIGNMENT,
 		::DWRITE_PARAGRAPH_ALIGNMENT,
+		::D2D1_BITMAP_PROPERTIES1,
+		::D2D1_PIXEL_FORMAT,
 		::IWICFormatConverter,
 		::ID2D1HwndRenderTarget,
 		::IWICImagingFactory2,
@@ -334,6 +337,7 @@ export namespace D2D1
 		::D2D1_SIZE_F,
 		::D2D1_RENDER_TARGET_TYPE,
 		::D2D1_ALPHA_MODE,
+		::D2D1_BITMAP_OPTIONS,
 		::D2D1_DEVICE_CONTEXT_OPTIONS,
 		::ID2D1Device,
 		::ID2D1DeviceContext,
