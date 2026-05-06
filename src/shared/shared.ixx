@@ -6,3 +6,5 @@ export import :comptr;
 export import :timer;
 export import :gamemainwindow;
 export import :graphicscontext;
+export import :windowsurface;
+export import :devicecontext;

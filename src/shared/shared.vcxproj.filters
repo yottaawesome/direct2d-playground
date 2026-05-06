@@ -39,5 +39,14 @@
     <ClCompile Include="graphicscontext.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="windowsurface.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="windowlike.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devicecontext.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

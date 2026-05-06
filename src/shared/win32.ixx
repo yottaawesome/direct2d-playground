@@ -7,7 +7,10 @@ module;
 #include <wincodec.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
+#include <d2d1_1.h>
 #include <dwrite.h>
+#include <dxgi.h>
+#include <d3d11.h>
 
 // Ensure the application uses the latest common controls
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
@@ -265,8 +268,23 @@ export namespace DXGI
 {
 	using
 		::DXGI_FORMAT,
-		::DXGI_SAMPLE_DESC
+		::DXGI_SAMPLE_DESC,
+		::IDXGIDevice
 		;
+}
+
+export namespace D3D11
+{
+	using
+		::ID3D11Device,
+		::ID3D11DeviceContext,
+		::D3D11_CREATE_DEVICE_FLAG,
+		::D3D_FEATURE_LEVEL,
+		::D3D_DRIVER_TYPE,
+		::D3D11CreateDevice
+		;
+
+	constexpr auto SdkVersion = D3D11_SDK_VERSION;
 }
 
 export namespace D2D1
@@ -278,8 +296,10 @@ export namespace D2D1
 		::D2D1_RECT_F,
 		::D2D1_FACTORY_TYPE,
 		::DWRITE_FACTORY_TYPE,
+		::D2D1_DEVICE_CONTEXT_OPTIONS,
 		::ID2D1Bitmap,
 		::ID2D1Factory,
+		::ID2D1Factory1,
 		::IDWriteFactory,
 		::DWRITE_FONT_STRETCH,
 		::DWRITE_FONT_WEIGHT,
@@ -293,6 +313,9 @@ export namespace D2D1
 		::D2D1_SIZE_F,
 		::D2D1_RENDER_TARGET_TYPE,
 		::D2D1_ALPHA_MODE,
+		::D2D1_DEVICE_CONTEXT_OPTIONS,
+		::ID2D1Device,
+		::ID2D1DeviceContext,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
 		::D2D1::SizeU,

@@ -1,6 +1,7 @@
 export module shared:comptr;
 import std;
 import :win32;
+import :error;
 
 export namespace Shared
 {
@@ -145,6 +146,21 @@ export namespace Shared
 		constexpr auto GetUuid(this const Ptr&) noexcept -> Win32::GUID
 		{
 			return __uuidof(T);
+		}
+
+		template <typename U>
+		auto As(this const Ptr& self) -> Ptr<U>
+		{
+			if (not self.ptr)
+				return {};
+
+			auto rawPtr = static_cast<U*>(nullptr);
+			auto hr = HResult{
+				self.ptr->QueryInterface(__uuidof(U), reinterpret_cast<void**>(&rawPtr))
+			};
+			if (not hr)
+				throw ComError{ hr, "QueryInterface() failed in As<>()" };
+			return Ptr<U>{ rawPtr };
 		}
 
 		T* ptr = nullptr;

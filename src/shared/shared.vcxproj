@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="comptr.ixx" />
+    <ClCompile Include="devicecontext.ixx" />
     <ClCompile Include="error.ixx" />
     <ClCompile Include="gamemainwindow.ixx" />
     <ClCompile Include="graphicscontext.ixx" />
@@ -153,6 +154,8 @@
     <ClCompile Include="timer.ixx" />
     <ClCompile Include="win32.ixx" />
     <ClCompile Include="window.ixx" />
+    <ClCompile Include="windowlike.ixx" />
+    <ClCompile Include="windowsurface.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
