@@ -71,8 +71,8 @@ export namespace GameLoop
 	{
 	private:
 		Shared::Timer timer;
-		Shared::GameMainWindow window{
-			Shared::GameMainWindow::OnEvent{
+		Shared::GameWindow window{
+			Shared::GameWindow::OnEvent{
 				.Render = 
 					[this]
 					{

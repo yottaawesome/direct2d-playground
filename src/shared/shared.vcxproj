@@ -149,19 +149,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="comptr.ixx" />
-    <ClCompile Include="d2dapp.ixx" />
-    <ClCompile Include="devicecontext.ixx" />
-    <ClCompile Include="error.ixx" />
-    <ClCompile Include="gamemainwindow.ixx" />
-    <ClCompile Include="graphicscontext.ixx" />
-    <ClCompile Include="init.ixx" />
+    <ClCompile Include="com\com.ixx" />
+    <ClCompile Include="com\comapartment.ixx" />
+    <ClCompile Include="com\comptr.ixx" />
+    <ClCompile Include="d2d\d2d.ixx" />
+    <ClCompile Include="d2d\d2dapp.ixx" />
+    <ClCompile Include="d2d\devicecontext.ixx" />
+    <ClCompile Include="error\error.ixx" />
+    <ClCompile Include="misc\misc.ixx" />
+    <ClCompile Include="ui\gamewindow.ixx" />
+    <ClCompile Include="d2d\graphicscontext.ixx" />
+    <ClCompile Include="misc\init.ixx" />
     <ClCompile Include="shared.ixx" />
-    <ClCompile Include="timer.ixx" />
-    <ClCompile Include="win32.ixx" />
-    <ClCompile Include="window.ixx" />
-    <ClCompile Include="windowlike.ixx" />
-    <ClCompile Include="windowsurface.ixx" />
+    <ClCompile Include="misc\timer.ixx" />
+    <ClCompile Include="ui\ui.ixx" />
+    <ClCompile Include="wic\wic.ixx" />
+    <ClCompile Include="win32\win32.ixx" />
+    <ClCompile Include="ui\window.ixx" />
+    <ClCompile Include="ui\windowlike.ixx" />
+    <ClCompile Include="ui\windowsurface.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,34 +7,10 @@ import devicecontextsample;
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "ole32.lib")
 
-namespace
-{
-	class ComApartment
-	{
-	public:
-		ComApartment()
-		{
-			auto hr = Shared::HResult{
-				Win32::CoInitializeEx(
-					nullptr,
-					Win32::COINIT::COINIT_MULTITHREADED | Win32::COINIT::COINIT_DISABLE_OLE1DDE
-				)
-			};
-			if (not hr)
-				throw Shared::ComError{ hr, "CoInitializeEx() failed" };
-		}
-
-		~ComApartment()
-		{
-			Win32::CoUninitialize();
-		}
-	};
-}
-
 auto main() -> int
 try
 {
-	auto com = ComApartment{};
+	auto com = Shared::ComApartment{};
 
 	auto ctx = Win32::GetThreadDpiAwarenessContext();
 	if (not Win32::AreDpiAwarenessContextsEqual(ctx, Win32::DpiAwarenessContext::PerMonitorAwareV2))

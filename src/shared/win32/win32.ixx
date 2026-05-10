@@ -12,6 +12,7 @@ module;
 #include <dxgi.h>
 #include <dxgi1_2.h>
 #include <d3d11.h>
+#include <wtypesbase.h>
 
 // Ensure the application uses the latest common controls
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
@@ -50,6 +51,8 @@ export namespace Win32
 		::PAINTSTRUCT,
 		::DPI_AWARENESS,
 		::IUnknown,
+		::CLSCTX,
+		::CoCreateInstance,
 		::IsIconic,
 		::AreDpiAwarenessContextsEqual,
 		::GetAwarenessFromDpiAwarenessContext,
@@ -90,6 +93,14 @@ export namespace Win32
 
 	constexpr auto Succeeded(HRESULT hr) noexcept { return SUCCEEDED(hr); }
 	constexpr auto Failed(HRESULT hr) noexcept { return FAILED(hr); }
+
+	namespace Access
+	{
+		constexpr auto Read = GENERIC_READ;
+		constexpr auto Write = GENERIC_WRITE;
+		constexpr auto Execute = GENERIC_EXECUTE;
+		constexpr auto All = GENERIC_ALL;
+	}
 
 	namespace DpiAwarenessContext
 	{
@@ -370,6 +381,28 @@ export namespace D2D1
 		{
 			SingleThreaded = D2D1_FACTORY_TYPE_SINGLE_THREADED,
 			MultiThreaded = D2D1_FACTORY_TYPE_MULTI_THREADED
+		};
+	}
+
+	
+}
+
+export namespace WIC
+{
+	using
+		::IWICImagingFactory2,
+		::IWICBitmapDecoder,
+		::IWICBitmapFrameDecode,
+		::IWICFormatConverter,
+		::CLSID_WICImagingFactory2,
+		::WICDecodeOptions
+		;
+	namespace DecodeOptions
+	{
+		enum : DWORD
+		{
+			MetadataCacheOnDemand = WICDecodeMetadataCacheOnDemand,
+			MetadataCacheOnLoad = WICDecodeMetadataCacheOnLoad,
 		};
 	}
 }

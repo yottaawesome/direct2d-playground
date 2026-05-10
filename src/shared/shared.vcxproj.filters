@@ -18,40 +18,58 @@
     <ClCompile Include="shared.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="win32.ixx">
+    <ClCompile Include="win32\win32.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="window.ixx">
+    <ClCompile Include="ui\window.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="error.ixx">
+    <ClCompile Include="error\error.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="comptr.ixx">
+    <ClCompile Include="com\comptr.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gamemainwindow.ixx">
+    <ClCompile Include="ui\gamewindow.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="timer.ixx">
+    <ClCompile Include="misc\timer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphicscontext.ixx">
+    <ClCompile Include="d2d\graphicscontext.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="windowsurface.ixx">
+    <ClCompile Include="ui\windowsurface.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="windowlike.ixx">
+    <ClCompile Include="ui\windowlike.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devicecontext.ixx">
+    <ClCompile Include="d2d\devicecontext.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d2dapp.ixx">
+    <ClCompile Include="d2d\d2dapp.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="init.ixx">
+    <ClCompile Include="misc\init.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wic\wic.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="com\comapartment.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc\misc.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="com\com.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d2d\d2d.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,12 +1,8 @@
 export module shared;
 export import :win32;
-export import :window;
 export import :error;
-export import :comptr;
-export import :timer;
-export import :gamemainwindow;
-export import :graphicscontext;
-export import :windowsurface;
-export import :devicecontext;
-export import :d2dapp;
-export import :init;
+export import :com;
+export import :d2d;
+export import :misc;
+export import :wic;
+export import :ui;

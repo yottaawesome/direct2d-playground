@@ -1,6 +1,6 @@
 export module shared:devicecontext;
 import std;
-import :comptr;
+import :com;
 import :win32;
 import :error;
 import :windowsurface;

@@ -1,4 +1,4 @@
-export module shared:gamemainwindow;
+export module shared:gamewindow;
 import std;
 import :win32;
 import :window;
@@ -6,7 +6,7 @@ import :init;
 
 export namespace Shared
 {
-	class GameMainWindow final : public Window<GameMainWindow>
+	class GameWindow final : public Window<GameWindow>
 	{
 	public:
 		using RenderFn = std::move_only_function<auto()->void>;
@@ -22,19 +22,19 @@ export namespace Shared
 			DisplayChangeFn DisplayChange = [] {};
 		};
 
-		GameMainWindow(GameMainWindow&&) noexcept = default;
-		auto operator=(GameMainWindow&&) noexcept -> GameMainWindow& = default;
+		GameWindow(GameWindow&&) noexcept = default;
+		auto operator=(GameWindow&&) noexcept -> GameWindow & = default;
 
-		GameMainWindow(NoInitTag) : Window<GameMainWindow>{false}
+		GameWindow(NoInitTag) : Window<GameWindow>{false}
 		{}
 
-		GameMainWindow(InitTag) : Window<GameMainWindow>{ false }
+		GameWindow(InitTag) : Window<GameWindow>{ false }
 		{
 			Init();
 		}
 
-		GameMainWindow(OnEvent handlers)
-			: Window<GameMainWindow>{ false }
+		GameWindow(OnEvent handlers)
+			: Window<GameWindow>{ false }
 			, On{ std::move(handlers) }
 		{
 			// We need to Init() after setting the function objects, 

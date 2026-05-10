@@ -1,6 +1,6 @@
 export module shared:windowsurface;
 import std;
-import :comptr;
+import :com;
 import :win32;
 import :error;
 

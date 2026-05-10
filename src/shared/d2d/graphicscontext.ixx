@@ -1,6 +1,6 @@
 export module shared:graphicscontext;
 import std;
-import :comptr;
+import :com;
 import :win32;
 import :error;
 import :windowsurface;
