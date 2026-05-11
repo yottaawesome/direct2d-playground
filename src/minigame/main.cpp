@@ -20,6 +20,15 @@ try
 		.DestinationFormat = WIC::GUID_WICPixelFormat32bppPBGRA
 	});
 
+	/*
+	* Shared::Ptr<ID2D1Bitmap1> bitmap;
+	 hr = deviceContext->CreateBitmapFromWicBitmap(
+		 converter.Get(),
+		 nullptr,
+		 bitmap.ReleaseAndGetAddressOf()
+	 );
+	*/
+
 	auto app = SpaceDefender::MainApp{};
 	return app.MainLoop();
 }
