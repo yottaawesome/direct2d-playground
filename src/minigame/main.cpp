@@ -13,7 +13,12 @@ try
 	auto com = Shared::ComApartment{};
 	auto wicContext = Shared::WicContext{};
 	auto playerDecoder = wicContext.CreateDecoderFromFilename({ .Filename = L"assets\\player.png" });
-	auto playerSprite = playerDecoder.GetFrame(0);
+	auto frame = playerDecoder.GetFrame(0);
+
+	auto converter = wicContext.CreateConverter({
+		.Source = frame.Get(),
+		.DestinationFormat = WIC::GUID_WICPixelFormat32bppPBGRA
+	});
 
 	auto app = SpaceDefender::MainApp{};
 	return app.MainLoop();

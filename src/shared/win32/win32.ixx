@@ -383,8 +383,6 @@ export namespace D2D1
 			MultiThreaded = D2D1_FACTORY_TYPE_MULTI_THREADED
 		};
 	}
-
-	
 }
 
 export namespace WIC
@@ -394,15 +392,11 @@ export namespace WIC
 		::IWICBitmapDecoder,
 		::IWICBitmapFrameDecode,
 		::IWICFormatConverter,
+		::WICDecodeOptions,
+		::WICBitmapDitherType,
+		::WICBitmapPaletteType,
+		::IWICPalette,
 		::CLSID_WICImagingFactory2,
-		::WICDecodeOptions
+		::GUID_WICPixelFormat32bppPBGRA
 		;
-	namespace DecodeOptions
-	{
-		enum : DWORD
-		{
-			MetadataCacheOnDemand = WICDecodeMetadataCacheOnDemand,
-			MetadataCacheOnLoad = WICDecodeMetadataCacheOnLoad,
-		};
-	}
 }

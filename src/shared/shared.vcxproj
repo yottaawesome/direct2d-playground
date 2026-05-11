@@ -163,7 +163,11 @@
     <ClCompile Include="shared.ixx" />
     <ClCompile Include="misc\timer.ixx" />
     <ClCompile Include="ui\ui.ixx" />
+    <ClCompile Include="wic\bitmapdecoder.ixx" />
+    <ClCompile Include="wic\bitmapframedecode.ixx" />
+    <ClCompile Include="wic\formatconverter.ixx" />
     <ClCompile Include="wic\wic.ixx" />
+    <ClCompile Include="wic\wiccontext.ixx" />
     <ClCompile Include="win32\win32.ixx" />
     <ClCompile Include="ui\window.ixx" />
     <ClCompile Include="ui\windowlike.ixx" />

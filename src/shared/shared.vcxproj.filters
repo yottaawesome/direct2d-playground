@@ -72,5 +72,17 @@
     <ClCompile Include="d2d\d2d.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wic\wiccontext.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wic\bitmapdecoder.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wic\bitmapframedecode.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wic\formatconverter.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
