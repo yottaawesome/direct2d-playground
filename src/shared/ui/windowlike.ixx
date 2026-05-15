@@ -1,4 +1,4 @@
-export module shared:windowlike;
+export module shared:ui.windowlike;
 import std;
 import :win32;
 

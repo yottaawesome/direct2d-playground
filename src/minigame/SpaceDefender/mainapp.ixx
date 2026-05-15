@@ -1,6 +1,7 @@
-export module spacedefender;
+export module spacedefender:mainapp;
 import std;
 import shared;
+import :wiccomponents;
 
 export namespace SpaceDefender
 {
@@ -60,5 +61,6 @@ export namespace SpaceDefender
 			}
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
+		WicComponents wicComponents{};
 	};
 }

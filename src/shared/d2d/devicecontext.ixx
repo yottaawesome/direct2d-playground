@@ -1,9 +1,9 @@
-export module shared:devicecontext;
+export module shared:d2d.devicecontext;
 import std;
 import :com;
 import :win32;
 import :error;
-import :windowsurface;
+import :ui;
 
 export namespace Shared
 {
@@ -84,9 +84,15 @@ export namespace Shared
 		}
 		
 		[[nodiscard]]
-		constexpr auto GetDeviceContext(this auto&& self) noexcept -> D3D11::ID3D11DeviceContext*
+		constexpr auto GetD3D11DeviceContext(this auto&& self) noexcept -> D3D11::ID3D11DeviceContext*
 		{
-			return self.deviceContext.Get();
+			return self.d3d11DeviceContext.Get();
+		}
+
+		[[nodiscard]]
+		constexpr auto GetD2DDeviceContext(this auto&& self) noexcept -> D2D1::ID2D1DeviceContext*
+		{
+			return self.d2dDeviceContext.Get();
 		}
 
 		[[nodiscard]]

@@ -1,4 +1,4 @@
-export module shared:comapartment;
+export module shared:com.comapartment;
 import :win32;
 import :error;
 

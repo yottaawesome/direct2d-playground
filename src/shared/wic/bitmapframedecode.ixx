@@ -1,4 +1,4 @@
-export module shared:bitmapframedecode;
+export module shared:wic.bitmapframedecode;
 import std;
 import :error;
 import :win32;

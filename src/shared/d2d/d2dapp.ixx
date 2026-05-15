@@ -1,4 +1,4 @@
-export module shared:d2dapp;
+export module shared:d2d.d2dapp;
 import std;
 import :win32;
 

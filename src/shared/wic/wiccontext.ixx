@@ -1,10 +1,10 @@
-export module shared:wiccontext;
+export module shared:wic.wiccontext;
 import std;
 import :error;
 import :win32;
 import :com;
-import :bitmapdecoder;
-import :formatconverter;
+import :wic.bitmapdecoder;
+import :wic.formatconverter;
 
 export namespace Shared
 {

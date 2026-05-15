@@ -11,24 +11,7 @@ auto main() -> int
 try
 {
 	auto com = Shared::ComApartment{};
-	auto wicContext = Shared::WicContext{};
-	auto playerDecoder = wicContext.CreateDecoderFromFilename({ .Filename = L"assets\\player.png" });
-	auto frame = playerDecoder.GetFrame(0);
-
-	auto converter = wicContext.CreateConverter({
-		.Source = frame.Get(),
-		.DestinationFormat = WIC::GUID_WICPixelFormat32bppPBGRA
-	});
-
-	/*
-	* Shared::Ptr<ID2D1Bitmap1> bitmap;
-	 hr = deviceContext->CreateBitmapFromWicBitmap(
-		 converter.Get(),
-		 nullptr,
-		 bitmap.ReleaseAndGetAddressOf()
-	 );
-	*/
-
+	
 	auto app = SpaceDefender::MainApp{};
 	return app.MainLoop();
 }

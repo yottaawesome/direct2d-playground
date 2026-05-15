@@ -18,7 +18,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="spacedefender.ixx">
+    <ClCompile Include="SpaceDefender\spacedefender.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceDefender\wiccomponents.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceDefender\mainapp.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceDefender\assetmanager.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-export module shared:windowsurface;
+export module shared:ui.windowsurface;
 import std;
 import :com;
 import :win32;

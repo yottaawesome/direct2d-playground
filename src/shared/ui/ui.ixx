@@ -1,5 +1,5 @@
 export module shared:ui;
-export import :window;
-export import :gamewindow;
-export import :windowlike;
-export import :windowsurface;
+export import :ui.window;
+export import :ui.gamewindow;
+export import :ui.windowlike;
+export import :ui.windowsurface;

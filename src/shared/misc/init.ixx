@@ -1,4 +1,4 @@
-export module shared:init;
+export module shared:misc.init;
 
 export namespace Shared
 {

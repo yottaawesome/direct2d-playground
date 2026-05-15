@@ -1,8 +1,8 @@
-export module shared:window;
+export module shared:ui.window;
 import std;
 import :win32;
 import :error;
-import :windowsurface;
+import :ui.windowsurface;
 
 namespace Shared
 {

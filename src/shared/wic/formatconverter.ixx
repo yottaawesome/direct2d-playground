@@ -1,9 +1,9 @@
-export module shared:formatconverter;
+export module shared:wic.formatconverter;
 import std;
 import :win32;
 import :error;
 import :com;
-import :bitmapframedecode;
+import :wic.bitmapframedecode;
 
 export namespace Shared
 {

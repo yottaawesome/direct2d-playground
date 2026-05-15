@@ -1,4 +1,4 @@
-export module shared:timer;
+export module shared:misc.timer;
 import std;
 
 export namespace Shared

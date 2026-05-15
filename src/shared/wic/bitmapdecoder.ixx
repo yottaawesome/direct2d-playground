@@ -1,9 +1,9 @@
-export module shared:bitmapdecoder;
+export module shared:wic.bitmapdecoder;
 import std;
 import :error;
 import :win32;
 import :com;
-import :bitmapframedecode;
+import :wic.bitmapframedecode;
 
 export namespace Shared
 {

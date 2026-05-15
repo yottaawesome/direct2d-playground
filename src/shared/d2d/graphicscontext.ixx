@@ -1,9 +1,9 @@
-export module shared:graphicscontext;
+export module shared:d2d.graphicscontext;
 import std;
 import :com;
 import :win32;
 import :error;
-import :windowsurface;
+import :ui;
 
 export namespace Shared
 {

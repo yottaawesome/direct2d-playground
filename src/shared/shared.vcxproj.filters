@@ -84,5 +84,8 @@
     <ClCompile Include="wic\formatconverter.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="d2d\bitmap.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

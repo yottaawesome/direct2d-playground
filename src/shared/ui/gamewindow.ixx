@@ -1,8 +1,8 @@
-export module shared:gamewindow;
+export module shared:ui.gamewindow;
 import std;
 import :win32;
-import :window;
-import :init;
+import :ui.window;
+import :misc;
 
 export namespace Shared
 {

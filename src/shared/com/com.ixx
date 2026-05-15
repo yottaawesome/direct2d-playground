@@ -1,3 +1,3 @@
 export module shared:com;
-export import :comptr;
-export import :comapartment;
+export import :com.comptr;
+export import :com.comapartment;

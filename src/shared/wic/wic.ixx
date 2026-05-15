@@ -1,5 +1,5 @@
 export module shared:wic;
-export import :wiccontext;
-export import :bitmapdecoder;
-export import :bitmapframedecode;
-export import :formatconverter;
+export import :wic.wiccontext;
+export import :wic.bitmapdecoder;
+export import :wic.bitmapframedecode;
+export import :wic.formatconverter;

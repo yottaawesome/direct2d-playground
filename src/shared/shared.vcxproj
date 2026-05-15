@@ -152,6 +152,7 @@
     <ClCompile Include="com\com.ixx" />
     <ClCompile Include="com\comapartment.ixx" />
     <ClCompile Include="com\comptr.ixx" />
+    <ClCompile Include="d2d\bitmap.ixx" />
     <ClCompile Include="d2d\d2d.ixx" />
     <ClCompile Include="d2d\d2dapp.ixx" />
     <ClCompile Include="d2d\devicecontext.ixx" />

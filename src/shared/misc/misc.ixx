@@ -1,3 +1,3 @@
 export module shared:misc;
-export import :init;
-export import :timer;
+export import :misc.init;
+export import :misc.timer;

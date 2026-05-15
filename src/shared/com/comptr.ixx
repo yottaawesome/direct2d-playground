@@ -1,4 +1,4 @@
-export module shared:comptr;
+export module shared:com.comptr;
 import std;
 import :win32;
 import :error;
