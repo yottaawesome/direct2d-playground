@@ -3,3 +3,4 @@ export import :ui.window;
 export import :ui.gamewindow;
 export import :ui.windowlike;
 export import :ui.windowsurface;
+export import :ui.functions;

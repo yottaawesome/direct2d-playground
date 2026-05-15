@@ -87,5 +87,11 @@
     <ClCompile Include="d2d\bitmap.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ui\functions.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d2dwic\d2dwic.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

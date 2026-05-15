@@ -33,6 +33,7 @@ export namespace Shared
 			return self.Factory.Get();
 		}
 
+		[[nodiscard]]
 		auto CreateConverter(
 			this auto&& self, 
 			const ConverterParameters& params
@@ -75,6 +76,7 @@ export namespace Shared
 			WIC::WICDecodeOptions DecodeOptions = WIC::WICDecodeOptions::WICDecodeMetadataCacheOnDemand;
 		};
 
+		[[nodiscard]]
 		auto CreateDecoderFromFilename(
 			this auto&& self,
 			const CreateDecoderFromFilenameOptions& options

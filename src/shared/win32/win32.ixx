@@ -355,6 +355,7 @@ export namespace D2D1
 		::ID2D1Bitmap1,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
+		::D2D1::RectF,
 		::D2D1::SizeU,
 		::D2D1::RectF,
 		::D2D1::RenderTargetProperties,

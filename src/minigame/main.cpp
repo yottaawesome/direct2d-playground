@@ -17,11 +17,11 @@ try
 }
 catch (const std::exception& ex)
 {
-	Win32::MessageBoxA(nullptr, ex.what(), "Error", Win32::MessageBoxOptions::Ok | Win32::MessageBoxOptions::Critical);
+	Shared::ErrorMessageBox(ex.what(), "Exception");
 	return 1;
 }
 catch (...)
 {
-	Win32::MessageBoxA(nullptr, "An unknown error occurred.", "Error", Win32::MessageBoxOptions::Ok | Win32::MessageBoxOptions::Critical);
+	Shared::ErrorMessageBox("An unknown error occurred.", "Unknown exception");
 	return 1;
 }

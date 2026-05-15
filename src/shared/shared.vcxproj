@@ -152,12 +152,14 @@
     <ClCompile Include="com\com.ixx" />
     <ClCompile Include="com\comapartment.ixx" />
     <ClCompile Include="com\comptr.ixx" />
+    <ClCompile Include="d2dwic\d2dwic.ixx" />
     <ClCompile Include="d2d\bitmap.ixx" />
     <ClCompile Include="d2d\d2d.ixx" />
     <ClCompile Include="d2d\d2dapp.ixx" />
     <ClCompile Include="d2d\devicecontext.ixx" />
     <ClCompile Include="error\error.ixx" />
     <ClCompile Include="misc\misc.ixx" />
+    <ClCompile Include="ui\functions.ixx" />
     <ClCompile Include="ui\gamewindow.ixx" />
     <ClCompile Include="d2d\graphicscontext.ixx" />
     <ClCompile Include="misc\init.ixx" />

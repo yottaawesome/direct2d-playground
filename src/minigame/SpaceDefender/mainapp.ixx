@@ -1,7 +1,7 @@
 export module spacedefender:mainapp;
 import std;
 import shared;
-import :wiccomponents;
+import :assetmanager;
 
 export namespace SpaceDefender
 {
@@ -10,7 +10,8 @@ export namespace SpaceDefender
 	public:
 		// There's MSVC modules bug that causes the Shared::GameMainWindow::OnEvent initialisation
 		// to fail if we don't provide a user-defined constructor here.
-		MainApp() {}
+		MainApp() 
+		{ }
 
 		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 		{
@@ -21,11 +22,18 @@ export namespace SpaceDefender
 		void OnIdle(this auto&& self)
 		{
 			self.deviceContext.CreateResources();
+			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
 			if (self.window.IsIconic())
 				return;
 
 			self.deviceContext.BeginDraw();
 			self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
+
+			self.deviceContext->DrawBitmap(
+				self.assetManager.Player.Get(),
+				D2D1::RectF(100.0f, 100.0f, 164.0f, 164.0f)
+			);
+
 			auto hr = Shared::HResult{ self.deviceContext->EndDraw() };
 
 			if (hr)
@@ -36,6 +44,7 @@ export namespace SpaceDefender
 			}
 			else if (hr.Code == D2D1::Error::RecreateTarget)
 			{
+				self.assetManager.Discard();
 				self.deviceContext.DiscardResources();
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
 			}
@@ -46,6 +55,11 @@ export namespace SpaceDefender
 		}
 
 	private:
+		void LoadAssets(this MainApp& self)
+		{
+			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
+		}
+
 		Shared::GameWindow window{
 			Shared::GameWindow::OnEvent{
 				.Render =
@@ -61,6 +75,6 @@ export namespace SpaceDefender
 			}
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
-		WicComponents wicComponents{};
+		AssetManager assetManager{};
 	};
 }

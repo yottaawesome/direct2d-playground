@@ -5,7 +5,7 @@ import :error;
 
 export namespace Shared
 {
-	template<typename T>
+	template<typename T, bool Copyable = true>
 	struct Ptr
 	{
 		constexpr ~Ptr() noexcept
@@ -19,14 +19,18 @@ export namespace Shared
 			: ptr(typePtr)
 		{}
 
-		// Copyable
-		constexpr Ptr(const Ptr& other) noexcept
+		// Optionally copyable
+		constexpr Ptr(const Ptr& other) noexcept 
+			requires Copyable
 			: ptr(other.ptr)
 		{
 			if (ptr)
 				ptr->AddRef();
 		}
-		constexpr auto operator=(const Ptr& other) noexcept -> Ptr&
+		constexpr Ptr(const Ptr& other) noexcept
+			requires (not Copyable) = delete;
+		constexpr auto operator=(const Ptr& other) noexcept -> Ptr& 
+			requires Copyable
 		{
 			if (this == &other)
 				return *this;
@@ -36,6 +40,9 @@ export namespace Shared
 				ptr->AddRef();
 			return *this;
 		}
+		constexpr auto operator=(const Ptr& other) noexcept -> Ptr& 
+			requires (not Copyable) = delete;
+
 
 		// Movable
 		constexpr Ptr(Ptr&& other) noexcept

@@ -35,6 +35,11 @@ export namespace Shared
 			return self.converter.Get();
 		}
 
+		auto Get(this auto&& self) noexcept -> WIC::IWICFormatConverter*
+		{
+			return self.converter.Get();
+		}
+
 	protected:
 		Ptr<WIC::IWICFormatConverter> converter;
 	};

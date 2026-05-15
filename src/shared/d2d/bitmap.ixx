@@ -26,6 +26,11 @@ export namespace Shared
 		{
 			return self.bitmap.Get();
 		}
+
+		explicit operator bool() const noexcept
+		{
+			return static_cast<bool>(bitmap);
+		}
 	protected:
 		Ptr<D2D1::ID2D1Bitmap1> bitmap;
 	};

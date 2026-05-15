@@ -6,3 +6,4 @@ export import :d2d;
 export import :misc;
 export import :wic;
 export import :ui;
+export import :d2dwic;

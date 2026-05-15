@@ -4,6 +4,7 @@ import :com;
 import :win32;
 import :error;
 import :ui;
+import :wic;
 
 export namespace Shared
 {
