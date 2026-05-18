@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SpaceDefender\assetmanager.ixx" />
+    <ClCompile Include="SpaceDefender\entity.ixx" />
     <ClCompile Include="SpaceDefender\mainapp.ixx" />
     <ClCompile Include="SpaceDefender\spacedefender.ixx" />
     <ClCompile Include="SpaceDefender\wiccomponents.ixx" />

@@ -31,6 +31,18 @@ export namespace Shared
 		{
 			return static_cast<bool>(bitmap);
 		}
+
+		auto GetCenter(this auto&& self) -> D2D1::D2D1_POINT_2F
+		{
+			auto [width, height] = self.GetSize();
+			return { width / 2.0f, height / 2.0f };
+		}
+
+		auto GetSize(this auto&& self) -> std::pair<float, float>
+		{
+			auto size = D2D1::D2D1_SIZE_F{self.bitmap->GetSize()};
+			return { size.width, size.height };
+		}
 	protected:
 		Ptr<D2D1::ID2D1Bitmap1> bitmap;
 	};

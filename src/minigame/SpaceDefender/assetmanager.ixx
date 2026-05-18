@@ -5,6 +5,28 @@ import :wiccomponents;
 
 export namespace SpaceDefender
 {
+	enum class SpriteType : size_t
+	{
+		Player,
+		Enemy,
+		PlayerBullet,
+		EnemyBullet,
+	};
+
+	struct AllBitmaps
+	{
+		std::array<Shared::Bitmap, 4> Bitmaps{};
+		auto operator[](this auto&& self, SpriteType type) -> Shared::Bitmap&
+		{
+			return self.Bitmaps[static_cast<std::size_t>(type)];
+		}
+		auto Clear(this auto&& self)
+		{
+			for (auto& bitmap : self.Bitmaps)
+				bitmap = {};
+		}
+	};
+
 	class AssetManager
 	{
 	public:
@@ -14,14 +36,16 @@ export namespace SpaceDefender
 		AssetManager(AssetManager&&) noexcept = default;
 		auto operator=(AssetManager&&) -> AssetManager& = default;
 
-		Shared::Bitmap Player;
-		Shared::Bitmap Enemy;
-		Shared::Bitmap PlayerBullet;
-		Shared::Bitmap EnemyBullet;
+		AllBitmaps Bitmaps{};
+
+		auto operator[](this auto&& self, SpriteType type) -> Shared::Bitmap&
+		{
+			return self.Bitmaps[type];
+		}
 
 		auto Load(this auto&& self, D2D1::ID2D1DeviceContext* deviceContext)
 		{
-			if (self.Player)
+			if (self[SpriteType::Player])
 				return;
 
 			auto baseDirectory = std::filesystem::path{ "assets" };
@@ -30,18 +54,15 @@ export namespace SpaceDefender
 			auto playerBulletSprite = baseDirectory / "player-bullet.png";
 			auto enemyBulletSprite = baseDirectory / "enemy-bullet.png";
 
-			self.Player = self.CreateBitmapFromFile(playerSprite, deviceContext);
-			self.Enemy = self.CreateBitmapFromFile(enemySprite, deviceContext);
-			self.PlayerBullet = self.CreateBitmapFromFile(playerBulletSprite, deviceContext);
-			self.EnemyBullet = self.CreateBitmapFromFile(enemyBulletSprite, deviceContext);
+			self[SpriteType::Player] = self.CreateBitmapFromFile(playerSprite, deviceContext);
+			self[SpriteType::Enemy] = self.CreateBitmapFromFile(enemySprite, deviceContext);
+			self[SpriteType::PlayerBullet] = self.CreateBitmapFromFile(playerBulletSprite, deviceContext);
+			self[SpriteType::EnemyBullet] = self.CreateBitmapFromFile(enemyBulletSprite, deviceContext);
 		}
 
-		auto Discard()
+		auto Discard(this auto&& self)
 		{
-			EnemyBullet = {};
-			PlayerBullet = {};
-			Enemy = {};
-			Player = {};
+			self.Bitmaps.Clear();
 		}
 
 		[[nodiscard]]

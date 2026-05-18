@@ -353,6 +353,7 @@ export namespace D2D1
 		::ID2D1Device,
 		::ID2D1DeviceContext,
 		::ID2D1Bitmap1,
+		::D2D1_POINT_2F,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
 		::D2D1::RectF,

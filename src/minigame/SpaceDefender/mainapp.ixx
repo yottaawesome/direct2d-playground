@@ -2,16 +2,23 @@ export module spacedefender:mainapp;
 import std;
 import shared;
 import :assetmanager;
+import :entity;
 
 export namespace SpaceDefender
 {
 	class MainApp final : public Shared::D2DApp
 	{
+	#pragma region Public
 	public:
-		// There's MSVC modules bug that causes the Shared::GameMainWindow::OnEvent initialisation
-		// to fail if we don't provide a user-defined constructor here.
+		// There's an MSVC modules bug that causes the Shared::GameMainWindow::OnEvent 
+		// initialisation to fail if we don't provide a user-defined constructor here.
 		MainApp() 
-		{ }
+		{
+			deviceContext.CreateResources();
+			assetManager.Load(deviceContext.GetD2DDeviceContext());
+			PositionPlayer();
+			AddEnemies();
+		}
 
 		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 		{
@@ -21,18 +28,46 @@ export namespace SpaceDefender
 
 		void OnIdle(this auto&& self)
 		{
+			self.Update(self.timer.Advance());
+			self.DrawScene();
+		}
+
+		Shared::Timer timer{};
+
+		void Update(this auto&& self, float deltaTime)
+		{
+		}
+
+		void DrawScene(this auto&& self)
+		{
 			self.deviceContext.CreateResources();
 			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
 			if (self.window.IsIconic())
 				return;
 
 			self.deviceContext.BeginDraw();
+			self.deviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 			self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
 
-			self.deviceContext->DrawBitmap(
-				self.assetManager.Player.Get(),
-				D2D1::RectF(100.0f, 100.0f, 164.0f, 164.0f)
-			);
+			for (auto i = 0; i < self.entities.Entities.size(); ++i)
+			{
+				if (not self.entities.Active[i])
+					continue;
+
+				auto [x, y] = self.entities.Positions[i];
+				auto translation = D2D1::Matrix3x2F::Translation(x, y);
+				auto rotation = D2D1::Matrix3x2F::Rotation(
+					self.entities.Rotations[i],
+					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].GetCenter()
+				);
+				auto transform = rotation*translation;
+				self.deviceContext->SetTransform(transform);
+
+				self.deviceContext->DrawBitmap(
+					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].Get(),
+					D2D1::RectF(100, 100, 0, 0)
+				);
+			}
 
 			auto hr = Shared::HResult{ self.deviceContext->EndDraw() };
 
@@ -53,13 +88,11 @@ export namespace SpaceDefender
 				throw Shared::ComError{ hr, "EndDraw() failed in OnIdle()" };
 			}
 		}
+	#pragma endregion
 
+	#pragma region Private members
 	private:
-		void LoadAssets(this MainApp& self)
-		{
-			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
-		}
-
+		EntityCollection entities{};
 		Shared::GameWindow window{
 			Shared::GameWindow::OnEvent{
 				.Render =
@@ -76,5 +109,43 @@ export namespace SpaceDefender
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
 		AssetManager assetManager{};
+
+		void LoadAssets(this MainApp& self)
+		{
+			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
+		}
+
+		void PositionPlayer(this MainApp& self)
+		{
+			// The player belongs at the bottom of the screen, horizontally centered.
+			auto rect = Win32::RECT{ self.window.GetClientRect() };
+			auto [width, height] = self.assetManager[SpriteType::Player].GetSize();
+			auto playerX = rect.bottom - height;
+			auto playerY = rect.right / 2.f - width / 2.f;
+
+			self.entities.AddEntity(
+				EntityDetails{
+					.Type = EntityType::Player,
+					.Active = true,
+					.Sprite = SpriteType::Player,
+					.Position = Vector2{playerY, playerX},
+					.Velocity = Vector2{ 0.0f, 0.0f },
+					.Rotation = 0
+				});
+		}
+
+		void AddEnemies(this MainApp& self)
+		{
+			self.entities.AddEntity(
+				EntityDetails{
+					.Type = EntityType::Enemy,
+					.Active = true,
+					.Sprite = SpriteType::Enemy,
+					.Position = Vector2{ 100.0f, 100.0f },
+					.Velocity = Vector2{ 0.0f, 0.0f },
+					.Rotation = 90
+				});
+		}
+		#pragma endregion
 	};
 }

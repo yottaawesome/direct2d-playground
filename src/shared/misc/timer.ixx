@@ -6,8 +6,6 @@ export namespace Shared
 	class Timer
 	{
 	public:
-		std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
-
 		auto Advance(this auto&& self) -> float
 		{
 			const auto now = std::chrono::steady_clock::now();
@@ -15,5 +13,17 @@ export namespace Shared
 			self.last = now;
 			return dt;
 		}
+
+		auto Reset(this auto&& self)
+		{
+			self.last = std::chrono::steady_clock::now();
+		}
+
+		auto GetLast(this auto&& self) -> std::chrono::steady_clock::time_point
+		{
+			return self.last;
+		}
+	protected:
+		std::chrono::steady_clock::time_point last = std::chrono::steady_clock::now();
 	};
 }
