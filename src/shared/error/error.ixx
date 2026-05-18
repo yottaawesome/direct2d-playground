@@ -4,6 +4,12 @@ import :win32;
 
 export namespace Shared
 {
+	enum class ErrorExitCode
+	{
+		GeneralFailure = 1,
+		AssetsNotFound = 2,
+	};
+
 	auto SystemCodeToString(Win32::DWORD code) -> std::string
 	{
 		void* buffer = nullptr;
@@ -64,9 +70,10 @@ export namespace Shared
 	public:
 		Error(
 			std::string_view msg,
+			std::optional<ErrorExitCode> exitCode = std::nullopt,
 			const std::source_location& loc = std::source_location::current(),
 			const std::stacktrace& trace = std::stacktrace::current()
-		) : std::runtime_error(Format(msg, loc, trace))
+		) : std::runtime_error(Format(msg, loc, trace)), ExitCode(exitCode)
 		{ }
 
 		static auto Format(
@@ -77,6 +84,8 @@ export namespace Shared
 		{
 			return std::format("{} at {} of {}:{}\n{}", message, loc.function_name(), loc.line(), loc.file_name(), trace);
 		}
+
+		std::optional<ErrorExitCode> ExitCode = std::nullopt;
 	};
 
 	class Win32Error : public Error
@@ -87,7 +96,7 @@ export namespace Shared
 			std::string_view message,
 			const std::source_location& loc = std::source_location::current(),
 			const std::stacktrace& trace = std::stacktrace::current()
-		) : Error(FormatPrefix(message, code), loc, trace)
+		) : Error(FormatPrefix(message, code), std::nullopt, loc, trace)
 		{}
 
 	private:
@@ -105,7 +114,7 @@ export namespace Shared
 			std::string_view message,
 			const std::source_location& loc = std::source_location::current(),
 			const std::stacktrace& trace = std::stacktrace::current()
-		) : Error(FormatPrefix(message, hr), loc, trace)
+		) : Error(FormatPrefix(message, hr), std::nullopt, loc, trace)
 		{}
 
 	private:

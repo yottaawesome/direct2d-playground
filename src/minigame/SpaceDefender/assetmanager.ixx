@@ -75,7 +75,7 @@ export namespace SpaceDefender
 			if (not deviceContext)
 				throw Shared::Error{ "Device context cannot be null when creating bitmap from file" };
 			if (not std::filesystem::exists(filename))
-				throw Shared::Error{ std::format("File not found: {}", filename.string()) };
+				throw Shared::Error{ std::format("File not found: {}", filename.string()), Shared::ErrorExitCode::AssetsNotFound };
 
 			auto bitmapDecoder = Shared::BitmapDecoder{ self.wicContext.CreateDecoderFromFilename({.Filename = filename }) };
 			auto frame = Shared::BitmapFrameDecode{ bitmapDecoder.GetFrame(0) };

@@ -11,9 +11,14 @@ auto main() -> int
 try
 {
 	auto com = Shared::ComApartment{};
-	
 	auto app = SpaceDefender::MainApp{};
 	return app.MainLoop();
+}
+catch (const Shared::Error& err)
+{
+	auto exitCode = err.ExitCode.value_or(Shared::ErrorExitCode::GeneralFailure);
+	Shared::ErrorMessageBox(err.what(), "Error");
+	return static_cast<int>(exitCode);
 }
 catch (const std::exception& ex)
 {
