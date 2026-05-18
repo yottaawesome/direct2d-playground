@@ -96,38 +96,13 @@ export namespace SpaceDefender
 		Shared::GameWindow window{
 			Shared::GameWindow::OnEvent{
 				.Render =
-					[this]
-					{
-						OnIdle();
-					},
+					[this]{ OnIdle(); },
 				.Resize =
-					[this](std::uint32_t width, std::uint32_t height)
-					{
-						OnResize(width, height);
-					},
-				.KeyUp = [this](Win32::WPARAM key)
-					{
-						if (key == Win32::Keys::Escape)
-							Win32::PostMessageW(window.GetHandle(), Win32::Messages::Destroy, 0, 0);
-					},
-				.KeyDown =
-					[this](Win32::WPARAM key)
-					{
-						if (key == Win32::Keys::Space)
-						{
-							// shoot
-						}
-						if (key == Win32::Keys::Left)
-						{
-							// move left
-							entities.Positions[0].X -= 10.0f;
-						}
-						if (key == Win32::Keys::Right)
-						{
-							// move right
-							entities.Positions[0].X += 10.0f;
-						}
-					}
+					[this](std::uint32_t width, std::uint32_t height) { OnResize(width, height); },
+				.KeyUp = 
+					[this](Win32::WPARAM key) { HandleKeyUp(key); },
+				.KeyDown = 
+					[this](Win32::WPARAM key) { HandleKeyDown(key); }
 			}
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
@@ -182,6 +157,36 @@ export namespace SpaceDefender
 						.Rotation = 0
 					});
 			}
+		}
+
+		void HandleKeyDown(this auto&& self, Win32::WPARAM key)
+		{
+			if (key == Win32::Keys::Space)
+			{
+				// shoot
+			}
+			if (key == Win32::Keys::Left)
+			{
+				// move left
+				self.entities.Positions[0].X -= 10.0f;
+				if (self.entities.Positions[0].X < 0)
+					self.entities.Positions[0].X = 0;
+			}
+			if (key == Win32::Keys::Right)
+			{
+				// move right
+				self.entities.Positions[0].X += 10.0f;
+				auto [width, height] = self.assetManager[SpriteType::Player].GetSize();
+				auto clientWidth = self.window.GetClientRect().right;
+				if (self.entities.Positions[0].X + width > clientWidth)
+					self.entities.Positions[0].X = clientWidth - width;
+			}
+		}
+
+		void HandleKeyUp(this auto&& self, Win32::WPARAM key)
+		{
+			if (key == Win32::Keys::Escape)
+				Win32::PostMessageW(self.window.GetHandle(), Win32::Messages::Destroy, 0, 0);
 		}
 		#pragma endregion
 	};
