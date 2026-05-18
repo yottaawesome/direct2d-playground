@@ -23,7 +23,7 @@ export namespace SpaceDefender
 		EnemyBullet,
 	};
 
-	constexpr auto MaximumSpriteCount = 2;
+	constexpr auto MaximumSpriteCount = 5;
 	using Degrees = float;
 	struct EntityDetails
 	{

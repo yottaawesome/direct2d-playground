@@ -13,6 +13,8 @@ export namespace Shared
 		using ResizeFn = std::move_only_function<auto(std::uint32_t, std::uint32_t)->void>;
 		using DpiChangedFn = std::move_only_function<auto(std::uint32_t, const Win32::RECT&)->void>;
 		using DisplayChangeFn = std::move_only_function<auto()->void>;
+		using KeyUpFn = std::move_only_function<auto(Win32::WPARAM)->void>;
+		using KeyDownFn = std::move_only_function<auto(Win32::WPARAM)->void>;
 
 		struct OnEvent
 		{
@@ -20,6 +22,8 @@ export namespace Shared
 			ResizeFn Resize = [](std::uint32_t, std::uint32_t) {};
 			DpiChangedFn DpiChanged = [](std::uint32_t, const Win32::RECT&) {};
 			DisplayChangeFn DisplayChange = [] {};
+			KeyUpFn KeyUp = [](Win32::WPARAM) {};
+			KeyDownFn KeyDown = [](Win32::WPARAM) {};
 		};
 
 		GameWindow(GameWindow&&) noexcept = default;
@@ -49,7 +53,8 @@ export namespace Shared
 			.Render = [] {},
 			.Resize = [](std::uint32_t, std::uint32_t) {},
 			.DpiChanged = [](std::uint32_t, const Win32::RECT&) {},
-			.DisplayChange = [] {}
+			.DisplayChange = [] {},
+			.KeyUp = [](Win32::WPARAM) {}
 		};
 
 		// This is the minimum message handling needed to support rendering in the main loop. 
@@ -60,6 +65,18 @@ export namespace Shared
 			Win32::BeginPaint(self.GetHandle(), &ps);
 			self.On.Render();
 			Win32::EndPaint(self.GetHandle(), &ps);
+			return 0;
+		}
+
+		auto OnMessage(this auto&& self, const Messages::KeyUp& msg) -> Win32::LRESULT
+		{
+			self.On.KeyUp(msg.WParam);
+			return 0;
+		}
+
+		auto OnMessage(this auto&& self, const Messages::KeyDown& msg) -> Win32::LRESULT
+		{
+			self.On.KeyDown(msg.WParam);
 			return 0;
 		}
 

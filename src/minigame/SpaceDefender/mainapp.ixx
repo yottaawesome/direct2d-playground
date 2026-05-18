@@ -105,6 +105,29 @@ export namespace SpaceDefender
 					{
 						OnResize(width, height);
 					},
+				.KeyUp = [this](Win32::WPARAM key)
+					{
+						if (key == Win32::Keys::Escape)
+							Win32::PostMessageW(window.GetHandle(), Win32::Messages::Destroy, 0, 0);
+					},
+				.KeyDown =
+					[this](Win32::WPARAM key)
+					{
+						if (key == Win32::Keys::Space)
+						{
+							// shoot
+						}
+						if (key == Win32::Keys::Left)
+						{
+							// move left
+							entities.Positions[0].X -= 10.0f;
+						}
+						if (key == Win32::Keys::Right)
+						{
+							// move right
+							entities.Positions[0].X += 10.0f;
+						}
+					}
 			}
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
@@ -136,15 +159,29 @@ export namespace SpaceDefender
 
 		void AddEnemies(this MainApp& self)
 		{
-			self.entities.AddEntity(
-				EntityDetails{
-					.Type = EntityType::Enemy,
-					.Active = true,
-					.Sprite = SpriteType::Enemy,
-					.Position = Vector2{ 100.0f, 100.0f },
-					.Velocity = Vector2{ 0.0f, 0.0f },
-					.Rotation = 90
-				});
+			auto clientRect = self.window.GetClientRect();
+			auto topOfWindow = clientRect.top;
+			auto [spriteWidth, spriteHeight] = self.assetManager[SpriteType::Enemy].GetSize();
+
+			auto toSpawn = 4;
+			auto rowWidth = spriteWidth * toSpawn;
+
+			auto start = (clientRect.right - rowWidth) / 2;
+
+			for (auto i = 0; i < toSpawn; ++i)
+			{
+				auto x = start + spriteWidth * (i);
+				auto y = 0;
+				self.entities.AddEntity(
+					EntityDetails{
+						.Type = EntityType::Enemy,
+						.Active = true,
+						.Sprite = SpriteType::Enemy,
+						.Position = Vector2{ static_cast<float>(x), static_cast<float>(y) },
+						.Velocity = Vector2{ 0.0f, 0.0f },
+						.Rotation = 0
+					});
+			}
 		}
 		#pragma endregion
 	};

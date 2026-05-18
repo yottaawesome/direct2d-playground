@@ -52,6 +52,7 @@ export namespace Win32
 		::DPI_AWARENESS,
 		::IUnknown,
 		::CLSCTX,
+		::PostMessageW,
 		::CoCreateInstance,
 		::IsIconic,
 		::AreDpiAwarenessContextsEqual,
@@ -241,10 +242,24 @@ export namespace Win32
 			Close = WM_CLOSE,
 			Paint = WM_PAINT,
 			KeyUp = WM_KEYUP,
+			KeyDown = WM_KEYDOWN,
 			Command = WM_COMMAND,
 			Size = WM_SIZE,
 			DisplayChange = WM_DISPLAYCHANGE,
 			DpiChanged = WM_DPICHANGED
+		};
+	}
+
+	namespace Keys
+	{
+		enum : WPARAM
+		{
+			Escape = VK_ESCAPE,
+			Left = VK_LEFT,
+			Up = VK_UP,
+			Right = VK_RIGHT,
+			Down = VK_DOWN,
+			Space = VK_SPACE,
 		};
 	}
 
