@@ -165,14 +165,14 @@ export namespace SpaceDefender
 			{
 				// shoot
 			}
-			if (key == Win32::Keys::Left)
+			else if (key == Win32::Keys::Left)
 			{
 				// move left
 				self.entities.Positions[0].X -= 10.0f;
 				if (self.entities.Positions[0].X < 0)
 					self.entities.Positions[0].X = 0;
 			}
-			if (key == Win32::Keys::Right)
+			else if (key == Win32::Keys::Right)
 			{
 				// move right
 				self.entities.Positions[0].X += 10.0f;
