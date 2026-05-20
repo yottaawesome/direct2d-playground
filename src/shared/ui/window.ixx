@@ -229,22 +229,57 @@ export namespace Shared
 					throw Win32Error{ lastError, "Failed to register window class" };
 		}
 
+		struct CreateWindowParams
+		{
+			const wchar_t* ClassName{};
+			const wchar_t* WindowName{};
+			Win32::DWORD Style{};
+			Win32::DWORD ExStyle{};
+			int X{};
+			int Y{};
+			int Width{};
+			int Height{};
+			Win32::HWND Parent{};
+			Win32::HMENU Menu{};
+			Win32::HINSTANCE Instance{};
+			void* Param{};
+		};
+
+		auto GetCreateWindowParams(this auto&& self) noexcept -> CreateWindowParams
+		{
+			return CreateWindowParams{
+				.ClassName = self.ClassName(),
+				.WindowName = L"Shared Window",
+				.Style = Win32::WindowStyles::OverlappedWindow | Win32::WindowStyles::Visible,
+				.ExStyle = 0,
+				.X = 0,
+				.Y = 0,
+				.Width = 800,
+				.Height = 600,
+				.Parent = nullptr,
+				.Menu = nullptr,
+				.Instance = Win32::GetModuleHandleW(nullptr),
+				.Param = &self
+			};
+		}
+
 		void CreateAndShowWindow(this auto&& self)
 		{
+			auto params = self.GetCreateWindowParams();
 			auto hwnd =
 				Win32::CreateWindowExW(
 					0,
-					self.ClassName(),
-					L"Shared Window",
-					Win32::WindowStyles::OverlappedWindow | Win32::WindowStyles::Visible,
-					0,
-					0,
-					800,
-					600,
-					nullptr,
-					nullptr,
-					Win32::GetModuleHandleW(nullptr),
-					&self
+					params.ClassName,
+					params.WindowName,
+					params.Style,
+					params.X,
+					params.Y,
+					params.Width,
+					params.Height,
+					params.Parent,
+					params.Menu,
+					params.Instance,
+					params.Param
 				);
 			if (not hwnd)
 				throw Win32Error{ Win32::GetLastError(), "Failed to create window" };

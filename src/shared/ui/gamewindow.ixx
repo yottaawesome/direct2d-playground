@@ -3,10 +3,11 @@ import std;
 import :win32;
 import :ui.window;
 import :misc;
+import :concepts;
 
 export namespace Shared
 {
-	class GameWindow final : public Window
+	class GameWindow : public Window
 	{
 	public:
 		using RenderFn = std::move_only_function<auto()->void>;
@@ -27,17 +28,9 @@ export namespace Shared
 		};
 
 		GameWindow(GameWindow&&) noexcept = default;
-		auto operator=(GameWindow&&) noexcept -> GameWindow & = default;
+		auto operator=(GameWindow&&) noexcept -> GameWindow& = default;
 
-		GameWindow(NoInitTag) : Window{false}
-		{}
-
-		GameWindow(InitTag) : Window{ false }
-		{
-			Init();
-		}
-
-		GameWindow(OnEvent handlers)
+		GameWindow(OnEvent handlers, OneOf<InitTag, NoInitTag> auto&& initTag)
 			: Window{ false }
 			, On{ std::move(handlers) }
 		{
@@ -46,6 +39,17 @@ export namespace Shared
 			// Letting the base constructor do the init would cause 
 			// the handlers to call empty function objects, generating 
 			// errors.
+			if constexpr (SameTypes<decltype(initTag), InitTag>)
+			{
+				Init();
+			}
+		}
+
+		GameWindow(NoInitTag) : Window{false}
+		{}
+
+		GameWindow(InitTag) : Window{ false }
+		{
 			Init();
 		}
 

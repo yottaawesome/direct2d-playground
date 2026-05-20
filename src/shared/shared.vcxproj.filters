@@ -93,5 +93,8 @@
     <ClCompile Include="d2dwic\d2dwic.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="concepts\concepts.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

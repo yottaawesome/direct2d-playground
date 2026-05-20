@@ -88,7 +88,8 @@ export namespace GameLoop
 					{
 						OnDpiChanged(dpiX, suggestedRect);
 					}
-			}
+			},
+			Shared::Init
 		};
 		Shared::GraphicsContext gfxContext{
 			Shared::WindowSurface{ window.GetHandle(), window.GetDpi(), window.GetClientRect() }

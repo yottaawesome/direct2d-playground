@@ -33,6 +33,9 @@
     <ClCompile Include="SpaceDefender\entity.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceDefender\mainwindow.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="vcpkg.json" />

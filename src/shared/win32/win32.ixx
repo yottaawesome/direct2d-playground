@@ -45,6 +45,7 @@ export namespace Win32
 		::CREATESTRUCT,
 		::LONG_PTR,
 		::GUID,
+		::HINSTANCE,
 		::RECT,
 		::HRESULT,
 		::COINIT,

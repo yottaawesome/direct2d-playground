@@ -3,6 +3,7 @@ import std;
 import shared;
 import :assetmanager;
 import :entity;
+import :spacedefenderwindow;
 
 export namespace SpaceDefender
 {
@@ -32,10 +33,19 @@ export namespace SpaceDefender
 			self.DrawScene();
 		}
 
-		Shared::Timer timer{};
-
 		void Update(this auto&& self, float deltaTime)
 		{
+			constexpr auto enemyYSpeed = 10.0f; // pixels per second
+			auto distance = enemyYSpeed * deltaTime;
+			for (int x = 0; x < self.entities.Entities.size(); ++x)
+			{
+				if (not self.entities.Active[x])
+					continue;
+				if (self.entities.Entities[x] == EntityType::Enemy)
+				{
+					self.entities.Positions[x].Y += distance;
+				}
+			}
 		}
 
 		void DrawScene(this auto&& self)
@@ -92,9 +102,10 @@ export namespace SpaceDefender
 
 	#pragma region Private members
 	private:
+		Shared::Timer timer{};
 		EntityCollection entities{};
-		Shared::GameWindow window{
-			Shared::GameWindow::OnEvent{
+		MainWindow window{
+			MainWindow::OnEvent{
 				.Render =
 					[this]{ OnIdle(); },
 				.Resize =
