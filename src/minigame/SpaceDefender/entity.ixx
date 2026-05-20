@@ -35,6 +35,25 @@ export namespace SpaceDefender
 		Degrees Rotation;
 	};
 
+	enum class EnemyType
+	{
+		Common,
+	};
+	struct Enemies
+	{
+		std::vector<EnemyType> Types{ MaximumSpriteCount };
+		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
+		std::vector<Vector2> Positions{ MaximumSpriteCount };
+		std::vector<Vector2> Velocities{ MaximumSpriteCount };
+		std::vector<Degrees> Rotations =
+			[] static->std::vector<Degrees>
+			{
+				auto vec = std::vector<Degrees>{};
+				vec.resize(MaximumSpriteCount);
+				return vec;
+			}();
+	};
+
 	struct EntityCollection
 	{
 		std::vector<EntityType> Entities{ MaximumSpriteCount };
