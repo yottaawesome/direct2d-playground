@@ -51,6 +51,7 @@ export namespace Win32
 		::PAINTSTRUCT,
 		::DPI_AWARENESS,
 		::IUnknown,
+		::HMENU,
 		::CLSCTX,
 		::PostMessageW,
 		::CoCreateInstance,

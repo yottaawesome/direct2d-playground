@@ -6,7 +6,7 @@ import :misc;
 
 export namespace Shared
 {
-	class GameWindow final : public Window<GameWindow>
+	class GameWindow final : public Window
 	{
 	public:
 		using RenderFn = std::move_only_function<auto()->void>;
@@ -29,16 +29,16 @@ export namespace Shared
 		GameWindow(GameWindow&&) noexcept = default;
 		auto operator=(GameWindow&&) noexcept -> GameWindow & = default;
 
-		GameWindow(NoInitTag) : Window<GameWindow>{false}
+		GameWindow(NoInitTag) : Window{false}
 		{}
 
-		GameWindow(InitTag) : Window<GameWindow>{ false }
+		GameWindow(InitTag) : Window{ false }
 		{
 			Init();
 		}
 
 		GameWindow(OnEvent handlers)
-			: Window<GameWindow>{ false }
+			: Window{ false }
 			, On{ std::move(handlers) }
 		{
 			// We need to Init() after setting the function objects, 

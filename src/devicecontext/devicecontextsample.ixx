@@ -14,11 +14,11 @@ import shared;
 
 export namespace DeviceContextSample
 {
-	class SampleApp final : public Shared::Window<SampleApp>
+	class SampleApp final : public Shared::Window
 	{
 	public:
 		SampleApp()
-			: Shared::Window<SampleApp>{ true },
+			: Shared::Window{ true },
 			dpi(GetDpi())
 		{
 			CreateDeviceIndependentResources();

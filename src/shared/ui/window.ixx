@@ -55,7 +55,6 @@ export namespace Shared
 
 export namespace Shared
 {
-	template<typename TWindow>
 	class Window
 	{
 	public:
@@ -71,7 +70,7 @@ export namespace Shared
 		{
 			m_window = std::move(other.m_window);
 			if (m_window)
-				Win32::SetWindowLongPtrW(m_window.get(), Win32::Gwlp::UserData, reinterpret_cast<Win32::LONG_PTR>(static_cast<TWindow*>(this)));
+				Win32::SetWindowLongPtrW(m_window.get(), Win32::Gwlp::UserData, reinterpret_cast<Win32::LONG_PTR>(this));
 		}
 		auto operator=(Window&& other) noexcept -> Window&
 		{
@@ -137,17 +136,18 @@ export namespace Shared
 		// a single name would cause the second-and-later RegisterClassExW calls
 		// to fail with ERROR_CLASS_ALREADY_EXISTS and silently fall back to the
 		// first-registered class's WndProc.
-		static auto ClassName() noexcept -> const wchar_t*
+		auto ClassName(this auto&& self) noexcept -> const wchar_t*
 		{
 			static const auto name = 
 				[] static -> std::wstring
 				{
-					auto raw = std::string_view{ typeid(TWindow).name() };
+					auto raw = std::string_view{ typeid(std::remove_cvref_t<decltype(self)>).name() };
 					return { raw.begin(), raw.end() };
 				}();
 			return name.c_str();
 		}
 
+		template<typename TWindow>
 		static auto WndProc(
 			Win32::HWND handle, 
 			Win32::UINT msg, 
@@ -209,7 +209,7 @@ export namespace Shared
 			return Win32::WNDCLASSEXW{
 				.cbSize = sizeof(Win32::WNDCLASSEXW),
 				.style = 0,
-				.lpfnWndProc = &WndProc,
+				.lpfnWndProc = &WndProc<std::remove_cvref_t<decltype(self)>>,
 				.cbClsExtra = 0,
 				.cbWndExtra = 0,
 				.hInstance = Win32::GetModuleHandleW(nullptr),
@@ -217,7 +217,7 @@ export namespace Shared
 				.hCursor = Win32::LoadCursorW(nullptr, Win32::IdcArrow),
 				.hbrBackground = static_cast<Win32::HBRUSH>(Win32::GetStockObject(Win32::Brushes::White)),
 				.lpszMenuName = nullptr,
-				.lpszClassName = ClassName(),
+				.lpszClassName = self.ClassName(),
 			};
 		}
 
@@ -234,7 +234,7 @@ export namespace Shared
 			auto hwnd =
 				Win32::CreateWindowExW(
 					0,
-					ClassName(),
+					self.ClassName(),
 					L"Shared Window",
 					Win32::WindowStyles::OverlappedWindow | Win32::WindowStyles::Visible,
 					0,
