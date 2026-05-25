@@ -1,0 +1,5 @@
+{
+  "name": "box2dsample",
+  "version": "1.0.0",
+  "dependencies": ["box2d"]
+}

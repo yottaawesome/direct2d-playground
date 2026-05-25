@@ -53,7 +53,15 @@ export namespace Win32
 		::DPI_AWARENESS,
 		::IUnknown,
 		::HMENU,
+		::UINT_PTR,
 		::CLSCTX,
+		::UINT32,
+		::CREATESTRUCTW,
+		::KillTimer,
+		::SetTimer,
+		::SetWindowTextW,
+		::GetMessageW,
+		::UpdateWindow,
 		::PostMessageW,
 		::CoCreateInstance,
 		::IsIconic,
@@ -94,8 +102,13 @@ export namespace Win32
 		::GetLastError
 		;
 
+	constexpr auto False = FALSE;
+	constexpr auto True = TRUE;
+
 	constexpr auto Succeeded(HRESULT hr) noexcept { return SUCCEEDED(hr); }
 	constexpr auto Failed(HRESULT hr) noexcept { return FAILED(hr); }
+
+	constexpr auto CwUseDefault = CW_USEDEFAULT;
 
 	namespace Access
 	{
@@ -161,6 +174,27 @@ export namespace Win32
 			InvalidData = ERROR_INVALID_DATA,
 			OutOfMemory = ERROR_OUTOFMEMORY,
 			ClassAlreadyExists = ERROR_CLASS_ALREADY_EXISTS
+		};
+	}
+
+	namespace ClassStyles
+	{
+		enum
+		{
+			DblClks = CS_DBLCLKS,
+			DropShadow = CS_DROPSHADOW,
+			HRedraw = CS_HREDRAW,
+			VRedraw = CS_VREDRAW,
+			OwnDC = CS_OWNDC,
+			ClassDC = CS_CLASSDC,
+			ParentDC = CS_PARENTDC,
+			Noclose = CS_NOCLOSE,
+			Savedefault = CS_SAVEBITS,
+			ByteAlignClient = CS_BYTEALIGNCLIENT,
+			ByteAlignWindow = CS_BYTEALIGNWINDOW,
+			GlobalClass = CS_GLOBALCLASS,
+			Ime = CS_IME,
+			Dblclks = CS_DBLCLKS
 		};
 	}
 
@@ -248,7 +282,8 @@ export namespace Win32
 			Command = WM_COMMAND,
 			Size = WM_SIZE,
 			DisplayChange = WM_DISPLAYCHANGE,
-			DpiChanged = WM_DPICHANGED
+			DpiChanged = WM_DPICHANGED,
+			Timer = WM_TIMER
 		};
 	}
 
@@ -371,6 +406,8 @@ export namespace D2D1
 		::ID2D1DeviceContext,
 		::ID2D1Bitmap1,
 		::D2D1_POINT_2F,
+		::ID2D1SolidColorBrush,
+		::ID2D1Brush,
 		::D2D1::Matrix3x2F,
 		::D2D1::ColorF,
 		::D2D1::RectF,

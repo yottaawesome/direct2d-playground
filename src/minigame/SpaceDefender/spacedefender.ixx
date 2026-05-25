@@ -3,3 +3,4 @@ export import :wiccomponents;
 export import :mainapp;
 export import :spacedefenderwindow;
 export import :assetmanager;
+export import :input;

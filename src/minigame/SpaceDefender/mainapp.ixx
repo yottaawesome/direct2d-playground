@@ -4,6 +4,7 @@ import shared;
 import :assetmanager;
 import :entity;
 import :spacedefenderwindow;
+import :input;
 
 export namespace SpaceDefender
 {
@@ -35,6 +36,25 @@ export namespace SpaceDefender
 
 		void Update(this auto&& self, float deltaTime)
 		{
+			if (self.inputState.IsPressed(Win32::Keys::Left))
+			{
+				self.entities.Positions[0].X -= 10.0f;
+				if (self.entities.Positions[0].X < 0)
+					self.entities.Positions[0].X = 0;
+			}
+			if (self.inputState.IsPressed(Win32::Keys::Right))
+			{
+				self.entities.Positions[0].X += 10.0f;
+				auto [width, height] = self.assetManager[SpriteType::Player].GetSize();
+				auto clientWidth = self.window.GetClientRect().right;
+				if (self.entities.Positions[0].X + width > clientWidth)
+					self.entities.Positions[0].X = clientWidth - width;
+			}
+			if (self.inputState.IsPressed(Win32::Keys::Space))
+			{
+				// shoot
+			}
+
 			constexpr auto enemyYSpeed = 10.0f; // pixels per second
 			auto distance = enemyYSpeed * deltaTime;
 			for (int x = 0; x < self.entities.Entities.size(); ++x)
@@ -79,6 +99,13 @@ export namespace SpaceDefender
 				);
 			}
 
+			self.deviceContext.DrawLine(
+				D2D1::Point2F(0, 0),
+				D2D1::Point2F(200, 200),
+				self.assetManager.SolidColorBrushes[SpriteType::Player].Get(),
+				5.0f
+			);
+
 			auto hr = Shared::HResult{ self.deviceContext->EndDraw() };
 
 			if (hr)
@@ -118,6 +145,7 @@ export namespace SpaceDefender
 		};
 		Shared::DeviceContext deviceContext{ window.ToSurface() };
 		AssetManager assetManager{};
+		InputState inputState{};
 
 		void LoadAssets(this MainApp& self)
 		{
@@ -170,35 +198,17 @@ export namespace SpaceDefender
 			}
 		}
 
+		#pragma region Input handling
 		void HandleKeyDown(this auto&& self, Win32::WPARAM key)
 		{
-			if (key == Win32::Keys::Space)
-			{
-				// shoot
-			}
-			else if (key == Win32::Keys::Left)
-			{
-				// move left
-				self.entities.Positions[0].X -= 10.0f;
-				if (self.entities.Positions[0].X < 0)
-					self.entities.Positions[0].X = 0;
-			}
-			else if (key == Win32::Keys::Right)
-			{
-				// move right
-				self.entities.Positions[0].X += 10.0f;
-				auto [width, height] = self.assetManager[SpriteType::Player].GetSize();
-				auto clientWidth = self.window.GetClientRect().right;
-				if (self.entities.Positions[0].X + width > clientWidth)
-					self.entities.Positions[0].X = clientWidth - width;
-			}
+			self.inputState.WasPressed(key);
 		}
 
 		void HandleKeyUp(this auto&& self, Win32::WPARAM key)
 		{
-			if (key == Win32::Keys::Escape)
-				Win32::PostMessageW(self.window.GetHandle(), Win32::Messages::Destroy, 0, 0);
+			self.inputState.WasReleased(key);
 		}
+		#pragma endregion
 		#pragma endregion
 	};
 }
