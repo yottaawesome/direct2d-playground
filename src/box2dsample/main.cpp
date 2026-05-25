@@ -27,6 +27,12 @@ namespace
 	class Box2DDemoApp
 	{
 	public:
+		~Box2DDemoApp()
+		{
+			if (b2World_IsValid(world))
+				b2DestroyWorld(world);
+		}
+
 		Box2DDemoApp()
 		{
 			CreatePhysicsWorld();
@@ -38,12 +44,6 @@ namespace
 
 		Box2DDemoApp(Box2DDemoApp const&) = delete;
 		auto operator=(Box2DDemoApp const&) -> Box2DDemoApp& = delete;
-
-		~Box2DDemoApp()
-		{
-			if (b2World_IsValid(world))
-				b2DestroyWorld(world);
-		}
 
 		auto Run() -> int
 		{
@@ -83,7 +83,7 @@ namespace
 		void RegisterWindowClass()
 		{
 			auto wc = Win32::WNDCLASSEXW{
-				.cbSize = sizeof(wc),
+				.cbSize = sizeof(Win32::WNDCLASSEXW),
 				.style = Win32::ClassStyles::HRedraw | Win32::ClassStyles::VRedraw,
 				.lpfnWndProc = &Box2DDemoApp::WindowProc,
 				.hInstance = Win32::GetModuleHandleW(nullptr),
@@ -250,42 +250,50 @@ namespace
 		{
 			switch (message)
 			{
-			case Win32::Messages::NonClientCreate:
-				Win32::SetTimer(window, SimulationTimerId, SimulationTimerMs, nullptr);
-				return true;
-
-			case Win32::Messages::Timer:
-				if (wParam == SimulationTimerId)
-					StepSimulation();
-				return 0;
-
-			case Win32::Messages::Size:
-				if (renderTarget)
+				case Win32::Messages::NonClientCreate:
 				{
-					auto const width = Win32::LoWord(lParam);
-					auto const height = Win32::HiWord(lParam);
-					auto const hr = renderTarget->Resize(D2D1::SizeU(width, height));
-					if (Win32::Failed(hr))
-						DiscardDeviceResources();
+					Win32::SetTimer(window, SimulationTimerId, SimulationTimerMs, nullptr);
+					return true;
 				}
-				return 0;
 
-			case Win32::Messages::Paint:
-			{
-				auto paint = Win32::PAINTSTRUCT{};
-				Win32::BeginPaint(window, &paint);
-				Render();
-				Win32::EndPaint(window, &paint);
-				return 0;
-			}
+				case Win32::Messages::Timer:
+				{
+					if (wParam == SimulationTimerId)
+						StepSimulation();
+					return 0;
+				}
 
-			case Win32::Messages::Destroy:
-				Win32::KillTimer(window, SimulationTimerId);
-				Win32::PostQuitMessage(0);
-				return 0;
+				case Win32::Messages::Size:
+				{
+					if (renderTarget)
+					{
+						auto const width = Win32::LoWord(lParam);
+						auto const height = Win32::HiWord(lParam);
+						auto const hr = renderTarget->Resize(D2D1::SizeU(width, height));
+						if (Win32::Failed(hr))
+							DiscardDeviceResources();
+					}
+					return 0;
+				}
 
-			default:
-				return Win32::DefWindowProcW(window, message, wParam, lParam);
+				case Win32::Messages::Paint:
+				{
+					auto paint = Win32::PAINTSTRUCT{};
+					Win32::BeginPaint(window, &paint);
+					Render();
+					Win32::EndPaint(window, &paint);
+					return 0;
+				}
+
+				case Win32::Messages::Destroy:
+				{
+					Win32::KillTimer(window, SimulationTimerId);
+					Win32::PostQuitMessage(0);
+					return 0;
+				}
+
+				default:
+					return Win32::DefWindowProcW(window, message, wParam, lParam);
 			}
 		}
 
