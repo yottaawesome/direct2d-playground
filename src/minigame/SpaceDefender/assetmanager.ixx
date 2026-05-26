@@ -29,10 +29,10 @@ export namespace SpaceDefender
 
 	struct AllBrushes
 	{
-		Shared::Ptr<D2D1::ID2D1SolidColorBrush> PlayerBrush;
+		Shared::Ptr<D2D1::ID2D1SolidColorBrush> DebugBrush;
 		auto Clear(this auto&& self)
 		{
-			self.PlayerBrush = nullptr;
+			self.DebugBrush = nullptr;
 		}
 	};
 
@@ -54,31 +54,8 @@ export namespace SpaceDefender
 
 		auto Load(this auto&& self, D2D1::ID2D1DeviceContext* deviceContext)
 		{
-			if (self[SpriteType::Player])
-				return;
-
-			auto baseDirectory = std::filesystem::path{ "assets" };
-			auto playerSprite = baseDirectory / "player.png";
-			auto enemySprite = baseDirectory / "enemy.png";
-			auto playerBulletSprite = baseDirectory / "player-bullet.png";
-			auto enemyBulletSprite = baseDirectory / "enemy-bullet.png";
-
-			self[SpriteType::Player] = self.CreateBitmapFromFile(playerSprite, deviceContext);
-			self[SpriteType::Enemy] = self.CreateBitmapFromFile(enemySprite, deviceContext);
-			self[SpriteType::PlayerBullet] = self.CreateBitmapFromFile(playerBulletSprite, deviceContext);
-			self[SpriteType::EnemyBullet] = self.CreateBitmapFromFile(enemyBulletSprite, deviceContext);
-
-
-			auto hr = Shared::HResult{
-				deviceContext->CreateSolidColorBrush(
-					D2D1::ColorF(D2D1::ColorF::DarkRed), 
-					self.SolidColorBrushes.PlayerBrush.ReleaseAndGetAddressOf()
-				)};
-			if(not hr)
-				throw Shared::ComError{ hr, "Failed to create solid color brush" };
-
-			//self.SolidColorBrushes.PlayerBrush =
-			//	deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkRed));
+			self.LoadSprites(deviceContext);
+			self.LoadBrushes(deviceContext);
 		}
 
 		auto Discard(this auto&& self)
@@ -120,6 +97,34 @@ export namespace SpaceDefender
 		}
 
 	private:
+		auto LoadSprites(this auto&& self, D2D1::ID2D1DeviceContext* deviceContext)
+		{
+			if (self[SpriteType::Player])
+				return;
+
+			auto baseDirectory = std::filesystem::path{ "assets" };
+			auto playerSprite = baseDirectory / "player.png";
+			auto enemySprite = baseDirectory / "enemy.png";
+			auto playerBulletSprite = baseDirectory / "player-bullet.png";
+			auto enemyBulletSprite = baseDirectory / "enemy-bullet.png";
+
+			self[SpriteType::Player] = self.CreateBitmapFromFile(playerSprite, deviceContext);
+			self[SpriteType::Enemy] = self.CreateBitmapFromFile(enemySprite, deviceContext);
+			self[SpriteType::PlayerBullet] = self.CreateBitmapFromFile(playerBulletSprite, deviceContext);
+			self[SpriteType::EnemyBullet] = self.CreateBitmapFromFile(enemyBulletSprite, deviceContext);
+		}
+
+		auto LoadBrushes(this auto&& self, D2D1::ID2D1DeviceContext* deviceContext)
+		{
+			auto hr = Shared::HResult{
+				deviceContext->CreateSolidColorBrush(
+					D2D1::ColorF(D2D1::ColorF::DarkRed),
+					self.SolidColorBrushes.DebugBrush.ReleaseAndGetAddressOf()
+				) };
+			if (not hr)
+				throw Shared::ComError{ hr, "Failed to create solid color brush" };
+		}
+
 		Shared::WicContext wicContext{};
 	};
 }

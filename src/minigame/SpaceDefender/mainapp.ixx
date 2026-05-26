@@ -103,7 +103,7 @@ export namespace SpaceDefender
 				// This is just for debugging: draw a box around the sprite to show its bounds.
 				self.deviceContext->DrawRectangle(
 					D2D1::RectF(0, 0, width, height),
-					self.assetManager.SolidColorBrushes.PlayerBrush.Get(),
+					self.assetManager.SolidColorBrushes.DebugBrush.Get(),
 					5.0f,
 					nullptr
 				);
