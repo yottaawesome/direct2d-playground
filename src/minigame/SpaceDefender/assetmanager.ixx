@@ -27,6 +27,15 @@ export namespace SpaceDefender
 		}
 	};
 
+	struct AllBrushes
+	{
+		Shared::Ptr<D2D1::ID2D1SolidColorBrush> PlayerBrush;
+		auto Clear(this auto&& self)
+		{
+			self.PlayerBrush = nullptr;
+		}
+	};
+
 	class AssetManager
 	{
 	public:
@@ -37,7 +46,7 @@ export namespace SpaceDefender
 		auto operator=(AssetManager&&) -> AssetManager& = default;
 
 		AllBitmaps Bitmaps{};
-
+		AllBrushes SolidColorBrushes{};
 		auto operator[](this auto&& self, SpriteType type) -> Shared::Bitmap&
 		{
 			return self.Bitmaps[type];
@@ -58,6 +67,18 @@ export namespace SpaceDefender
 			self[SpriteType::Enemy] = self.CreateBitmapFromFile(enemySprite, deviceContext);
 			self[SpriteType::PlayerBullet] = self.CreateBitmapFromFile(playerBulletSprite, deviceContext);
 			self[SpriteType::EnemyBullet] = self.CreateBitmapFromFile(enemyBulletSprite, deviceContext);
+
+
+			auto hr = Shared::HResult{
+				deviceContext->CreateSolidColorBrush(
+					D2D1::ColorF(D2D1::ColorF::DarkRed), 
+					self.SolidColorBrushes.PlayerBrush.ReleaseAndGetAddressOf()
+				)};
+			if(not hr)
+				throw Shared::ComError{ hr, "Failed to create solid color brush" };
+
+			//self.SolidColorBrushes.PlayerBrush =
+			//	deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkRed));
 		}
 
 		auto Discard(this auto&& self)

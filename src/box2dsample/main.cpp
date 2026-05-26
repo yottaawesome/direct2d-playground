@@ -36,10 +36,9 @@ namespace
 		Box2DDemoApp()
 		{
 			CreatePhysicsWorld();
-			CheckHr(
-				D2D1::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, direct2dFactory.ReleaseAndGetAddressOf()),
-				"D2D1CreateFactory() failed"
-			);
+			auto hr = D2D1::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, direct2dFactory.ReleaseAndGetAddressOf());
+			if (Win32::Failed(hr))
+				throw std::runtime_error{ "D2D1CreateFactory() failed" };
 		}
 
 		Box2DDemoApp(Box2DDemoApp const&) = delete;
@@ -49,21 +48,22 @@ namespace
 		{
 			RegisterWindowClass();
 
-			window = Win32::CreateWindowExW(
-				0,
-				WindowClassName,
-				L"Box2D 3 + Direct2D demo",
-				Win32::WindowStyles::OverlappedWindow,
-				Win32::CwUseDefault,
-				Win32::CwUseDefault,
-				1024,
-				720,
-				nullptr,
-				nullptr,
-				Win32::GetModuleHandleW(nullptr),
-				this
-			);
-			if (!window)
+			window = 
+				Win32::CreateWindowExW(
+					0,
+					WindowClassName,
+					L"Box2D 3 + Direct2D demo",
+					Win32::WindowStyles::OverlappedWindow,
+					Win32::CwUseDefault,
+					Win32::CwUseDefault,
+					1024,
+					720,
+					nullptr,
+					nullptr,
+					Win32::GetModuleHandleW(nullptr),
+					this
+				);
+			if (not window)
 				throw std::runtime_error{ std::format("CreateWindowExW() failed {}", Win32::GetLastError()) };
 
 			Win32::ShowWindow(window, Win32::ShowWindowFlags::ShowDefault);
@@ -90,8 +90,7 @@ namespace
 				.hCursor = Win32::LoadCursorW(nullptr, Win32::IdcArrow),
 				.lpszClassName = WindowClassName
 			};
-
-			if (!Win32::RegisterClassExW(&wc))
+			if (not Win32::RegisterClassExW(&wc))
 				throw std::runtime_error{ "RegisterClassExW() failed" };
 		}
 

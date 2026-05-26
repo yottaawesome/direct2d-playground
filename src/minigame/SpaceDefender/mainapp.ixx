@@ -84,27 +84,30 @@ export namespace SpaceDefender
 				if (not self.entities.Active[i])
 					continue;
 
+				// Apply the correct world transform for the sprite based on its position and rotation.
 				auto [x, y] = self.entities.Positions[i];
 				auto translation = D2D1::Matrix3x2F::Translation(x, y);
 				auto rotation = D2D1::Matrix3x2F::Rotation(
 					self.entities.Rotations[i],
 					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].GetCenter()
 				);
-				auto transform = rotation*translation;
+				auto transform = D2D1::Matrix3x2F{ rotation * translation };
 				self.deviceContext->SetTransform(transform);
 
+				// Determine the size of the sprite so we can draw it and its bounding box correctly.
+				auto [width, height] = self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].GetSize();
 				self.deviceContext->DrawBitmap(
 					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].Get(),
-					D2D1::RectF(100, 100, 0, 0)
+					D2D1::RectF(0, 0, width, height)
+				);
+				// This is just for debugging: draw a box around the sprite to show its bounds.
+				self.deviceContext->DrawRectangle(
+					D2D1::RectF(0, 0, width, height),
+					self.assetManager.SolidColorBrushes.PlayerBrush.Get(),
+					5.0f,
+					nullptr
 				);
 			}
-
-			self.deviceContext.DrawLine(
-				D2D1::Point2F(0, 0),
-				D2D1::Point2F(200, 200),
-				self.assetManager.SolidColorBrushes[SpriteType::Player].Get(),
-				5.0f
-			);
 
 			auto hr = Shared::HResult{ self.deviceContext->EndDraw() };
 
