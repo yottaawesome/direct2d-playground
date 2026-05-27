@@ -38,17 +38,17 @@ export namespace SpaceDefender
 		{
 			if (self.inputState.IsPressed(Win32::Keys::Left))
 			{
-				self.entities.Positions[0].X -= 10.0f;
-				if (self.entities.Positions[0].X < 0)
-					self.entities.Positions[0].X = 0;
+				self.entities.Player.Position.X -= 10.0f;
+				if (self.entities.Player.Position.X < 0)
+					self.entities.Player.Position.X = 0;
 			}
 			if (self.inputState.IsPressed(Win32::Keys::Right))
 			{
-				self.entities.Positions[0].X += 10.0f;
+				self.entities.Player.Position.X += 10.0f;
 				auto [width, height] = self.assetManager[SpriteType::Player].GetSize();
 				auto clientWidth = self.window.GetClientRect().right;
-				if (self.entities.Positions[0].X + width > clientWidth)
-					self.entities.Positions[0].X = clientWidth - width;
+				if (self.entities.Player.Position.X + width > clientWidth)
+					self.entities.Player.Position.X = clientWidth - width;
 			}
 			if (self.inputState.IsPressed(Win32::Keys::Space))
 			{
@@ -57,14 +57,11 @@ export namespace SpaceDefender
 
 			constexpr auto enemyYSpeed = 10.0f; // pixels per second
 			auto distance = enemyYSpeed * deltaTime;
-			for (int x = 0; x < self.entities.Entities.size(); ++x)
+			for (int x = 0; x < self.entities.Enemies.Size(); ++x)
 			{
-				if (not self.entities.Active[x])
+				if (not self.entities.Enemies.Active[x])
 					continue;
-				if (self.entities.Entities[x] == EntityType::Enemy)
-				{
-					self.entities.Positions[x].Y += distance;
-				}
+				self.entities.Enemies.Positions[x].Y += distance;
 			}
 		}
 
@@ -79,25 +76,41 @@ export namespace SpaceDefender
 			self.deviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
 			self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
 
-			for (auto i = 0; i < self.entities.Entities.size(); ++i)
+			//draw player
+			[&self]
 			{
-				if (not self.entities.Active[i])
+				auto [x, y] = self.entities.Player.Position;
+				auto translation = D2D1::Matrix3x2F::Translation(x, y);
+				self.deviceContext->SetTransform(translation);
+				auto [width, height] = self.assetManager[self.entities.Player.Sprite].GetSize();
+				self.deviceContext->DrawBitmap(
+					self.assetManager[self.entities.Player.Sprite].Get(),
+					D2D1::RectF(0, 0, width, height)
+				);
+			}();
+
+
+			// The drawing code needs to be moved to a GraphicsContext class and the gameplay classes
+			// need to be transformed (per frame) to a shape or view appropriate for the GraphicsContext.
+			for (auto i = 0; i < self.entities.Enemies.Size(); ++i)
+			{
+				if (not self.entities.Enemies.Active[i])
 					continue;
 
 				// Apply the correct world transform for the sprite based on its position and rotation.
-				auto [x, y] = self.entities.Positions[i];
+				auto [x, y] = self.entities.Enemies.Positions[i];
 				auto translation = D2D1::Matrix3x2F::Translation(x, y);
 				auto rotation = D2D1::Matrix3x2F::Rotation(
-					self.entities.Rotations[i],
-					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].GetCenter()
+					self.entities.Enemies.Rotations[i],
+					self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].GetCenter()
 				);
 				auto transform = D2D1::Matrix3x2F{ rotation * translation };
 				self.deviceContext->SetTransform(transform);
 
 				// Determine the size of the sprite so we can draw it and its bounding box correctly.
-				auto [width, height] = self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].GetSize();
+				auto [width, height] = self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].GetSize();
 				self.deviceContext->DrawBitmap(
-					self.assetManager.Bitmaps[self.entities.SpriteCollection[i]].Get(),
+					self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].Get(),
 					D2D1::RectF(0, 0, width, height)
 				);
 				// This is just for debugging: draw a box around the sprite to show its bounds.
@@ -163,15 +176,12 @@ export namespace SpaceDefender
 			auto playerX = rect.bottom - height;
 			auto playerY = rect.right / 2.f - width / 2.f;
 
-			self.entities.AddEntity(
-				EntityDetails{
-					.Type = EntityType::Player,
-					.Active = true,
-					.Sprite = SpriteType::Player,
-					.Position = Vector2{playerY, playerX},
-					.Velocity = Vector2{ 0.0f, 0.0f },
-					.Rotation = 0
-				});
+			self.entities.Player = Player{
+				.Sprite = SpriteType::Player,
+				.Position = Vector2{ playerY, playerX },
+				.Velocity = Vector2{ 0.0f, 0.0f },
+				.Rotation = 0
+			};
 		}
 
 		void AddEnemies(this MainApp& self)
@@ -189,9 +199,9 @@ export namespace SpaceDefender
 			{
 				auto x = start + spriteWidth * (i);
 				auto y = 0;
-				self.entities.AddEntity(
-					EntityDetails{
-						.Type = EntityType::Enemy,
+				self.entities.AddEnemy(
+					EnemyDetails{
+						.Type = EnemyType::Common,
 						.Active = true,
 						.Sprite = SpriteType::Enemy,
 						.Position = Vector2{ static_cast<float>(x), static_cast<float>(y) },

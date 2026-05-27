@@ -23,7 +23,7 @@ export namespace SpaceDefender
 		EnemyBullet,
 	};
 
-	constexpr auto MaximumSpriteCount = 5;
+	constexpr auto MaximumSpriteCount = 25;
 	using Degrees = float;
 	struct EntityDetails
 	{
@@ -42,6 +42,13 @@ export namespace SpaceDefender
 	struct Enemies
 	{
 		std::vector<EnemyType> Types{ MaximumSpriteCount };
+		std::vector<std::uint32_t> Active = 
+			[] static->std::vector<std::uint32_t>
+			{
+				auto active = std::vector<std::uint32_t>{};
+				active.resize(MaximumSpriteCount);
+				return active;
+			}();
 		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
 		std::vector<Vector2> Positions{ MaximumSpriteCount };
 		std::vector<Vector2> Velocities{ MaximumSpriteCount };
@@ -52,43 +59,50 @@ export namespace SpaceDefender
 				vec.resize(MaximumSpriteCount);
 				return vec;
 			}();
+
+		auto Size() -> size_t
+		{
+			return Types.size();
+		}
+	};
+
+	struct Player
+	{
+		SpriteType Sprite;
+		Vector2 Position;
+		Vector2 Velocity;
+		Degrees Rotation;
+	};
+
+	struct EnemyDetails
+	{
+		EnemyType Type =  EnemyType::Common;
+		bool Active = true;
+		SpriteType Sprite = SpriteType::Enemy;
+		Vector2 Position = {};
+		Vector2 Velocity = {};
+		Degrees Rotation = 0;
 	};
 
 	struct EntityCollection
 	{
-		std::vector<EntityType> Entities{ MaximumSpriteCount };
-		std::vector<bool> Active =
-			[] static -> std::vector<bool>
-			{
-				auto vec = std::vector<bool>{};
-				vec.resize(MaximumSpriteCount);
-				return  vec;
-			}();
-		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
-		std::vector<Vector2> Positions{ MaximumSpriteCount };
-		std::vector<Vector2> Velocities{ MaximumSpriteCount };
-		std::vector<Degrees> Rotations =
-			[] static -> std::vector<Degrees>
-			{
-				auto vec = std::vector<Degrees>{};
-				vec.resize(MaximumSpriteCount);
-				return vec;
-			}();
-		auto AddEntity(this auto&& self, const EntityDetails& details) -> std::size_t
+		Player Player{};
+		Enemies Enemies{};
+		auto AddEnemy(this auto&& self, EnemyDetails enemy) -> std::size_t
 		{
-			for (auto i = 0ull; i < self.Entities.size(); ++i)
+			for (auto i = 0ull; i < self.Enemies.Types.size(); ++i)
 			{
-				if (self.Active[i])
+				if (self.Enemies.Active[i])
 					continue;
-				self.Entities[i] = details.Type;
-				self.Active[i] = details.Active;
-				self.SpriteCollection[i] = details.Sprite;
-				self.Positions[i] = details.Position;
-				self.Velocities[i] = details.Velocity;
-				self.Rotations[i] = details.Rotation;
+				self.Enemies.Types[i] = enemy.Type;
+				self.Enemies.Active[i] = enemy.Active;
+				self.Enemies.SpriteCollection[i] = enemy.Sprite;
+				self.Enemies.Positions[i] = enemy.Position;
+				self.Enemies.Velocities[i] = enemy.Velocity;
+				self.Enemies.Rotations[i] = enemy.Rotation;
 				return i;
 			}
-			throw std::runtime_error{ "Maximum entity count reached" };
+			throw std::runtime_error{ "Maximum enemy count reached" };
 		}
 	};
 }

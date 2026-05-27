@@ -12,12 +12,12 @@ export namespace SpaceDefender
 		{
 			Init();
 		}
+		
 		auto GetCreateWindowParams(this auto&& self) noexcept -> CreateWindowParams
 		{
 			auto params = self.GameWindow::GetCreateWindowParams();
 			params.WindowName = L"Space Defender";
 			return params;
 		}
-	private:
 	};
 }
