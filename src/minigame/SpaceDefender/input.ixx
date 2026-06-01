@@ -53,11 +53,10 @@ export namespace SpaceDefender
 
 		auto CheckReleasedAndReset(this auto&& self, Win32::WPARAM key) -> bool
 		{
-			if (key >= self.Keys.size())
+			if (key >= self.Keys.size() or self.Keys[key].ChangeWasChecked)
 				return false;
-			self.Keys[key].Previous = std::exchange(self.Keys[key].Current, false);
-			self.Keys[key].ChangeWasChecked = false;
-			return not self.Keys[key].Previous;
+			self.Keys[key].ChangeWasChecked = true;
+			return self.Keys[key].Current;
 		}
 
 		auto ResetCheckedAll(this auto&& self)

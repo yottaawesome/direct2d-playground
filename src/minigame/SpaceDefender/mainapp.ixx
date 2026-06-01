@@ -51,9 +51,41 @@ export namespace SpaceDefender
 				if (self.entities.Player.Position.X + width > clientWidth)
 					self.entities.Player.Position.X = clientWidth - width;
 			}
-			if (self.inputState.IsPressed(Win32::Keys::Space))
+			// We can receive multiple key events between updates, but we only 
+			// want to shoot once per key press, so we check for the release 
+			// event and reset it at the same time.
+			if (self.inputState.CheckReleasedAndReset(Win32::Keys::Space))
 			{
 				// shoot
+				auto [playerWidth, playerHeight] = self.assetManager[SpriteType::Player].GetSize();
+				auto [bulletWidth, bulletHeight] = self.assetManager[SpriteType::PlayerBullet].GetSize();
+
+				auto bulletSpawnX = 
+					(self.entities.Player.Position.X + playerWidth / 2.0f) - (bulletWidth / 2.0f);
+				auto bulletSpawnY = self.entities.Player.Position.Y - bulletHeight;
+
+				self.entities.AddBullet(
+					PlayerBulletDetails{
+						.Active = true,
+						.Sprite = SpriteType::PlayerBullet,
+						.Position = { bulletSpawnX, bulletSpawnY },
+						.Velocity = { 0.0f, -20.0f },
+						.Rotation = 0
+					});
+			}
+
+			for (int x = 0; x < self.entities.PlayerBullets.Active.size(); ++x)
+			{
+				self.entities.PlayerBullets.TimeAlive[x] += deltaTime;
+				// bullets only live for a limited time
+				if (self.entities.PlayerBullets.TimeAlive[x] > 10.0f)
+				{
+					self.entities.PlayerBullets.Active[x] = false;
+					continue;
+				}
+				if (not self.entities.PlayerBullets.Active[x])
+					continue;
+				self.entities.PlayerBullets.Positions[x].Y -= 40.f*deltaTime;
 			}
 
 			constexpr auto enemyYSpeed = 10.0f; // pixels per second
@@ -75,21 +107,36 @@ export namespace SpaceDefender
 
 			static auto toDraw = std::vector<ToDraw>{};
 			toDraw.clear();
-			toDraw.push_back(ToDraw{
-				.Sprite = self.assetManager[self.entities.Player.Sprite],
-				.Position = self.entities.Player.Position,
-				.Rotation = self.entities.Player.Rotation
-			});
+			// Draw the player.
+			toDraw.push_back(
+				ToDraw{
+					.Sprite = self.assetManager[self.entities.Player.Sprite],
+					.Position = self.entities.Player.Position,
+					.Rotation = self.entities.Player.Rotation
+				});
+
+			for (auto i = 0; i < self.entities.PlayerBullets.Active.size(); ++i)
+			{
+				if (not self.entities.PlayerBullets.Active[i])
+					continue;
+				toDraw.push_back(
+					ToDraw{
+						.Sprite = self.assetManager[self.entities.PlayerBullets.SpriteCollection[i]],
+						.Position = self.entities.PlayerBullets.Positions[i],
+						.Rotation = self.entities.PlayerBullets.Rotations[i]
+					});
+			}
 
 			for (auto i = 0; i < self.entities.Enemies.Size(); ++i)
 			{
 				if (not self.entities.Enemies.Active[i])
 					continue;
-				toDraw.push_back(ToDraw{
-					.Sprite = self.assetManager[self.entities.Enemies.SpriteCollection[i]],
-					.Position = self.entities.Enemies.Positions[i],
-					.Rotation = self.entities.Enemies.Rotations[i]
-				});
+				toDraw.push_back(
+					ToDraw{
+						.Sprite = self.assetManager[self.entities.Enemies.SpriteCollection[i]],
+						.Position = self.entities.Enemies.Positions[i],
+						.Rotation = self.entities.Enemies.Rotations[i]
+					});
 			}
 
 			if (not self.renderer.DrawScene(toDraw, self.assetManager.SolidColorBrushes.DebugBrush.Get()))
@@ -103,24 +150,6 @@ export namespace SpaceDefender
 
 	#pragma region Private members
 	private:
-		Shared::Timer timer{};
-		EntityCollection entities{};
-		MainWindow window{
-			MainWindow::OnEvent{
-				.Render =
-					[this]{ OnIdle(); },
-				.Resize =
-					[this](std::uint32_t width, std::uint32_t height) { OnResize(width, height); },
-				.KeyUp = 
-					[this](Win32::WPARAM key) { HandleKeyUp(key); },
-				.KeyDown = 
-					[this](Win32::WPARAM key) { HandleKeyDown(key); }
-			}
-		};
-		Renderer renderer{ window.ToSurface() };
-		AssetManager assetManager{};
-		InputState inputState{};
-
 		void LoadAssets(this MainApp& self)
 		{
 			self.assetManager.Load(self.renderer.GetD2DDeviceContext());
@@ -169,7 +198,7 @@ export namespace SpaceDefender
 			}
 		}
 
-		#pragma region Input handling
+	#pragma region Input handling
 		void HandleKeyDown(this auto&& self, Win32::WPARAM key)
 		{
 			self.inputState.WasPressed(key);
@@ -179,7 +208,31 @@ export namespace SpaceDefender
 		{
 			self.inputState.WasReleased(key);
 		}
-		#pragma endregion
-		#pragma endregion
+
+	private:
+		Shared::Timer timer{};
+		EntityCollection entities{};
+		MainWindow window{
+			MainWindow::OnEvent{
+				.Render =
+					[this] { OnIdle(); },
+				.Resize =
+					[this](std::uint32_t width, std::uint32_t height) { OnResize(width, height); },
+				.KeyUp =
+					[this](Win32::WPARAM key) { HandleKeyUp(key); },
+				.KeyDown =
+					[this](Win32::WPARAM key) { HandleKeyDown(key); }
+			}
+		};
+		Renderer renderer{
+			window.ToSurface(),
+			Renderer::Settings{
+				.ClearColor = D2D1::ColorF(D2D1::ColorF::DarkGoldenrod)
+			}
+		};
+		AssetManager assetManager{};
+		InputState inputState{};
+	#pragma endregion
+	#pragma endregion
 	};
 }

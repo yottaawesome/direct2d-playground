@@ -99,5 +99,8 @@
     <ClCompile Include="math\math.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="misc\functions.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

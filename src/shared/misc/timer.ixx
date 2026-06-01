@@ -14,6 +14,14 @@ export namespace Shared
 			return dt;
 		}
 
+		auto AdvanceMs(this auto&& self) -> std::chrono::milliseconds
+		{
+			const auto now = std::chrono::steady_clock::now();
+			auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(now - self.last);
+			self.last = now;
+			return dt;
+		}
+
 		auto Reset(this auto&& self)
 		{
 			self.last = std::chrono::steady_clock::now();

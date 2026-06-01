@@ -18,7 +18,7 @@ export namespace SpaceDefender
 		EnemyBullet,
 	};
 
-	constexpr auto MaximumSpriteCount = 25;
+	constexpr auto MaximumSpriteCount = 50;
 	using Degrees = float;
 	struct EntityDetails
 	{
@@ -34,27 +34,17 @@ export namespace SpaceDefender
 	{
 		Common,
 	};
+
+	
+
 	struct Enemies
 	{
 		std::vector<EnemyType> Types{ MaximumSpriteCount };
-		std::vector<std::uint32_t> Active = 
-			[] static->std::vector<std::uint32_t>
-			{
-				auto active = std::vector<std::uint32_t>{};
-				active.resize(MaximumSpriteCount);
-				return active;
-			}();
+		std::vector<std::uint32_t> Active = Shared::MakeVector<std::uint32_t, MaximumSpriteCount>();
 		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
 		std::vector<Shared::Vector2> Positions{ MaximumSpriteCount };
 		std::vector<Shared::Vector2> Velocities{ MaximumSpriteCount };
-		std::vector<Degrees> Rotations =
-			[] static->std::vector<Degrees>
-			{
-				auto vec = std::vector<Degrees>{};
-				vec.resize(MaximumSpriteCount);
-				return vec;
-			}();
-
+		std::vector<Degrees> Rotations = Shared::MakeVector<Degrees, MaximumSpriteCount>();
 		auto Size() -> size_t
 		{
 			return Types.size();
@@ -79,31 +69,48 @@ export namespace SpaceDefender
 		Degrees Rotation = 0;
 	};
 
-	struct PlayerBulllets
+	struct PlayerBullets
 	{
-		std::vector<std::uint8_t> Active =
-			[] static->std::vector<std::uint8_t>
-			{
-				auto vec = std::vector<std::uint8_t>{};
-				vec.resize(MaximumSpriteCount);
-				return vec;
-			}();
+		std::vector<std::uint8_t> Active = Shared::MakeVector<std::uint8_t, MaximumSpriteCount>();
 		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
 		std::vector<Shared::Vector2> Positions{ MaximumSpriteCount };
 		std::vector<Shared::Vector2> Velocities{ MaximumSpriteCount };
-		std::vector<Degrees> Rotations =
-			[] static->std::vector<Degrees>
-			{
-				auto vec = std::vector<Degrees>{};
-				vec.resize(MaximumSpriteCount);
-				return vec;
-			}();
+		std::vector<Degrees> Rotations = 
+			Shared::MakeVector<Degrees, MaximumSpriteCount>();
+		std::vector<float> TimeAlive = Shared::MakeVector<float, MaximumSpriteCount>();
+	};
+	struct PlayerBulletDetails
+	{
+		bool Active = false;
+		SpriteType Sprite = SpriteType::PlayerBullet;
+		Shared::Vector2 Position = {};
+		Shared::Vector2 Velocity = {};
+		Degrees Rotation = 0;
 	};
 
 	struct EntityCollection
 	{
 		Player Player{};
 		Enemies Enemies{};
+		PlayerBullets PlayerBullets{};
+
+		auto AddBullet(this auto&& self, PlayerBulletDetails bullet) -> std::size_t
+		{
+			for (auto i = 0ull; i < self.PlayerBullets.Active.size(); ++i)
+			{
+				if (self.PlayerBullets.Active[i])
+					continue;
+				self.PlayerBullets.Active[i] = bullet.Active;
+				self.PlayerBullets.SpriteCollection[i] = bullet.Sprite;
+				self.PlayerBullets.Positions[i] = bullet.Position;
+				self.PlayerBullets.Velocities[i] = bullet.Velocity;
+				self.PlayerBullets.Rotations[i] = bullet.Rotation;
+				self.PlayerBullets.TimeAlive[i] = 0.0f;
+				return i;
+			}
+			throw std::runtime_error{ "Maximum player bullet count reached" };
+		}
+
 		auto AddEnemy(this auto&& self, EnemyDetails enemy) -> std::size_t
 		{
 			for (auto i = 0ull; i < self.Enemies.Types.size(); ++i)

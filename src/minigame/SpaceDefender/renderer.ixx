@@ -14,8 +14,15 @@ export namespace SpaceDefender
 	class Renderer
 	{
 	public:
-		Renderer(Shared::WindowSurface windowSurface)
-			: deviceContext(windowSurface)
+		struct Settings 
+		{
+			D2D1::ColorF ClearColor = D2D1::ColorF(D2D1::ColorF::DarkSeaGreen);
+		};
+
+		Settings settings;
+
+		Renderer(Shared::WindowSurface windowSurface, Settings rendererSettings)
+			: deviceContext(windowSurface), settings{rendererSettings}
 		{}
 
 		void CreateResources(this auto&& self)
@@ -40,9 +47,9 @@ export namespace SpaceDefender
 		) -> bool
 		{
 			self.deviceContext.BeginDraw();
-			// Clear the background to DarkSeaGreen
+			// Clear the background to the configured clear color
 			self.deviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
-			self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
+			self.deviceContext->Clear(self.settings.ClearColor);
 
 			for (const ToDraw& item : toDraw)
 			{

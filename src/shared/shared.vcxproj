@@ -160,6 +160,7 @@
     <ClCompile Include="d2d\devicecontext.ixx" />
     <ClCompile Include="error\error.ixx" />
     <ClCompile Include="math\math.ixx" />
+    <ClCompile Include="misc\functions.ixx" />
     <ClCompile Include="misc\misc.ixx" />
     <ClCompile Include="ui\functions.ixx" />
     <ClCompile Include="ui\gamewindow.ixx" />

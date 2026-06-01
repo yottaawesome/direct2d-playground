@@ -22,6 +22,7 @@ catch (const Shared::Error& err)
 }
 catch (const std::exception& ex)
 {
+	std::println("{}", ex.what());
 	Shared::ErrorMessageBox(ex.what(), "Exception");
 	return 1;
 }
