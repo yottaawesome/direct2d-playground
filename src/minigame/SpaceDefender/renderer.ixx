@@ -53,9 +53,9 @@ export namespace SpaceDefender
 					item.Rotation,
 					item.Sprite.GetCenter()
 				);
-
 				auto transform = D2D1::Matrix3x2F{ rotation * translation };
 				self.deviceContext->SetTransform(transform);
+
 				// Determine the size of the sprite so we can draw it and its bounding box correctly.
 				auto [width, height] = item.Sprite->GetSize();
 				self.deviceContext->DrawBitmap(

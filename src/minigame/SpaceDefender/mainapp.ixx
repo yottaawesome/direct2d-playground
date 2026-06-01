@@ -17,15 +17,15 @@ export namespace SpaceDefender
 		// initialisation to fail if we don't provide a user-defined constructor here.
 		MainApp() 
 		{
-			deviceContext.CreateResources();
-			assetManager.Load(deviceContext.GetD2DDeviceContext());
+			renderer.CreateResources();
+			assetManager.Load(renderer.GetD2DDeviceContext());
 			PositionPlayer();
 			AddEnemies();
 		}
 
 		void OnResize(this auto&& self, std::uint32_t width, std::uint32_t height)
 		{
-			self.deviceContext.OnResize(width, height);
+			self.renderer.OnResize(width, height);
 			self.window.Invalidate();
 		}
 
@@ -68,8 +68,8 @@ export namespace SpaceDefender
 
 		void DrawScene(this auto&& self)
 		{
-			self.deviceContext.CreateResources();
-			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
+			self.renderer.CreateResources();
+			self.assetManager.Load(self.renderer.GetD2DDeviceContext());
 			if (self.window.IsIconic())
 				return;
 
@@ -92,10 +92,10 @@ export namespace SpaceDefender
 				});
 			}
 
-			if (not self.deviceContext.DrawScene(toDraw, self.assetManager.SolidColorBrushes.DebugBrush.Get()))
+			if (not self.renderer.DrawScene(toDraw, self.assetManager.SolidColorBrushes.DebugBrush.Get()))
 			{
 				self.assetManager.Discard();
-				self.deviceContext.DiscardResources();
+				self.renderer.DiscardResources();
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
 			}
 		}
@@ -117,14 +117,13 @@ export namespace SpaceDefender
 					[this](Win32::WPARAM key) { HandleKeyDown(key); }
 			}
 		};
-		Renderer deviceContext{ window.ToSurface() };
-		//Shared::DeviceContext deviceContext{ window.ToSurface() };
+		Renderer renderer{ window.ToSurface() };
 		AssetManager assetManager{};
 		InputState inputState{};
 
 		void LoadAssets(this MainApp& self)
 		{
-			self.assetManager.Load(self.deviceContext.GetD2DDeviceContext());
+			self.assetManager.Load(self.renderer.GetD2DDeviceContext());
 		}
 
 		void PositionPlayer(this MainApp& self)
