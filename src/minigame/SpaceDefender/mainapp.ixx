@@ -5,6 +5,7 @@ import :assetmanager;
 import :entity;
 import :spacedefenderwindow;
 import :input;
+import :renderer;
 
 export namespace SpaceDefender
 {
@@ -72,73 +73,30 @@ export namespace SpaceDefender
 			if (self.window.IsIconic())
 				return;
 
-			self.deviceContext.BeginDraw();
-			self.deviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
-			self.deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::DarkSeaGreen));
+			static auto toDraw = std::vector<ToDraw>{};
+			toDraw.clear();
+			toDraw.push_back(ToDraw{
+				.Sprite = self.assetManager[self.entities.Player.Sprite],
+				.Position = self.entities.Player.Position,
+				.Rotation = self.entities.Player.Rotation
+			});
 
-			//draw player
-			[&self]
-			{
-				auto [x, y] = self.entities.Player.Position;
-				auto translation = D2D1::Matrix3x2F::Translation(x, y);
-				self.deviceContext->SetTransform(translation);
-				auto [width, height] = self.assetManager[self.entities.Player.Sprite].GetSize();
-				self.deviceContext->DrawBitmap(
-					self.assetManager[self.entities.Player.Sprite].Get(),
-					D2D1::RectF(0, 0, width, height)
-				);
-			}();
-
-
-			// The drawing code needs to be moved to a GraphicsContext class and the gameplay classes
-			// need to be transformed (per frame) to a shape or view appropriate for the GraphicsContext.
 			for (auto i = 0; i < self.entities.Enemies.Size(); ++i)
 			{
 				if (not self.entities.Enemies.Active[i])
 					continue;
-
-				// Apply the correct world transform for the sprite based on its position and rotation.
-				auto [x, y] = self.entities.Enemies.Positions[i];
-				auto translation = D2D1::Matrix3x2F::Translation(x, y);
-				auto rotation = D2D1::Matrix3x2F::Rotation(
-					self.entities.Enemies.Rotations[i],
-					self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].GetCenter()
-				);
-				auto transform = D2D1::Matrix3x2F{ rotation * translation };
-				self.deviceContext->SetTransform(transform);
-
-				// Determine the size of the sprite so we can draw it and its bounding box correctly.
-				auto [width, height] = self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].GetSize();
-				self.deviceContext->DrawBitmap(
-					self.assetManager.Bitmaps[self.entities.Enemies.SpriteCollection[i]].Get(),
-					D2D1::RectF(0, 0, width, height)
-				);
-				// This is just for debugging: draw a box around the sprite to show its bounds.
-				self.deviceContext->DrawRectangle(
-					D2D1::RectF(0, 0, width, height),
-					self.assetManager.SolidColorBrushes.DebugBrush.Get(),
-					5.0f,
-					nullptr
-				);
+				toDraw.push_back(ToDraw{
+					.Sprite = self.assetManager[self.entities.Enemies.SpriteCollection[i]],
+					.Position = self.entities.Enemies.Positions[i],
+					.Rotation = self.entities.Enemies.Rotations[i]
+				});
 			}
 
-			auto hr = Shared::HResult{ self.deviceContext->EndDraw() };
-
-			if (hr)
-			{
-				hr = self.deviceContext.Present(1, 0);
-				if (not hr)
-					throw Shared::ComError{ hr, "IDXGISwapChain::Present() failed" };
-			}
-			else if (hr.Code == D2D1::Error::RecreateTarget)
+			if (not self.deviceContext.DrawScene(toDraw, self.assetManager.SolidColorBrushes.DebugBrush.Get()))
 			{
 				self.assetManager.Discard();
 				self.deviceContext.DiscardResources();
 				Win32::ValidateRect(self.window.GetHandle(), nullptr);
-			}
-			else
-			{
-				throw Shared::ComError{ hr, "EndDraw() failed in OnIdle()" };
 			}
 		}
 	#pragma endregion
@@ -159,7 +117,8 @@ export namespace SpaceDefender
 					[this](Win32::WPARAM key) { HandleKeyDown(key); }
 			}
 		};
-		Shared::DeviceContext deviceContext{ window.ToSurface() };
+		Renderer deviceContext{ window.ToSurface() };
+		//Shared::DeviceContext deviceContext{ window.ToSurface() };
 		AssetManager assetManager{};
 		InputState inputState{};
 
@@ -178,8 +137,8 @@ export namespace SpaceDefender
 
 			self.entities.Player = Player{
 				.Sprite = SpriteType::Player,
-				.Position = Vector2{ playerY, playerX },
-				.Velocity = Vector2{ 0.0f, 0.0f },
+				.Position = Shared::Vector2{ playerY, playerX },
+				.Velocity = Shared::Vector2{ 0.0f, 0.0f },
 				.Rotation = 0
 			};
 		}
@@ -204,8 +163,8 @@ export namespace SpaceDefender
 						.Type = EnemyType::Common,
 						.Active = true,
 						.Sprite = SpriteType::Enemy,
-						.Position = Vector2{ static_cast<float>(x), static_cast<float>(y) },
-						.Velocity = Vector2{ 0.0f, 0.0f },
+						.Position = Shared::Vector2{ static_cast<float>(x), static_cast<float>(y) },
+						.Velocity = Shared::Vector2{ 0.0f, 0.0f },
 						.Rotation = 0
 					});
 			}

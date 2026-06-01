@@ -96,5 +96,8 @@
     <ClCompile Include="concepts\concepts.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="math\math.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -146,6 +146,7 @@
     <ClCompile Include="SpaceDefender\entity.ixx" />
     <ClCompile Include="SpaceDefender\input.ixx" />
     <ClCompile Include="SpaceDefender\mainapp.ixx" />
+    <ClCompile Include="SpaceDefender\renderer.ixx" />
     <ClCompile Include="SpaceDefender\spacedefender.ixx" />
     <ClCompile Include="SpaceDefender\mainwindow.ixx" />
     <ClCompile Include="SpaceDefender\wiccomponents.ixx" />

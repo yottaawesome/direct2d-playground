@@ -9,11 +9,6 @@ export namespace SpaceDefender
 	{
 		D2D1::ID2D1Bitmap* Sprite = nullptr;
 	};
-	struct Vector2
-	{
-		float X = 0.0f;
-		float Y = 0.0f;
-	};
 
 	enum class EntityType
 	{
@@ -30,8 +25,8 @@ export namespace SpaceDefender
 		EntityType Type;
 		bool Active;
 		SpriteType Sprite;
-		Vector2 Position;
-		Vector2 Velocity;
+		Shared::Vector2 Position;
+		Shared::Vector2 Velocity;
 		Degrees Rotation;
 	};
 
@@ -50,8 +45,8 @@ export namespace SpaceDefender
 				return active;
 			}();
 		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
-		std::vector<Vector2> Positions{ MaximumSpriteCount };
-		std::vector<Vector2> Velocities{ MaximumSpriteCount };
+		std::vector<Shared::Vector2> Positions{ MaximumSpriteCount };
+		std::vector<Shared::Vector2> Velocities{ MaximumSpriteCount };
 		std::vector<Degrees> Rotations =
 			[] static->std::vector<Degrees>
 			{
@@ -69,8 +64,8 @@ export namespace SpaceDefender
 	struct Player
 	{
 		SpriteType Sprite;
-		Vector2 Position;
-		Vector2 Velocity;
+		Shared::Vector2 Position;
+		Shared::Vector2 Velocity;
 		Degrees Rotation;
 	};
 
@@ -79,9 +74,30 @@ export namespace SpaceDefender
 		EnemyType Type =  EnemyType::Common;
 		bool Active = true;
 		SpriteType Sprite = SpriteType::Enemy;
-		Vector2 Position = {};
-		Vector2 Velocity = {};
+		Shared::Vector2 Position = {};
+		Shared::Vector2 Velocity = {};
 		Degrees Rotation = 0;
+	};
+
+	struct PlayerBulllets
+	{
+		std::vector<std::uint8_t> Active =
+			[] static->std::vector<std::uint8_t>
+			{
+				auto vec = std::vector<std::uint8_t>{};
+				vec.resize(MaximumSpriteCount);
+				return vec;
+			}();
+		std::vector<SpriteType> SpriteCollection{ MaximumSpriteCount };
+		std::vector<Shared::Vector2> Positions{ MaximumSpriteCount };
+		std::vector<Shared::Vector2> Velocities{ MaximumSpriteCount };
+		std::vector<Degrees> Rotations =
+			[] static->std::vector<Degrees>
+			{
+				auto vec = std::vector<Degrees>{};
+				vec.resize(MaximumSpriteCount);
+				return vec;
+			}();
 	};
 
 	struct EntityCollection

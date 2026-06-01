@@ -26,8 +26,9 @@ export namespace Shared
 		if (chars == 0 or not buffer)
 			return std::format("Unknown error code: {}", code);
 
-		auto message = std::string(static_cast<char*>(buffer), chars);
+		auto message = std::string{ static_cast<char*>(buffer), chars };
 		Win32::LocalFree(buffer);
+		
 		while (not message.empty() and (message.back() == '\r' or message.back() == '\n'))
 			message.pop_back();
 		return message;

@@ -8,3 +8,4 @@ export import :wic;
 export import :ui;
 export import :d2dwic;
 export import :concepts;
+export import :math;
